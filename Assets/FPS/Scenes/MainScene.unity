@@ -546,6 +546,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectionPort: 25001
   position: {x: 0, y: 0, z: 0}
+--- !u!114 &319678130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319678117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dce46c1181343f4c9488063476804b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &409996927
 PrefabInstance:
   m_ObjectHideFlags: 0
