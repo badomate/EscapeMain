@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System;
+using Newtonsoft.Json;
 
 public class Socket_toHl2 : MonoBehaviour
 {
@@ -16,6 +17,11 @@ public class Socket_toHl2 : MonoBehaviour
     TcpClient client;
     private volatile bool running = true;
     private volatile bool clientAccepted = false;
+    //  data being received in this example
+    public Vector3 position = new Vector3(0, 0, 0);
+    public Vector3 origin = new Vector3(0, 0, 0);
+    public string jointName;
+    Dictionary<string, List<object>> recivedData = new Dictionary<string, List<object>>();
 
 
     // Start is called before the first frame update
@@ -98,8 +104,10 @@ public class Socket_toHl2 : MonoBehaviour
         //dataReceived.Trim();
         if (dataReceived != null && dataReceived != "")
         {
+            // itt kell valamit mashogy recivelni es atalakitani
             // Convert the received string of data to the format we are using
-            position = ParseData(dataReceived);
+            //position = ParseData(dataReceived);
+            recivedData = ParseData(dataReceived);
             nwStream.Write(buffer, 0, bytesRead);
         }
         else
@@ -111,20 +119,24 @@ public class Socket_toHl2 : MonoBehaviour
     // Use-case specific function, need to re-write this to interpret whatever data is being sent
     public static Vector3 ParseData(string dataString)
     {
-        dataString = dataString.Replace("[", "").Replace("]", "").Trim();
-        string[] arrayData = dataString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        Debug.Log(dataString);
+        Dictionary<string, List<object>> receivedData = JsonConvert.DeserializeObject<Dictionary<string, List<object>>>(dataString.ToString());
+        Debug.Log(receivedData);
+        //dataString = dataString.Replace("[", "").Replace("]", "").Trim();
+        //string[] arrayData = dataString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         //Debug.Log(dataString);
         //Debug.Log(arrayData);
-      
-        Vector3 result = new Vector3(
-            float.Parse(arrayData[0]),
-            float.Parse(arrayData[1]),
-            float.Parse(arrayData[2]));
-        return result;
+
+        //Vector3 result = new Vector3(
+        //    float.Parse(arrayData[0]),
+        //    float.Parse(arrayData[1]),
+        //    float.Parse(arrayData[2]));
+
+        // we should send back the name of the joint
+        return null;
     }
 
-    // Position is the data being received in this example
-    public Vector3 position = new Vector3(0,0,0);
+   
 
     void Update()
     {

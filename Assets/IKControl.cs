@@ -12,6 +12,10 @@ public class IKControl : MonoBehaviour
     public bool ikActive = false;
     public Transform rightHandObj = null;
     public Transform lookObj = null;
+    public Transform indexFinger = null;
+    //GameObject hips = GetComponent("mixamorig:  ");
+    //hips.transform.location = Vector3(0,0,0);
+
 
     void Start()
     {

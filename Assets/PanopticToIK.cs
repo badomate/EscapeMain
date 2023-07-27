@@ -14,8 +14,9 @@ public class PanopticToIK : MonoBehaviour
     public GameObject[] keypointBones = null; //for keypoints that are to be set specifically and not with IK
     protected Animator animator;
     public bool Looping = true; //TODO: fix the False setting, perhaps by introducing a new bool to check for the animation finishing.
-
+    // ezt le kellene sztm cserelni egy dictre ami a kulcs a neve a jointnak es a value ez az angles
     float[] angles;
+    Dictionary<string, List<object>> angles = new Dictionary<string, List<object>>();
     public float scaleFactor = 0.02f; //0.005f; // Adjust the scaling factor as needed
     private int frameCount;
     private int smoothingFrameCount = 0;
@@ -75,8 +76,38 @@ public class PanopticToIK : MonoBehaviour
     {
         GameObject rightHand = GameObject.Find("mixamorig:RightHand");
         GameObject leftHand = GameObject.Find("mixamorig:LeftHand");
+
+        GameObject rightThumbMetacarpal = GameObject.Find("mixamorig:RightHandThumb1");
+        GameObject rightThumbProximal = GameObject.Find("mixamorig:RightHandThumb2");
+        GameObject rightThumbDistal = GameObject.Find("mixamorig:RightHandThumb3");
+        GameObject rightThumbTip = GameObject.Find("mixamorig:RightHandThumb4");
+                   
+        GameObject rightIndexMetacarpal = GameObject.Find("mixamorig:RightHandIndex1");
+        GameObject rightIndexProximal = GameObject.Find("mixamorig:RightHandIndex2");
+        GameObject rightIndexDistal = GameObject.Find("mixamorig:RightHandIndex3");
+        GameObject rightIndexTip = GameObject.Find("mixamorig:RightHandIndex4");
+                   
+        GameObject rightMiddleMetacarpal = GameObject.Find("mixamorig:RightHandMiddle1");
+        GameObject rightMiddleProximal = GameObject.Find("mixamorig:RightHandMiddle2");
+        GameObject rightMiddleDistal = GameObject.Find("mixamorig:RightHandMiddle3");
+        GameObject rightMiddleTip = GameObject.Find("mixamorig:RightHandMiddle4");
+                   
+        GameObject rightRingdMetacarpal = GameObject.Find("mixamorig:RightHandRing1");
+        GameObject rightRingdProximal = GameObject.Find("mixamorig:RightHandRing2");
+        GameObject rightRingdDistal = GameObject.Find("mixamorig:RightHandRing3");
+        GameObject rightRingdTip = GameObject.Find("mixamorig:RightHandRing4");
+                   
+        GameObject rightPinkyMetacarpal = GameObject.Find("mixamorig:RightHandPinky1");
+        GameObject rightPinkyProximal = GameObject.Find("mixamorig:RightHandPinky2");
+        GameObject rightPinkyDistal = GameObject.Find("mixamorig:RightHandPinky3");
+        GameObject rightPinkyTip = GameObject.Find("mixamorig:RightHandPinky4");
+
+
+        Debug.Log("rightPinkyTip: " + rightPinkyTip);
         rightHand.transform.rotation = rightHand.transform.parent.rotation;
         leftHand.transform.rotation = leftHand.transform.parent.rotation;
+        // es az angelnek meg kellene valahogy adni hogy melyik 
+        rightThumbMetacarpal.transform.position = Vector3(angles[0], angles[1], angles[2])
     }
 
     private Vector3 goalFromIndex(int index)
@@ -108,6 +139,8 @@ public class PanopticToIK : MonoBehaviour
         //Endpoints:
         SetIKPosition(0, AvatarIKGoal.LeftHand);
         //SetIKPosition(11, AvatarIKGoal.RightHand);
+
+
 
         if (!usingHololensTcp)
         {
@@ -288,9 +321,16 @@ public class PanopticToIK : MonoBehaviour
         else{ //TODO: dont have multiple frame counters
             frameCount = (Mathf.FloorToInt((Time.time - animStartTime) / frameTime) + 1) % (endFrame - startFrame); // Add 1 to start from frame 1, % by all frames of animation
         }
-        
-    }
 
+    //    // Example: Rotate the finger joints based on input or animation
+    //    float proximalRotation = 30f * Mathf.Sin(Time.time);
+    //    float intermediateRotation = 45f * Mathf.Cos(Time.time);
+    //    float distalRotation = 60f * Mathf.Sin(Time.time * 1.5f);
+
+    //    proximalPhalanx.localRotation = Quaternion.Euler(proximalRotation, 0f, 0f);
+    //    intermediatePhalanx.localRotation = Quaternion.Euler(intermediateRotation, 0f, 0f);
+    //    distalPhalanx.localRotation = Quaternion.Euler(distalRotation, 0f, 0f);
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -298,7 +338,7 @@ public class PanopticToIK : MonoBehaviour
         DirectoryInfo dir = new DirectoryInfo(basePath + selectedAnimName);
         FileInfo[] info = dir.GetFiles("*.json");
 
-        if(endFrame > info.Length || endFrame < 0)
+        if (endFrame > info.Length || endFrame < 0)
         {
             endFrame = info.Length; //cull endFrame if set over frame limit
         }
@@ -312,4 +352,6 @@ public class PanopticToIK : MonoBehaviour
         fadeInStart();
     }
 
+
 }
+
