@@ -14,9 +14,11 @@ public class CompareGesture : MonoBehaviour
     private int recordingProgress = 0; //how many samples of the currently playing gesture have we saved so far
     private float matchThreshold = 0.1f; //0 would mean an absolute perfect match across all samples
 
+    private LevelManager LevelManagerScript;
     // Start is called before the first frame update
     void Start()
     {
+        LevelManagerScript = GetComponent<LevelManager>();
         goalGesture = new float[,] { { 4, 5, 6 }, { 4, 5, 6 } }; //example value for testing
         //Debug.Log(MeanSquaredError(characterGesture, goalGesture) < matchThreshold);
     }
@@ -33,10 +35,10 @@ public class CompareGesture : MonoBehaviour
         if (timeSinceLastFrame >= frameInterval)
         {
             saveGestureFrame();
-            if (goalGestureCompleted())
+            if (goalGestureCompleted()) //we could use this to detect other gestures too, not just the solution
             {
-                Debug.Log("Goal gesture was performed correctly.");
                 recording = false; recordingProgress = 0;
+                LevelManagerScript.Success();
             }
             timeSinceLastFrame = 0f; // Reset the time counter
         }
