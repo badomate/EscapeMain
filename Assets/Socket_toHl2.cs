@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 
 public class Socket_toHl2 : MonoBehaviour
 {
@@ -21,7 +21,7 @@ public class Socket_toHl2 : MonoBehaviour
     public Vector3 position = new Vector3(0, 0, 0);
     public Vector3 origin = new Vector3(0, 0, 0);
     public string jointName;
-    Dictionary<string, List<object>> recivedData = new Dictionary<string, List<object>>();
+    //Dictionary<string, List<object>> recivedData = new Dictionary<string, List<object>>();
 
 
     // Start is called before the first frame update
@@ -107,7 +107,7 @@ public class Socket_toHl2 : MonoBehaviour
             // itt kell valamit mashogy recivelni es atalakitani
             // Convert the received string of data to the format we are using
             //position = ParseData(dataReceived);
-            recivedData = ParseData(dataReceived);
+            ParseData(dataReceived);
             nwStream.Write(buffer, 0, bytesRead);
         }
         else
@@ -120,8 +120,8 @@ public class Socket_toHl2 : MonoBehaviour
     public static Vector3 ParseData(string dataString)
     {
         Debug.Log(dataString);
-        Dictionary<string, List<object>> receivedData = JsonConvert.DeserializeObject<Dictionary<string, List<object>>>(dataString.ToString());
-        Debug.Log(receivedData);
+        //Dictionary<string, List<object>> receivedData = JsonConvert.DeserializeObject<Dictionary<string, List<object>>>(dataString.ToString());
+        //Debug.Log(receivedData);
         //dataString = dataString.Replace("[", "").Replace("]", "").Trim();
         //string[] arrayData = dataString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         //Debug.Log(dataString);
@@ -133,7 +133,7 @@ public class Socket_toHl2 : MonoBehaviour
         //    float.Parse(arrayData[2]));
 
         // we should send back the name of the joint
-        return null;
+        return new Vector3(0,0,0);
     }
 
    

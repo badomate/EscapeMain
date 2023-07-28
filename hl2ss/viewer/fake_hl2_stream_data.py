@@ -22,6 +22,8 @@ def generate_fake_joint_data(joint_name):
 def generate_fake_data():
     fake_data = {}
 
+    #Generate timestamp
+    fake_data.update({"timestamp":1})
     # Generate Head pose data
     fake_data.update(generate_fake_head_pose())
 
@@ -49,32 +51,33 @@ def send_fake_data(connection):
             fake_data = generate_fake_data()
             data_json = json.dumps(fake_data)
             connection.sendall(data_json.encode("utf-8"))
+            connection.recv(1024).decode("utf-8")
     except Exception as e:
         print(f"Error sending fake data: {e}")
     finally:
         connection.close()
 
 def start_server(host, port):
-    server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_sock.bind((host, port))
-    server_sock.listen(1)
-    print(f"Server started. Listening on {host}:{port}...")
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+        server_socket.bind((host, port))
+        server_socket.listen(1)
+        print(f"Server started. Listening on {host}:{port}...")
 
-    try:
-        while True:
-            connection, addr = server_sock.accept()
-            print(f"Connected to {addr}")
-            # Start a new thread to handle the connection
-            threading.Thread(target=send_fake_data, args=(connection,), daemon=True).start()
-    except KeyboardInterrupt:
-        print("Server stopped.")
-    finally:
-        server_sock.close()
+        try:
+            while True:
+                connection, addr = server_socket.accept()
+                print(f"Connected to {addr}")
+                # Start a new thread to handle the connection
+                send_fake_data(connection)
+        except KeyboardInterrupt:
+            print("Server stopped.")
+        finally:
+            server_socket.close()
 
 
 
 # Example usage
 if __name__ == "__main__":
     # Example usage with starting the server to listen for incoming connections
-    host, port = "127.0.0.1", hl2ss.StreamPort.SPATIAL_INPUT
-    start_server(host, port)
+    HOST, PORT = "127.0.0.1", hl2ss.StreamPort.SPATIAL_INPUT
+    start_server(HOST, PORT)
