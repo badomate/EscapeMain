@@ -42,6 +42,7 @@ def arg_parser():
     args = parser.parse_args()
     return args
 
+
 def send_data_to_unity(data, client):
     data_json = json.dumps(data)
     client.sendall(data_json.encode("utf-8"))
@@ -75,6 +76,7 @@ def hand_position(hand, data_dict):
             pose = hand.get_joint_pose(all_elements[name])
             print(f'Left {name} pose: Position={pose.position} Orientation={pose.orientation} Radius={pose.radius} Accuracy={pose.accuracy}')
             data_dict[f'Left-{name}'] = [pose.position, pose.orientation, pose.radius]
+
 
 def hl2_data(HOST, PORT, HOST_UNITY, PORT_UNITY):
     print("Sending real data")
@@ -126,6 +128,7 @@ def hl2_data(HOST, PORT, HOST_UNITY, PORT_UNITY):
 
 
         send_data_to_unity(data_dict)
+
 
 def main(send_fake_data=False):
     

@@ -4,7 +4,8 @@ import json
 import hl2ss
 import threading
 
-# elore definialt 
+# Todo - create predefined fake data for testing moving hand left to right up and down
+# hl2 compare datas
 def generate_fake_head_pose():
     position = [random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1)]
     forward = [random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1)]
