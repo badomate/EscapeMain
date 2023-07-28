@@ -45,6 +45,7 @@ public class PanopticToIK : MonoBehaviour
 
     //get data from hololens
     public bool usingHololensTcp = false;
+    public bool usingPanoptic = false;
 
     [System.Serializable]
     public class BodyData
@@ -81,9 +82,10 @@ public class PanopticToIK : MonoBehaviour
 
     private Vector3 goalFromIndex(int index)
     {
-        float neckX = angles[index * 4] * scaleFactor; // x-axis pos
-        float neckY = angles[index * 4 + 1] * scaleFactor; // y-axis pos
-        float neckZ = angles[index * 4 + 2] * scaleFactor; // z-axis pos - positive values in Z is going to the right
+        int offset = 3; //how many coordinates per keypoint, hololens has 3, panoptic has 4
+        float neckX = angles[index * offset] * scaleFactor; // x-axis pos
+        float neckY = angles[index * offset + 1] * scaleFactor; // y-axis pos
+        float neckZ = angles[index * offset + 2] * scaleFactor; // z-axis pos - positive values in Z is going to the right
         return origin + new Vector3(-neckX, neckY, neckZ); //Y is inverted, but how about the others?
     }
 
@@ -109,7 +111,7 @@ public class PanopticToIK : MonoBehaviour
         SetIKPosition(0, AvatarIKGoal.LeftHand);
         //SetIKPosition(11, AvatarIKGoal.RightHand);
 
-        if (!usingHololensTcp)
+        if (!usingHololensTcp && usingPanoptic)
         {
             SetIKPosition(8, AvatarIKGoal.LeftFoot);
             SetIKPosition(14, AvatarIKGoal.RightFoot);
@@ -125,7 +127,7 @@ public class PanopticToIK : MonoBehaviour
     //index is index in the json
     private void SetCenterPosition(int index)
     {
-        if (!usingHololensTcp)
+        if (!usingHololensTcp && usingPanoptic)
         {
             Vector3 goal = goalFromIndex(index);
             //GameObject hips = GameObject.Find("mixamorig:Hips");
@@ -157,6 +159,24 @@ public class PanopticToIK : MonoBehaviour
         angles = test;
     }
 
+    public LevelManager LevelManagerScript;
+    public void loadHololensRecording()
+    {
+        LevelManagerScript = GetComponent<LevelManager>();
+        frameCount = 0;
+        endFrame = LevelManagerScript.goalGesture.GetLength(0); //TODO: make this more dynamic, use switchToAnimation or fadeIn
+        startFrame = 0;
+
+
+        angles = new float[LevelManagerScript.goalGesture.GetLength(1)];
+
+        //copy goalGesture into current angles so we can do the animation
+        for (int j = 0; j < LevelManagerScript.goalGesture.GetLength(1); j++)
+        {
+            angles[j] = LevelManagerScript.goalGesture[frameCount, j];
+        }
+    }
+
     void OnAnimatorIK()
     {
         if (fadingIn && smoothing) //each step of fading in
@@ -173,8 +193,12 @@ public class PanopticToIK : MonoBehaviour
                 {
                     getDataFromHololens();
                 }
-                else {
+                else if(usingPanoptic){
                     LoadJSONData(basePath + selectedAnimName + "/body3DScene_" + (frameCount + startFrame).ToString("D8") + ".json");
+                }
+                else
+                {
+                    loadHololensRecording();
                 }
                 lastProcessedFrame = frameCount;
             }

@@ -19,7 +19,7 @@ public class CompareGesture : MonoBehaviour
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
-        goalGesture = new float[,] { { 4, 5, 6 }, { 4, 5, 6 } }; //example value for testing
+        //goalGesture = new float[,] { { 4, 5, 6 }, { 4, 5, 6 } }; //example value for testing
         //Debug.Log(MeanSquaredError(characterGesture, goalGesture) < matchThreshold);
     }
 
@@ -37,8 +37,11 @@ public class CompareGesture : MonoBehaviour
             saveGestureFrame();
             if (goalGestureCompleted()) //we could use this to detect other gestures too, not just the solution
             {
-                recording = false; recordingProgress = 0;
-                LevelManagerScript.Success();
+                if(LevelManagerScript.currentPlayer == 0) //TODO: implement A.I (player1) performing the goal gesture
+                {
+                    recording = false; recordingProgress = 0;
+                    LevelManagerScript.Success();
+                }
             }
             timeSinceLastFrame = 0f; // Reset the time counter
         }
