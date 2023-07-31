@@ -10,6 +10,7 @@ public class LevelManager : MonoBehaviour
 
     PanopticToIK estimationToIkScript;
     CompareGesture compareGestureScript;
+    public GameObject PlayerUI;
     void Start()
     {
         compareGestureScript = Helper.GetComponent<CompareGesture>();
@@ -27,6 +28,7 @@ public class LevelManager : MonoBehaviour
         //Player solves, A.I demonstrates
         if (currentPlayer == 0) 
         {
+            PlayerUI.SetActive(false); 
             //mimic that gesture using the IK script
             estimationToIkScript.usingHololensTcp = false;
             estimationToIkScript.usingPanoptic = false;
@@ -34,6 +36,9 @@ public class LevelManager : MonoBehaviour
         else
         {
             //show the player what to demonstrate
+            PlayerUI.SetActive(true); //TODO: make UI more dynamic, perhaps put a video or an ingame camera on an example character performing the gesture on loop.
+
+            //have A.I copy the saved movements from gesturecompare
         }
     }
 
@@ -56,6 +61,6 @@ public class LevelManager : MonoBehaviour
 
     public float[,] pickFromDictionary()
     {
-        return new float[,] { { 4, 5, 6 }, { 4, 5, 6 } }; //example value for testing
+        return new float[,] { { 5, 0, 0 }, { 5, 0, 0 } }; //example value for testing
     }
 }
