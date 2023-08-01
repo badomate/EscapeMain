@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-// A pose corresponds to a specific (and static) landmark landmarkPos.
+// A pose corresponds to a specific (and static) set oflandmark positions.
 public class Pose : MonoBehaviour
 {
     // Valid landmarks. Each correspond to a point in the player's body.
@@ -21,6 +21,13 @@ public class Pose : MonoBehaviour
     // Match between a landmark and its position on the pose, relative to the player's location.
     // Not all landmarks are relevant for a given pose.
     public Dictionary<Landmark, Vector3> landmarkArrangement = new Dictionary<Landmark, Vector3>();
+    
+    public Pose() {}
+
+    public Pose(Dictionary<Landmark, Vector3> arranjement) {
+        landmarkArrangement = arranjement;
+    }
+
 
     public float MatchVariance(Pose otherPose) {
         float matchVariance = 0f;
@@ -44,11 +51,13 @@ public class Pose : MonoBehaviour
         return matchVariance;
     }
 
+    // Returns the variance between a landmark's position and its reference value
     public float GetLandmarkVariance(Vector3 reference, Vector3 toCompare) {
         float varianceSquared = GetLandmarkVarianceSquared(reference, toCompare);
         return Mathf.Sqrt(varianceSquared);
     }
 
+    // Returns the squared variance between a landmark's position and its reference value
     public float GetLandmarkVarianceSquared(Vector3 reference, Vector3 toCompare) {
         float varianceSquared = 0f;
 
@@ -61,11 +70,10 @@ public class Pose : MonoBehaviour
         return varianceSquared;
     }
 
+    // Format: "[[lm00Pos_x, lm00Pos_y,  lm00Pos_z] [lm01Pos_x, lm01Pos_y,  lm01Pos_z]]"
     public override string ToString()
     {
-        string poseString = "";
-        StringBuilder poseSB = new StringBuilder();
-        poseSB.Append("[");
+        string poseString = "[";
 
         for (int j = 0; j < Pose.landmarkIds.Count; j++) {
             Pose.Landmark landmark = Pose.landmarkIds[j];
@@ -73,7 +81,8 @@ public class Pose : MonoBehaviour
             poseString += "[ " + pos[0] + ", " + pos[1] + ",  " + pos[2] + "]  ";
         }
 
-        poseString = poseString.Remove(poseString.Length-1);
+        if (Pose.landmarkIds.Count > 0)
+            poseString = poseString.Remove(poseString.Length-1);
         poseString += "]";
 
         return poseString;

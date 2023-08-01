@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // A list of sequential poses, with a specific frame (time) interval and (pose) match threshold. 
-// Each frame and pose allow for an error margin/threshold.
 public class Gesture : MonoBehaviour
 {
+    /* Pose within a gesture,
+      * with information about the pose,
+      * the time between transition to the next pose,
+      * and how closely these need to match another to be called equal
+      */
     public class PoseInGesture {
         public Pose poseToMatch;
         public float matchThreshold; 
@@ -15,47 +19,88 @@ public class Gesture : MonoBehaviour
         public PoseInGesture() {
             poseToMatch = new Pose();
             matchThreshold = 0.1f;
-            frameInterval = Mathf.Pow(30f, -1);
+            frameInterval = Mathf.Pow(30f, -1); // 30Hz / 30fps
             frameIntervalThreshold = 0.2f;
         }
     }
 
     public List<PoseInGesture> poseSequence;
+    public float matchThresholdPerPoseNr;
+
     public Gesture() {
         poseSequence = new List<PoseInGesture>();
+        matchThresholdPerPoseNr = 0.5f;
     }
 
+    public void AddPoses(List<Pose> poses, 
+                                    List<float> matchThresholds = null, 
+                                    List<float> frameIntervals = null,
+                                    List<float> frameIntervalThresholds = null) {
+        for (int i = 0; i < poses.Count; i++) {
+            PoseInGesture poseInGesture = new PoseInGesture();
+            poseInGesture.poseToMatch = poses[i];
+            poseInGesture.matchThreshold = matchThresholds == null? 
+                                poseInGesture.matchThreshold : matchThresholds[i];
+            poseInGesture.frameInterval = frameIntervals == null? 
+                                poseInGesture.frameInterval : frameIntervals[i];
+            poseInGesture.frameIntervalThreshold = frameIntervalThresholds == null? 
+                                poseInGesture.frameIntervalThreshold : frameIntervalThresholds[i];
+
+            poseSequence.Add(poseInGesture);
+        }
+    } 
+
+    /* Converts a gesture to a matrix of coordinates, where each row represents a pose
+      * and each column represents a landmark.
+      * matrix[i, j] represents the position of landmark "j" in pose "i"
+      */
     public Vector3[,] GestureToMatrix() {
-        Vector3[,] gestureArray = new Vector3 [poseSequence.Count, Pose.landmarkIds.Count];
+        Vector3[,] gestureMatrix = new Vector3 [poseSequence.Count, Pose.landmarkIds.Count];
         for (int i = 0; i < poseSequence.Count; i++) {
             for (int j = 0; j < Pose.landmarkIds.Count; j++) {
                 Pose.Landmark landmark = Pose.landmarkIds[j];
-                Vector3 pos = poseSequence[i].poseToMatch.landmarkArrangement[landmark]; 
-                gestureArray[i,j] = pos;
+                Dictionary<Pose.Landmark, Vector3> landmarkArrangement = poseSequence[i].
+                                                                                                    poseToMatch.
+                                                                                                    landmarkArrangement;
+
+                Vector3 pos = landmarkArrangement.ContainsKey(landmark) ?
+                                        landmarkArrangement[landmark]: Vector3.zero;
+                
+                gestureMatrix[i,j] = pos;
             }
         }
-        return gestureArray;
+        return gestureMatrix;
     }
 
+    /* Returns true if the none of the poses in the 
+      * other gesture's pose sequence vary more than the 
+      * match threshold from the current gesture.
+      */
     public bool GestureMatches(Gesture otherGesture) {
         for (int i = 0; i < poseSequence.Count; i++) {
-            PoseInGesture poseGestRef = poseSequence[i];
-            PoseInGesture poseGestOther = otherGesture.poseSequence[i];
-            float matchVariance = poseGestRef.poseToMatch.MatchVariance(poseGestOther.poseToMatch);
+            Pose poseRef = poseSequence[i].poseToMatch;
+            Pose poseOther = otherGesture.poseSequence[i].poseToMatch;
+            float poseMatchVariance = poseRef.MatchVariance(poseOther);
 
-            if (matchVariance > poseGestRef.matchThreshold)
+            if (poseMatchVariance > poseSequence[i].matchThreshold)
                 return false;
         }
 
         return true;
     }
 
+    /* Returns a value representing how much the poses in the 
+      * other gesture's pose sequence vary from the 
+      * current gestures'.
+      */
     public float GetMatchVariance(Gesture otherGesture) {
         float matchVarianceSquared = 0f;
         for (int i = 0; i < poseSequence.Count; i++) {
-            PoseInGesture poseGestRef = poseSequence[i];
-            PoseInGesture poseGestOther = otherGesture.poseSequence[i];
-            matchVarianceSquared += Mathf.Pow(poseGestRef.poseToMatch.MatchVariance(poseGestOther.poseToMatch), 2);
+            Pose poseRef = poseSequence[i].poseToMatch;
+            Pose poseOther = otherGesture.poseSequence[i].poseToMatch;
+            float poseMatchVariance = poseRef.MatchVariance(poseOther);
+ 
+            matchVarianceSquared += Mathf.Pow(poseMatchVariance, 2);
         }
 
         return Mathf.Sqrt(matchVarianceSquared);
