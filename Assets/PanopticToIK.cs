@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System;
 
 public class PanopticToIK : MonoBehaviour
 {
@@ -43,9 +44,10 @@ public class PanopticToIK : MonoBehaviour
     private bool fadingIn = false;
 
 
-    //get data from hololens
-    public bool usingHololensTcp = false;
+    //Where to receive data. LevelManager might overwrite these if active.
+    public bool usingHololensTcp = false; 
     public bool usingPanoptic = false;
+    public bool usingRecording = false;
 
     [System.Serializable]
     public class BodyData
@@ -111,7 +113,7 @@ public class PanopticToIK : MonoBehaviour
         SetIKPosition(0, AvatarIKGoal.LeftHand);
         //SetIKPosition(11, AvatarIKGoal.RightHand);
 
-        if (!usingHololensTcp && usingPanoptic)
+        if (usingPanoptic)
         {
             SetIKPosition(8, AvatarIKGoal.LeftFoot);
             SetIKPosition(14, AvatarIKGoal.RightFoot);
@@ -159,21 +161,28 @@ public class PanopticToIK : MonoBehaviour
         angles = test;
     }
 
-    public LevelManager LevelManagerScript;
-    public void loadHololensRecording()
+    private float[,] savedRecording;
+    public void saveRecording(float[,] recording)
+    {
+        savedRecording = new float[recording.GetLength(0), recording.GetLength(1)];
+        Array.Copy(recording, savedRecording, recording.GetLength(0) * recording.GetLength(1));
+    }
+
+    private LevelManager LevelManagerScript;
+    public void getDataFromRecording()
     {
         LevelManagerScript = GetComponent<LevelManager>();
         frameCount = 0;
-        endFrame = LevelManagerScript.goalGesture.GetLength(0); //TODO: make this more dynamic, use switchToAnimation or fadeIn
+        endFrame = savedRecording.GetLength(0); //TODO: make this more dynamic, use switchToAnimation or fadeIn
         startFrame = 0;
 
 
-        angles = new float[LevelManagerScript.goalGesture.GetLength(1)];
+        angles = new float[savedRecording.GetLength(1)];
 
         //copy goalGesture into current angles so we can do the animation
-        for (int j = 0; j < LevelManagerScript.goalGesture.GetLength(1); j++)
+        for (int j = 0; j < savedRecording.GetLength(1); j++)
         {
-            angles[j] = LevelManagerScript.goalGesture[frameCount, j];
+            angles[j] = savedRecording[frameCount, j];
         }
     }
 
@@ -196,9 +205,20 @@ public class PanopticToIK : MonoBehaviour
                 else if(usingPanoptic){
                     LoadJSONData(basePath + selectedAnimName + "/body3DScene_" + (frameCount + startFrame).ToString("D8") + ".json");
                 }
-                else
+                else if(usingRecording)
                 {
-                    loadHololensRecording();
+                    getDataFromRecording();
+                }
+                else //no data to gather, so reset weights
+                {
+                    if (angles != null)
+                    {
+                        for (int i = 0; i < angles.Length; i++)
+                        {
+                            angles[i] = 0;
+                        }
+                    }
+                    editLimbWeights(0);
                 }
                 lastProcessedFrame = frameCount;
             }
@@ -206,10 +226,6 @@ public class PanopticToIK : MonoBehaviour
             {
                 SetCenterPosition(2); //move the center to the correct position
                 SetJointAngles();
-            }
-            else
-            {
-                Debug.Log("No data was found by IK animator");
             }
         }
 
@@ -266,9 +282,9 @@ public class PanopticToIK : MonoBehaviour
         animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, newWeight);
 
+        /*
         animator.SetIKPositionWeight(AvatarIKGoal.RightHand, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.RightHand, newWeight);
-        /*
         animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, newWeight);
 

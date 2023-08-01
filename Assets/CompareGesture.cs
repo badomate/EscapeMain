@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CompareGesture : MonoBehaviour
 {
     public static int recordingLength = 2; //how many frames do we save for comparison? should match the dictionary
     public static int sampleLength = 3; //how many coordinates are we receiving in total? (e.g. 3 keypoints are likely equal to a sample length of 9)
+    public int stillnessFramesRequired = 2;
+
 
     public bool recording = true;
 
@@ -13,6 +16,9 @@ public class CompareGesture : MonoBehaviour
     public float[,] goalGesture = new float[recordingLength, sampleLength];
     private int recordingProgress = 0; //how many samples of the currently playing gesture have we saved so far
     private float matchThreshold = 0.1f; //0 would mean an absolute perfect match across all samples
+    private float stillnessThreshold = 0.1f; //used to "lock in" a pose
+
+    public UnityEvent m_StillnessEvent = new UnityEvent();
 
     private LevelManager LevelManagerScript;
     // Start is called before the first frame update
@@ -35,6 +41,7 @@ public class CompareGesture : MonoBehaviour
         if (timeSinceLastFrame >= frameInterval)
         {
             saveGestureFrame();
+            detectStillness();  //TODO: only run this function if needed
             if (goalGestureCompleted()) //we could use this to detect other gestures too, not just the solution
             {
                 if(LevelManagerScript.currentPlayer == 0) //TODO: implement A.I (player1) performing the goal gesture
@@ -45,6 +52,38 @@ public class CompareGesture : MonoBehaviour
             }
             timeSinceLastFrame = 0f; // Reset the time counter
         }
+    }
+
+    public void detectStillness()
+    {
+        // Check if there are enough rows to check for stillness
+        if (recordingLength < stillnessFramesRequired)
+        {
+            Debug.Log("Recording length is set too short");
+            return;
+        }
+
+        // the difference in each element of the last stillnessFramesRequired rows must be under threshold
+        for (int recordingIndex = recordingLength - stillnessFramesRequired; recordingIndex < recordingLength -1; recordingIndex++)
+        {
+            for (int sampleIndex = 0; sampleIndex < sampleLength; sampleIndex++)
+            {
+                if (System.Math.Abs(characterGesture[recordingIndex, sampleIndex] - characterGesture[recordingIndex + 1, sampleIndex]) > stillnessThreshold)
+                {
+                    Debug.Log("Not still");
+                    return; // Difference exceeded the threshold
+                }
+            }
+        }
+        if (m_StillnessEvent != null)
+        {
+            m_StillnessEvent.Invoke();
+        }
+        else
+        {
+            m_StillnessEvent = new UnityEvent();
+        }
+
     }
 
     public bool goalGestureCompleted()
