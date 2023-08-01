@@ -10,7 +10,7 @@ public class CompareGesture : MonoBehaviour
     public int stillnessFramesRequired = 2;
 
 
-    public bool recording = true;
+    public bool recording = false;
 
     public float[,] characterGesture = new float[recordingLength, sampleLength];
     public float[,] goalGesture = new float[recordingLength, sampleLength];
@@ -25,8 +25,6 @@ public class CompareGesture : MonoBehaviour
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
-        //goalGesture = new float[,] { { 4, 5, 6 }, { 4, 5, 6 } }; //example value for testing
-        //Debug.Log(MeanSquaredError(characterGesture, goalGesture) < matchThreshold);
     }
 
 
@@ -38,7 +36,7 @@ public class CompareGesture : MonoBehaviour
         timeSinceLastFrame += Time.deltaTime;
 
         // Check if the desired time interval has passed (30fps)
-        if (timeSinceLastFrame >= frameInterval)
+        if (timeSinceLastFrame >= frameInterval && recording)
         {
             saveGestureFrame();
             detectStillness();  //TODO: only run this function if needed

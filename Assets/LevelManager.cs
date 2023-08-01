@@ -11,16 +11,28 @@ public class LevelManager : MonoBehaviour
     PanopticToIK estimationToIkScript;
     CompareGesture compareGestureScript;
     public GameObject PlayerUI;
+    public GameObject InfoBox;
     private bool connected = false; //used for events
+
     void Start()
     {
         compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<PanopticToIK>();
-        //decide which player's turn it is
-        nextTurn();
+
+        StartCoroutine(DelayBeforeNextTurn(2.0f));
+
 
     }
-    
+
+    IEnumerator DelayBeforeNextTurn(float wait)
+    {
+        // Wait for 2 seconds
+        yield return new WaitForSeconds(wait);
+
+        // Call nextTurn() after the 2-second delay
+        nextTurn();
+    }
+
     void Update()
     {
         if (!connected)
@@ -37,9 +49,10 @@ public class LevelManager : MonoBehaviour
         goalGesture = pickFromDictionary();
         compareGestureScript.goalGesture = goalGesture;
         //Player solves, A.I demonstrates
-        if (currentPlayer == 0) 
+        if (currentPlayer == 0)
         {
-            PlayerUI.SetActive(false); 
+            UpdateText("Next to demonstrate: A.I");
+            PlayerUI.SetActive(false);
             //mimic that gesture using the IK script
             estimationToIkScript.usingHololensTcp = false;
             estimationToIkScript.usingPanoptic = false;
@@ -49,6 +62,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
+            UpdateText("Next to demonstrate: Player");
             estimationToIkScript.usingHololensTcp = false;
             estimationToIkScript.usingPanoptic = false;
             estimationToIkScript.usingRecording = false;
@@ -71,25 +85,40 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void Success() 
+    public void Success()
     {
-        Debug.Log("Puzzle solved!");
-        if (currentPlayer == 0) {
-            //handle the puzzle successfully being solved
-            Debug.Log("Next to solve: A.I");
-            currentPlayer = 1;
-        }
-        else
-        {
-            Debug.Log("Next to solve: Player");
-            currentPlayer = 0;
-
-        }
-        nextTurn();
+        UpdateText("Puzzle Solved!");
+        StartCoroutine(DelayBeforeNextTurn(2.0f));
     }
 
     public float[,] pickFromDictionary()
     {
         return new float[,] { { 5, 0, 0 }, { 5, 0, 0 } }; //example value for testing
+    }
+    public void UpdateText(string newText)
+    {
+        // Check if the InfoBox GameObject is not null
+        if (InfoBox != null)
+        {
+            // Get the TextMesh component attached to the InfoBox GameObject
+            TextMesh textMeshComponent = InfoBox.GetComponent<TextMesh>();
+
+            // Check if the TextMesh component is not null
+            if (textMeshComponent != null)
+            {
+                // Update the text of the TextMesh component
+                textMeshComponent.text = newText;
+            }
+            else
+            {
+                Debug.LogError("TextMesh component not found on InfoBox GameObject.");
+            }
+        }
+        else
+        {
+            Debug.LogError("InfoBox GameObject is not assigned.");
+        }
+
+
     }
 }
