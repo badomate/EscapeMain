@@ -17,19 +17,19 @@ namespace GestureDictionary.ContentGenerators {
             Dictionary<string, Pose> poseRegistry = gestureDictionary.GetKnownPoses();
 
             Dictionary<Pose.Landmark, Vector3> dictPoseLeftHandUp = 
-                new Dictionary<Pose.Landmark, Vector3>() {
+                new() {
                     {Pose.Landmark.LEFT_WRIST, new Vector3(2, 5, 4)}
                 };
             poseRegistry.Add(PoseID.HAND_LEFT_UP.ToString(), new Pose(dictPoseLeftHandUp));
 
             Dictionary<Pose.Landmark, Vector3> dictPoseLeftHandMiddle = 
-                new Dictionary<Pose.Landmark, Vector3>() {
+                new() {
                     {Pose.Landmark.LEFT_WRIST, new Vector3(2, 3, 4)}
                 };
             poseRegistry.Add(PoseID.HAND_LEFT_MIDDLE.ToString(), new Pose(dictPoseLeftHandMiddle));
 
             Dictionary<Pose.Landmark, Vector3> dictPoseLeftHandDown = 
-                new Dictionary<Pose.Landmark, Vector3>() {
+                new() {
                     {Pose.Landmark.LEFT_WRIST, new Vector3(2, 0, 4)}
                 };
             poseRegistry.Add(PoseID.HAND_LEFT_DOWN.ToString(), new Pose(dictPoseLeftHandDown));

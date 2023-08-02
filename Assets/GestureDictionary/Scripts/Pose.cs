@@ -5,7 +5,9 @@ using UnityEngine;
 /// <summary> A pose corresponds to a specific (and static) set of landmark positions. </summary>
 public class Pose : MonoBehaviour
 {
-    // Valid landmarks. Each correspond to a point in the player's body.
+    /// <summary>
+    /// Valid landmarks. Each correspond to a point in the player's body.
+    /// </summary>
     public enum Landmark
     {
         LEFT_WRIST,
@@ -14,27 +16,26 @@ public class Pose : MonoBehaviour
         RIGHT_FOOT
     }
 
-    public static List<Landmark> landmarkIds = new List<Landmark>() {
+    public static List<Landmark> LandmarkIds = new List<Landmark>() {
         Landmark.LEFT_WRIST
     };
 
     /// <summary> Match between a landmark and its position on the pose, relative to the player's location.
     /// Not all landmarks are relevant for a given pose. </summary>
-    public Dictionary<Landmark, Vector3> landmarkArrangement;
-    
+    public Dictionary<Landmark, Vector3> _landmarkArrangement;
+
     public Pose() {
-        landmarkArrangement = new Dictionary<Landmark, Vector3>();
+        _landmarkArrangement = new Dictionary<Landmark, Vector3>();
     }
 
     public Pose(Dictionary<Landmark, Vector3> arranjement) {
-        landmarkArrangement = arranjement;
+        _landmarkArrangement = arranjement;
     }
 
 
     public float MatchVariance(Pose otherPose) {
-        float matchVariance = 0f;
         float matchVarianceSquared = 0f;
-        foreach(KeyValuePair<Landmark, Vector3> landmarkPos in landmarkArrangement) {
+        foreach(KeyValuePair<Landmark, Vector3> landmarkPos in _landmarkArrangement) {
             /*
             Vector3 refArranjement = landmarkPos.Value;
             Vector3 otherArranjement = otherPose.landmarkArrangement[landmarkPos.Key]; 
@@ -43,14 +44,13 @@ public class Pose : MonoBehaviour
 
             float landmarkVarianceSquared =  GetLandmarkVarianceSquared(
                 landmarkPos.Value,
-                otherPose.landmarkArrangement[landmarkPos.Key]
+                otherPose._landmarkArrangement[landmarkPos.Key]
             );     
             // matchVarianceSquared += Mathf.Pow(landmarkVariance, 2); // sqrt(a)**2 = a
             matchVarianceSquared += landmarkVarianceSquared;
         }
 
-        matchVariance = Mathf.Sqrt(matchVarianceSquared);
-        return matchVariance;
+        return Mathf.Sqrt(matchVarianceSquared);
     }
 
     /// <summary> Returns the variance between a landmark's position and its reference value </summary>
@@ -65,7 +65,7 @@ public class Pose : MonoBehaviour
 
         for (int i = 0; i < 3; i++) {
             varianceSquared += Mathf.Pow(
-                (reference[i]-toCompare[i]), 
+                reference[i]-toCompare[i], 
                 2);
         }
 
@@ -75,18 +75,23 @@ public class Pose : MonoBehaviour
     /// <summary> Format: "[[lm00Pos_x, lm00Pos_y,  lm00Pos_z] [lm01Pos_x, lm01Pos_y,  lm01Pos_z]]" </summary>
     public override string ToString()
     {
-        string poseString = "[";
+        StringBuilder poseStringBuilder = new StringBuilder();
+        poseStringBuilder.Append("[");
 
-        for (int j = 0; j < Pose.landmarkIds.Count; j++) {
-            Pose.Landmark landmark = Pose.landmarkIds[j];
-            Vector3 pos = landmarkArrangement[landmark];
-            poseString += "[ " + pos[0] + ", " + pos[1] + ",  " + pos[2] + "]  ";
+        for (int j = 0; j < LandmarkIds.Count; j++) {
+            Landmark landmark = LandmarkIds[j];
+            Vector3 landmarkPos = _landmarkArrangement[landmark];
+            string landmarkPosString = 
+                $"[{landmarkPos[0]}, {landmarkPos[1]},  {landmarkPos[2]}] ";
+            poseStringBuilder.Append(landmarkPosString);
         }
 
-        if (Pose.landmarkIds.Count > 0)
-            poseString = poseString.Remove(poseString.Length-1);
-        poseString += "]";
+        if (LandmarkIds.Count > 0)
+            poseStringBuilder.Remove(poseStringBuilder.Length - 1, poseStringBuilder.Length);
 
+        poseStringBuilder.Append("]");
+
+        string poseString = poseStringBuilder.ToString();
         return poseString;
     }
 }

@@ -6,16 +6,17 @@ using GestureDictionary.ContentGenerators;
 namespace GestureDictionary {
     public class GestureDictionary : MonoBehaviour
     {
-        private Dictionary<Gesture, string> gestureToMeaning;
-        private Dictionary<Gesture, string> metaGestureToMeaning;
-        private Dictionary<string, Gesture> meaningToGesture;
+        private Dictionary<Gesture, string> _gestureToMeaning;
+        private Dictionary<Gesture, string> _metaGestureToMeaning;
+        private Dictionary<string, Gesture> _meaningToGesture;
 
-        private Dictionary<string, Pose> knownPoses;
+        private Dictionary<string, Pose> _knownPoses;
 
         public GestureDictionary() {
-            gestureToMeaning = new Dictionary<Gesture, string>();
-            meaningToGesture = new Dictionary<string, Gesture>();
-            knownPoses = new Dictionary<string, Pose>();
+            _gestureToMeaning = new Dictionary<Gesture, string>();
+            _meaningToGesture = new Dictionary<string, Gesture>();
+            _knownPoses = new Dictionary<string, Pose>();
+
             PoseGenerator.GenerateStarterPoses(this);
             GestureGenerator.GenerateMetaGestures(this);
             GestureGenerator.GenerateStarterGestures(this);
@@ -23,52 +24,52 @@ namespace GestureDictionary {
 
         public Dictionary<string, Pose> GetKnownPoses()
         {
-            return knownPoses;
+            return _knownPoses;
         }
 
         public Dictionary<Gesture, string> GetGestureRegistry()
         {
-            return gestureToMeaning;
+            return _gestureToMeaning;
         }
 
         public Dictionary<Gesture, string> GetMetaGestureRegistry()
         {
-            return metaGestureToMeaning;
+            return _metaGestureToMeaning;
         }
 
         public Dictionary<string, Gesture> GetMeaningRegistry()
         {
-            return meaningToGesture;
+            return _meaningToGesture;
         }
 
         /// <summary> Adds a gesture to registries of known gestures </summary>
         public void AddGesture(Gesture gesture, string meaning, bool isMeta = false) {
             if (isMeta) {
-                metaGestureToMeaning.Add(gesture, meaning);
+                _metaGestureToMeaning.Add(gesture, meaning);
             }
             else
             {
-                gestureToMeaning.Add(gesture, meaning);
+                _gestureToMeaning.Add(gesture, meaning);
             }
             
-            meaningToGesture.Add(meaning, gesture);
+            _meaningToGesture.Add(meaning, gesture);
         }
 
         /// <summary> Updates a gesture's meaning </summary>
         public void UpdateGestureMeaning(Gesture gesture, string meaning) {
-            if (!gestureToMeaning.ContainsKey(gesture) || !meaningToGesture.ContainsKey(meaning)) {
+            if (!_gestureToMeaning.ContainsKey(gesture) || !_meaningToGesture.ContainsKey(meaning)) {
                 AddGesture(gesture, meaning);
             }
             else {
-                gestureToMeaning[gesture] = meaning;
-                meaningToGesture[meaning] = gesture;
+                _gestureToMeaning[gesture] = meaning;
+                _meaningToGesture[meaning] = gesture;
             }
         }
 
         /// <summary> Returns the gesture with the requested meaning (if known). </summary>
         public Gesture GetGestureFromMeaning(string meaning) {
-            if (meaningToGesture.ContainsKey(meaning)) {
-                return meaningToGesture[meaning];
+            if (_meaningToGesture.ContainsKey(meaning)) {
+                return _meaningToGesture[meaning];
             }
             return null;
         }
@@ -81,8 +82,8 @@ namespace GestureDictionary {
 
         /// <summary> Returns the meaning of the exact match to the given gesture (if recognized) </summary>
         public string GetMeaningFromGestureBasic(Gesture gesture) {
-            if (metaGestureToMeaning.ContainsKey(gesture)) return metaGestureToMeaning[gesture];
-            else if (gestureToMeaning.ContainsKey(gesture)) return gestureToMeaning[gesture];
+            if (_metaGestureToMeaning.ContainsKey(gesture)) return _metaGestureToMeaning[gesture];
+            else if (_gestureToMeaning.ContainsKey(gesture)) return _gestureToMeaning[gesture];
             else return "";
         }
 
@@ -95,13 +96,13 @@ namespace GestureDictionary {
             string bestMatch = "";
 
             // Always check metagestures first
-            foreach (KeyValuePair<Gesture, string> dictGesture in metaGestureToMeaning)
+            foreach (KeyValuePair<Gesture, string> dictGesture in _metaGestureToMeaning)
             {
                 Gesture metaGesture = dictGesture.Key;
                 float matchVariance = gesture.GetMatchVariance(metaGesture);
 
                 if (
-                    (matchVariance <= (metaGesture.matchThresholdPerPoseNr * metaGesture.poseSequence.Count)) 
+                    (matchVariance <= (metaGesture._matchThresholdPerPoseNr * metaGesture._poseSequence.Count)) 
                     && bestMatchVariance > matchVariance)
                 {
                     bestMatchVariance = matchVariance;
@@ -112,7 +113,7 @@ namespace GestureDictionary {
             if (!bestMatch.Equals(""))
                 return bestMatch;
 
-            foreach (KeyValuePair<Gesture, string> dictGesture in gestureToMeaning) {
+            foreach (KeyValuePair<Gesture, string> dictGesture in _gestureToMeaning) {
                 float matchVariance = gesture.GetMatchVariance(dictGesture.Key);
                 if (bestMatchVariance > matchVariance) {
                     bestMatchVariance = matchVariance;

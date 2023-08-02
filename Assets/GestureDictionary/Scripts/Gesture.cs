@@ -13,25 +13,25 @@ public class Gesture : MonoBehaviour
     /// and how closely these need to match another to be called equal
     /// </summary>
     public class PoseInGesture {
-        public Pose poseToMatch;
-        public float matchThreshold; 
-        public float frameInterval;
-        public float frameIntervalThreshold;
+        public Pose _poseToMatch;
+        public float _matchThreshold; 
+        public float _frameInterval;
+        public float _frameIntervalThreshold;
 
         public PoseInGesture(Pose pose = null) {
-            poseToMatch = pose;
-            matchThreshold = 0.1f;
-            frameInterval = Mathf.Pow(30f, -1); // 30Hz / 30fps
-            frameIntervalThreshold = 0.2f;
+            _poseToMatch = pose;
+            _matchThreshold = 0.1f;
+            _frameInterval = Mathf.Pow(30f, -1); // 30Hz / 30fps
+            _frameIntervalThreshold = 0.2f;
         }
     }
 
-    public List<PoseInGesture> poseSequence;
-    public float matchThresholdPerPoseNr;
+    public List<PoseInGesture> _poseSequence;
+    public float _matchThresholdPerPoseNr;
 
     public Gesture() {
-        poseSequence = new List<PoseInGesture>();
-        matchThresholdPerPoseNr = 0.5f;
+        _poseSequence = new List<PoseInGesture>();
+        _matchThresholdPerPoseNr = 0.5f;
     }
 
     /// <summary>
@@ -41,17 +41,10 @@ public class Gesture : MonoBehaviour
                                     List<float> matchThresholds = null, 
                                     List<float> frameIntervals = null,
                                     List<float> frameIntervalThresholds = null) {
-        if (matchThresholds == null)
-            matchThresholds = Enumerable.Repeat(-1f, poses.Count).ToList();
-        if (frameIntervals == null)
-        {
-            frameIntervals = Enumerable.Repeat(-1f, poses.Count).ToList();
-            frameIntervalThresholds = Enumerable.Repeat(-1f, poses.Count).ToList();
-        }
-        else if (frameIntervalThresholds == null)
-        {
-            frameIntervalThresholds = Enumerable.Repeat(-1f, poses.Count).ToList();
-        }
+
+        matchThresholds ??= Enumerable.Repeat(-1f, poses.Count).ToList();
+        frameIntervals ??= Enumerable.Repeat(-1f, poses.Count).ToList();
+        frameIntervalThresholds ??= Enumerable.Repeat(-1f, poses.Count).ToList();
 
         for (int i = 0; i < poses.Count; i++) {
             AddPose(poses[i], matchThresholds[i], frameIntervals[i], frameIntervalThresholds[i]);
@@ -64,14 +57,14 @@ public class Gesture : MonoBehaviour
                         float frameIntervalThreshold = -1f)
     {
         PoseInGesture poseInGesture = new PoseInGesture(pose);
-        poseInGesture.matchThreshold = matchThreshold< 0 ?
-                            poseInGesture.matchThreshold : matchThreshold;
-        poseInGesture.frameInterval = frameInterval< 0 ?
-                            poseInGesture.frameInterval : frameInterval;
-        poseInGesture.frameIntervalThreshold = frameIntervalThreshold< 0 ?
-                            poseInGesture.frameIntervalThreshold : frameIntervalThreshold;
+        poseInGesture._matchThreshold = matchThreshold < 0 ?
+                            poseInGesture._matchThreshold : matchThreshold;
+        poseInGesture._frameInterval = frameInterval < 0 ?
+                            poseInGesture._frameInterval : frameInterval;
+        poseInGesture._frameIntervalThreshold = frameIntervalThreshold < 0 ?
+                            poseInGesture._frameIntervalThreshold : frameIntervalThreshold;
 
-        poseSequence.Add(poseInGesture);
+        _poseSequence.Add(poseInGesture);
     }
 
     /// <summary>
@@ -80,18 +73,18 @@ public class Gesture : MonoBehaviour
     /// matrix[i, j] represents the position of landmark "j" in pose "i"
     /// </summary>
     public static Vector3[,] GestureToMatrix(Gesture gesture) {
-        List<PoseInGesture> privatePoseSequence = gesture.poseSequence;
+        List<PoseInGesture> privatePoseSequence = gesture._poseSequence;
 
-        Vector3[,] gestureMatrix = new Vector3 [privatePoseSequence.Count, Pose.landmarkIds.Count];
+        Vector3[,] gestureMatrix = new Vector3 [privatePoseSequence.Count, Pose.LandmarkIds.Count];
         int nrPoses = privatePoseSequence.Count;
-        int nrLandmarks = Pose.landmarkIds.Count;
+        int nrLandmarks = Pose.LandmarkIds.Count;
 
         for (int i = 0; i < nrPoses; i++) {
             for (int j = 0; j < nrLandmarks; j++) {
-                Pose.Landmark landmark = Pose.landmarkIds[j];
+                Pose.Landmark landmark = Pose.LandmarkIds[j];
                 Dictionary<Pose.Landmark, Vector3> landmarkArrangement = privatePoseSequence[i].
-                                                                         poseToMatch.
-                                                                         landmarkArrangement;
+                                                                         _poseToMatch.
+                                                                         _landmarkArrangement;
 
                 Vector3 pos = landmarkArrangement.ContainsKey(landmark) ?
                                         landmarkArrangement[landmark]: Vector3.zero;
@@ -111,7 +104,7 @@ public class Gesture : MonoBehaviour
     {
         Gesture gesture = new Gesture();
         int nrPoses = gestureMatrix.Length;
-        int nrLandmarks = Pose.landmarkIds.Count;
+        int nrLandmarks = Pose.LandmarkIds.Count;
 
         for (int i = 0; i < nrPoses; i++)
         {
@@ -119,8 +112,8 @@ public class Gesture : MonoBehaviour
 
             for (int j = 0; j < nrLandmarks; j++)
             {
-                Pose.Landmark landmark = Pose.landmarkIds[j];
-                pose.landmarkArrangement.Add(landmark, gestureMatrix[i, j]);
+                Pose.Landmark landmark = Pose.LandmarkIds[j];
+                pose._landmarkArrangement.Add(landmark, gestureMatrix[i, j]);
             }
 
             gesture.AddPose(pose);
@@ -134,13 +127,15 @@ public class Gesture : MonoBehaviour
     /// match threshold from the current gesture.
     /// </summary>
     public bool GestureMatches(Gesture otherGesture) {
-        for (int i = 0; i < poseSequence.Count; i++) {
-            Pose poseRef = poseSequence[i].poseToMatch;
-            Pose poseOther = otherGesture.poseSequence[i].poseToMatch;
+        for (int i = 0; i < _poseSequence.Count; i++) {
+            Pose poseRef = _poseSequence[i]._poseToMatch;
+            Pose poseOther = otherGesture._poseSequence[i]._poseToMatch;
             float poseMatchVariance = poseRef.MatchVariance(poseOther);
 
-            if (poseMatchVariance > poseSequence[i].matchThreshold)
+            if (poseMatchVariance > _poseSequence[i]._matchThreshold)
+            {
                 return false;
+            }
         }
 
         return true;
@@ -152,9 +147,9 @@ public class Gesture : MonoBehaviour
     /// </summary>
     public float GetMatchVariance(Gesture otherGesture) {
         float matchVarianceSquared = 0f;
-        for (int i = 0; i < poseSequence.Count; i++) {
-            Pose poseRef = poseSequence[i].poseToMatch;
-            Pose poseOther = otherGesture.poseSequence[i].poseToMatch;
+        for (int i = 0; i < _poseSequence.Count; i++) {
+            Pose poseRef = _poseSequence[i]._poseToMatch;
+            Pose poseOther = otherGesture._poseSequence[i]._poseToMatch;
             float poseMatchVariance = poseRef.MatchVariance(poseOther);
  
             matchVarianceSquared += Mathf.Pow(poseMatchVariance, 2);
