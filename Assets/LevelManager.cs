@@ -20,6 +20,8 @@ public class LevelManager : MonoBehaviour
         compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<PanopticToIK>();
 
+        goalGesture = pickFromDictionary();
+        compareGestureScript.goalGesture = goalGesture;
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
 
 
@@ -48,8 +50,6 @@ public class LevelManager : MonoBehaviour
     {
         //pick a gesture from the dictionary
         compareGestureScript.recording = true;
-        goalGesture = pickFromDictionary();
-        compareGestureScript.goalGesture = goalGesture;
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
         {
@@ -92,7 +92,7 @@ public class LevelManager : MonoBehaviour
             estimationToIkScript.saveRecording(compareGestureScript.characterGesture); //give the temp memory to the estimation
             estimationToIkScript.usingRecording = true;
             if (compareGestureScript.goalGestureCompleted(compareGestureScript.characterGesture)){
-                StartCoroutine(DelayBeforeMethod(2.0f, Success));
+                Success();
             }
         }
     }
@@ -100,7 +100,9 @@ public class LevelManager : MonoBehaviour
     public void Success()
     {
         UpdateText("Puzzle Solved!");
-        if(currentPlayer == 1)
+        goalGesture = pickFromDictionary();
+        compareGestureScript.goalGesture = goalGesture;
+        if (currentPlayer == 1)
         {
             currentPlayer = 0;
         }

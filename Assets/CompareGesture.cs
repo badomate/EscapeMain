@@ -42,7 +42,7 @@ public class CompareGesture : MonoBehaviour
             detectStillness();  //TODO: only run this function if needed
             if (goalGestureCompleted(characterGesture)) //we could use this to detect other gestures too, not just the solution
             {
-                if(LevelManagerScript.currentPlayer == 0) //TODO: implement A.I (player1) performing the goal gesture
+                if(LevelManagerScript.currentPlayer == 0)
                 {
                     recording = false; recordingProgress = 0;
                     LevelManagerScript.Success();
