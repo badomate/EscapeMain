@@ -12,7 +12,9 @@ public class PanopticToIK : MonoBehaviour
 {
     private Socket_toHl2 TcpScript;
 
-    public GameObject[] keypointBones = null; //for keypoints that are to be set specifically and not with IK
+    public GameObject[] keypointBones = null; //for keypoints that are to be set specifically and not with 
+    public GameObject leftHand = null; //used for aesthetic adjustments after IK
+    public GameObject rightHand = null;
     protected Animator animator;
     public bool Looping = true; //TODO: fix the False setting, perhaps by introducing a new bool to check for the animation finishing.
 
@@ -76,10 +78,11 @@ public class PanopticToIK : MonoBehaviour
     }
     private void adjustHands()
     {
-        GameObject rightHand = GameObject.Find("mixamorig:RightHand");
-        GameObject leftHand = GameObject.Find("mixamorig:LeftHand");
-        rightHand.transform.rotation = rightHand.transform.parent.rotation;
-        leftHand.transform.rotation = leftHand.transform.parent.rotation;
+        if(rightHand != null && leftHand != null)
+        {
+            rightHand.transform.rotation = rightHand.transform.parent.rotation;
+            leftHand.transform.rotation = leftHand.transform.parent.rotation;
+        }
     }
 
     private Vector3 goalFromIndex(int index)

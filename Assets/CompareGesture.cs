@@ -68,7 +68,7 @@ public class CompareGesture : MonoBehaviour
             {
                 if (System.Math.Abs(characterGesture[recordingIndex, sampleIndex] - characterGesture[recordingIndex + 1, sampleIndex]) > stillnessThreshold)
                 {
-                    Debug.Log("Not still");
+                    //Debug.Log("Not still");
                     return; // Difference exceeded the threshold
                 }
             }

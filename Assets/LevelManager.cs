@@ -5,6 +5,7 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour
 {
     public GameObject Helper;
+    public GameObject GoalDisplayCharacter;
     public int currentPlayer = 1; //0-player, 1-A.I
     public float[,] goalGesture = new float[2, 3]; //change these according to gesture dictionary
 
@@ -68,11 +69,18 @@ public class LevelManager : MonoBehaviour
             estimationToIkScript.usingPanoptic = false;
             estimationToIkScript.usingRecording = false;
             //show the player what to demonstrate
-            PlayerUI.SetActive(true); //TODO: make UI more dynamic, perhaps put a video or an ingame camera on an example character performing the gesture on loop.
+            displayGoal(); 
+        }
+    }
 
-            //Debug.Log("Adding listener");
-            //compareGestureScript.m_StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
-            //have A.I copy the saved movements from gesturecompare
+    void displayGoal()
+    {
+        PlayerUI.SetActive(true);
+        if(GoalDisplayCharacter != null)
+        {
+            PanopticToIK goalCharEstimator = GoalDisplayCharacter.GetComponent<PanopticToIK>();
+            goalCharEstimator.saveRecording(goalGesture);
+            goalCharEstimator.usingRecording = true;
         }
     }
 
