@@ -40,7 +40,7 @@ public class CompareGesture : MonoBehaviour
         {
             saveGestureFrame();
             detectStillness();  //TODO: only run this function if needed
-            if (goalGestureCompleted()) //we could use this to detect other gestures too, not just the solution
+            if (goalGestureCompleted(characterGesture)) //we could use this to detect other gestures too, not just the solution
             {
                 if(LevelManagerScript.currentPlayer == 0) //TODO: implement A.I (player1) performing the goal gesture
                 {
@@ -84,9 +84,9 @@ public class CompareGesture : MonoBehaviour
 
     }
 
-    public bool goalGestureCompleted()
+    public bool goalGestureCompleted(float[,] gestureToCompare)
     {
-        return recording && recordingProgress == recordingLength && MeanSquaredError(characterGesture, goalGesture) < matchThreshold;
+        return recording && recordingProgress == recordingLength && MeanSquaredError(gestureToCompare, goalGesture) < matchThreshold;
 
     }
 

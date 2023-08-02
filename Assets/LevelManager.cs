@@ -19,18 +19,19 @@ public class LevelManager : MonoBehaviour
         compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<PanopticToIK>();
 
-        StartCoroutine(DelayBeforeNextTurn(2.0f));
+        StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
 
 
     }
 
-    IEnumerator DelayBeforeNextTurn(float wait)
+    public delegate void myDelegate();
+    public IEnumerator DelayBeforeMethod(float wait, myDelegate method)
     {
         // Wait for 2 seconds
         yield return new WaitForSeconds(wait);
 
         // Call nextTurn() after the 2-second delay
-        nextTurn();
+        method();
     }
 
     void Update()
@@ -82,13 +83,24 @@ public class LevelManager : MonoBehaviour
             //Debug.Log("Player locked in his demonstration");
             estimationToIkScript.saveRecording(compareGestureScript.characterGesture); //give the temp memory to the estimation
             estimationToIkScript.usingRecording = true;
+            if (compareGestureScript.goalGestureCompleted(compareGestureScript.characterGesture)){
+                StartCoroutine(DelayBeforeMethod(2.0f, Success));
+            }
         }
     }
 
     public void Success()
     {
         UpdateText("Puzzle Solved!");
-        StartCoroutine(DelayBeforeNextTurn(2.0f));
+        if(currentPlayer == 1)
+        {
+            currentPlayer = 0;
+        }
+        else
+        {
+            currentPlayer = 1;
+        }
+        StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
     }
 
     public float[,] pickFromDictionary()
