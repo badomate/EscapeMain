@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-// A pose corresponds to a specific (and static) set oflandmark positions.
+/// <summary> A pose corresponds to a specific (and static) set of landmark positions. </summary>
 public class Pose : MonoBehaviour
 {
     // Valid landmarks. Each correspond to a point in the player's body.
@@ -18,8 +18,8 @@ public class Pose : MonoBehaviour
         Landmark.LEFT_WRIST
     };
 
-    // Match between a landmark and its position on the pose, relative to the player's location.
-    // Not all landmarks are relevant for a given pose.
+    /// <summary> Match between a landmark and its position on the pose, relative to the player's location.
+    /// Not all landmarks are relevant for a given pose. </summary>
     public Dictionary<Landmark, Vector3> landmarkArrangement = new Dictionary<Landmark, Vector3>();
     
     public Pose() {}
@@ -51,13 +51,13 @@ public class Pose : MonoBehaviour
         return matchVariance;
     }
 
-    // Returns the variance between a landmark's position and its reference value
+    /// <summary> Returns the variance between a landmark's position and its reference value </summary>
     public float GetLandmarkVariance(Vector3 reference, Vector3 toCompare) {
         float varianceSquared = GetLandmarkVarianceSquared(reference, toCompare);
         return Mathf.Sqrt(varianceSquared);
     }
 
-    // Returns the squared variance between a landmark's position and its reference value
+    /// <summary> Returns the squared variance between a landmark's position and its reference value </summary>
     public float GetLandmarkVarianceSquared(Vector3 reference, Vector3 toCompare) {
         float varianceSquared = 0f;
 
@@ -70,7 +70,7 @@ public class Pose : MonoBehaviour
         return varianceSquared;
     }
 
-    // Format: "[[lm00Pos_x, lm00Pos_y,  lm00Pos_z] [lm01Pos_x, lm01Pos_y,  lm01Pos_z]]"
+    /// <summary> Format: "[[lm00Pos_x, lm00Pos_y,  lm00Pos_z] [lm01Pos_x, lm01Pos_y,  lm01Pos_z]]" </summary>
     public override string ToString()
     {
         string poseString = "[";

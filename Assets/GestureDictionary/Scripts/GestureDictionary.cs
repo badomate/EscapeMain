@@ -17,7 +17,7 @@ public class GestureDictionary : MonoBehaviour
         GenerateGestures();
     }
 
-    // Generates basic known poses
+    /// <summary> Generates basic known poses </summary>
     private void GeneratePoses() {
         Dictionary<Pose.Landmark, Vector3> dictPoseLeftHandUp = 
             new Dictionary<Pose.Landmark, Vector3>() {
@@ -39,7 +39,7 @@ public class GestureDictionary : MonoBehaviour
         knownPoses.Add("leftHandDown", new Pose(dictPoseLeftHandDown));
     }
 
-    // Generates basic known gestures
+    /// <summary> Generates basic known gestures </summary>
     private void GenerateGestures() {
         Gesture gestureHandRises = new Gesture();
         List<Pose> gestureHandRisesPoses = new List<Pose>() {
@@ -61,13 +61,13 @@ public class GestureDictionary : MonoBehaviour
         this.AddGesture(gestureHandFalls, "handFalls");
     }
 
-    // Adds a gesture to the dictionary of known gestures
+    /// <summary> Adds a gesture to the dictionary of known gestures </summary>
     public void AddGesture(Gesture gesture, string meaning) {
         gestureToMeaning.Add(gesture, meaning);
         meaningToGesture.Add(meaning, gesture);
     }
 
-    // Updates a gesture's meaning
+    /// <summary> Updates a gesture's meaning </summary>
     public void UpdateGestureMeaning(Gesture gesture, string meaning) {
         if (!gestureToMeaning.ContainsKey(gesture) || !meaningToGesture.ContainsKey(meaning)) {
             AddGesture(gesture, meaning);
@@ -78,7 +78,7 @@ public class GestureDictionary : MonoBehaviour
         }
     }
 
-    // Returns the gesture with the requested meaning (if known).
+    /// <summary> Returns the gesture with the requested meaning (if known). </summary>
     public Gesture GetGestureFromMeaning(string meaning) {
         if (meaningToGesture.ContainsKey(meaning)) {
             return meaningToGesture[meaning];
@@ -86,21 +86,22 @@ public class GestureDictionary : MonoBehaviour
         return null;
     }
 
-    // Returns the most likely meaning for a given gesture, out of the ones known
+    /// <summary> Returns the most likely meaning for a given gesture, out of the ones known </summary>
     public string GetMeaningFromGesture(Gesture gesture, bool isBasic=false) {
         if (isBasic) return GetMeaningFromGestureBasic(gesture);
         else return GetMeaningFromGestureComplex(gesture);
     }
 
-    // Returns the meaning of the exact match to the given gesture (if recognized)
+    /// <summary> Returns the meaning of the exact match to the given gesture (if recognized) </summary>
     public string GetMeaningFromGestureBasic(Gesture gesture) {
         if (gestureToMeaning.ContainsKey(gesture)) return gestureToMeaning[gesture];
         else return "";
     }
 
-    /* Looks through all known gestures to find the closest match to the one supplied,
-      * then returns its meaning.
-      */
+    /// <summary> 
+    /// Looks through all known gestures to find the closest match to the one supplied,
+    /// then returns its meaning.
+    /// </summary> 
     public string GetMeaningFromGestureComplex(Gesture gesture) {
         float bestMatchVariance= Mathf.Infinity;
         string bestMatch = "";

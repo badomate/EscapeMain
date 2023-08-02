@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// A list of sequential poses, with a specific frame (time) interval and (pose) match threshold. 
+/// <summary> A list of sequential poses, with a specific frame (time) interval and (pose) match threshold. </summary>
 public class Gesture : MonoBehaviour
 {
-    /* Pose within a gesture,
-      * with information about the pose,
-      * the time between transition to the next pose,
-      * and how closely these need to match another to be called equal
-      */
+    /// <summary>
+    /// Pose within a gesture,
+    /// with information about the pose,
+    /// the time between transition to the next pose,
+    /// and how closely these need to match another to be called equal
+    /// </summary>
     public class PoseInGesture {
         public Pose poseToMatch;
         public float matchThreshold; 
@@ -32,6 +33,9 @@ public class Gesture : MonoBehaviour
         matchThresholdPerPoseNr = 0.5f;
     }
 
+    /// <summary>
+    /// Adds poses to a gesture's pose sequence
+    /// </summary>
     public void AddPoses(List<Pose> poses, 
                                     List<float> matchThresholds = null, 
                                     List<float> frameIntervals = null,
@@ -50,10 +54,11 @@ public class Gesture : MonoBehaviour
         }
     } 
 
-    /* Converts a gesture to a matrix of coordinates, where each row represents a pose
-      * and each column represents a landmark.
-      * matrix[i, j] represents the position of landmark "j" in pose "i"
-      */
+    /// <summary>
+    /// Converts a gesture to a matrix of coordinates, where each row represents a pose
+    /// and each column represents a landmark.
+    /// matrix[i, j] represents the position of landmark "j" in pose "i"
+    /// </summary>
     public Vector3[,] GestureToMatrix() {
         Vector3[,] gestureMatrix = new Vector3 [poseSequence.Count, Pose.landmarkIds.Count];
         for (int i = 0; i < poseSequence.Count; i++) {
@@ -72,10 +77,11 @@ public class Gesture : MonoBehaviour
         return gestureMatrix;
     }
 
-    /* Returns true if the none of the poses in the 
-      * other gesture's pose sequence vary more than the 
-      * match threshold from the current gesture.
-      */
+    /// <summary>
+    /// Returns true if the none of the poses in the 
+    /// other gesture's pose sequence vary more than the 
+    /// match threshold from the current gesture.
+    /// </summary>
     public bool GestureMatches(Gesture otherGesture) {
         for (int i = 0; i < poseSequence.Count; i++) {
             Pose poseRef = poseSequence[i].poseToMatch;
@@ -89,10 +95,10 @@ public class Gesture : MonoBehaviour
         return true;
     }
 
-    /* Returns a value representing how much the poses in the 
-      * other gesture's pose sequence vary from the 
-      * current gestures'.
-      */
+    /// <summary>
+    /// Returns a value representing how much the poses in the 
+    /// other gesture's pose sequence vary from the current gestures'.
+    /// </summary>
     public float GetMatchVariance(Gesture otherGesture) {
         float matchVarianceSquared = 0f;
         for (int i = 0; i < poseSequence.Count; i++) {
