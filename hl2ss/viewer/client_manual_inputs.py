@@ -39,6 +39,10 @@ def on_press(key):
     # Check if the key is '1' and update movement data accordingly
     if key == keyboard.KeyCode.from_char('1'):
         data = "[ 5, 0,  0]"
+
+    
+    if key == keyboard.KeyCode.from_char('2'):
+        data = "[ 2, 2,  2]"
     
     # Check if the key is 'esc' and set enable to False to quit the program
     if key == keyboard.Key.esc:

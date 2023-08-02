@@ -15,8 +15,8 @@ public class CompareGesture : MonoBehaviour
     public float[,] characterGesture = new float[recordingLength, sampleLength];
     public float[,] goalGesture = new float[recordingLength, sampleLength];
     private int recordingProgress = 0; //how many samples of the currently playing gesture have we saved so far
-    private float matchThreshold = 0.1f; //0 would mean an absolute perfect match across all samples
-    private float stillnessThreshold = 0.1f; //used to "lock in" a pose
+    public float matchThreshold = 0.01f; //0 would mean an absolute perfect match across all samples
+    public float stillnessThreshold = 0.1f; //used to "lock in" a pose
 
     public UnityEvent m_StillnessEvent = new UnityEvent();
 

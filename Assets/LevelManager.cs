@@ -111,9 +111,19 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
     }
 
+    private int pickIndex = 0;
     public float[,] pickFromDictionary()
     {
-        return new float[,] { { 5, 0, 0 }, { 5, 0, 0 } }; //example value for testing
+        if(pickIndex % 2 == 0)
+        {
+            pickIndex++;
+            return new float[,] { { 5, 0, 0 }, { 5, 0, 0 } }; //example value for testing
+        }
+        else
+        {
+            pickIndex++;
+            return new float[,] { { 2, 2, 2 }, { 2, 2, 2 } }; //example value for testing
+        }
     }
     public void UpdateText(string newText)
     {

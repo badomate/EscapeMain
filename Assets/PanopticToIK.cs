@@ -10,7 +10,7 @@ using System;
 
 public class PanopticToIK : MonoBehaviour
 {
-    private Socket_toHl2 TcpScript;
+    public Socket_toHl2 TcpScript = null;
 
     public GameObject[] keypointBones = null; //for keypoints that are to be set specifically and not with 
     public GameObject leftHand = null; //used for aesthetic adjustments after IK
@@ -158,7 +158,10 @@ public class PanopticToIK : MonoBehaviour
     //this should rewrite our angles[] array
     private void getDataFromHololens()
     {
-        TcpScript = GetComponent<Socket_toHl2>();
+        if (TcpScript == null)
+        {
+            TcpScript = GetComponent<Socket_toHl2>();
+        }
         //Debug.Log(TcpScript.position);
         float[] test  = { TcpScript.position.x, TcpScript.position.y, TcpScript.position.z };
         angles = test;
