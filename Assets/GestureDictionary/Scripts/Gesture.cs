@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary> A list of sequential poses, with a specific frame (time) interval and (pose) match threshold. </summary>
@@ -17,8 +18,8 @@ public class Gesture : MonoBehaviour
         public float frameInterval;
         public float frameIntervalThreshold;
 
-        public PoseInGesture() {
-            poseToMatch = new Pose();
+        public PoseInGesture(Pose pose = null) {
+            poseToMatch = pose;
             matchThreshold = 0.1f;
             frameInterval = Mathf.Pow(30f, -1); // 30Hz / 30fps
             frameIntervalThreshold = 0.2f;
@@ -40,33 +41,57 @@ public class Gesture : MonoBehaviour
                                     List<float> matchThresholds = null, 
                                     List<float> frameIntervals = null,
                                     List<float> frameIntervalThresholds = null) {
-        for (int i = 0; i < poses.Count; i++) {
-            PoseInGesture poseInGesture = new PoseInGesture();
-            poseInGesture.poseToMatch = poses[i];
-            poseInGesture.matchThreshold = matchThresholds == null? 
-                                poseInGesture.matchThreshold : matchThresholds[i];
-            poseInGesture.frameInterval = frameIntervals == null? 
-                                poseInGesture.frameInterval : frameIntervals[i];
-            poseInGesture.frameIntervalThreshold = frameIntervalThresholds == null? 
-                                poseInGesture.frameIntervalThreshold : frameIntervalThresholds[i];
-
-            poseSequence.Add(poseInGesture);
+        if (matchThresholds == null)
+            matchThresholds = Enumerable.Repeat(-1f, poses.Count).ToList();
+        if (frameIntervals == null)
+        {
+            frameIntervals = Enumerable.Repeat(-1f, poses.Count).ToList();
+            frameIntervalThresholds = Enumerable.Repeat(-1f, poses.Count).ToList();
         }
-    } 
+        else if (frameIntervalThresholds == null)
+        {
+            frameIntervalThresholds = Enumerable.Repeat(-1f, poses.Count).ToList();
+        }
+
+        for (int i = 0; i < poses.Count; i++) {
+            AddPose(poses[i], matchThresholds[i], frameIntervals[i], frameIntervalThresholds[i]);
+        }
+    }
+
+    public void AddPose(Pose pose, 
+                        float matchThreshold = -1f, 
+                        float frameInterval = -1f,
+                        float frameIntervalThreshold = -1f)
+    {
+        PoseInGesture poseInGesture = new PoseInGesture(pose);
+        poseInGesture.matchThreshold = matchThreshold< 0 ?
+                            poseInGesture.matchThreshold : matchThreshold;
+        poseInGesture.frameInterval = frameInterval< 0 ?
+                            poseInGesture.frameInterval : frameInterval;
+        poseInGesture.frameIntervalThreshold = frameIntervalThreshold< 0 ?
+                            poseInGesture.frameIntervalThreshold : frameIntervalThreshold;
+
+        poseSequence.Add(poseInGesture);
+    }
 
     /// <summary>
     /// Converts a gesture to a matrix of coordinates, where each row represents a pose
     /// and each column represents a landmark.
     /// matrix[i, j] represents the position of landmark "j" in pose "i"
     /// </summary>
-    public Vector3[,] GestureToMatrix() {
-        Vector3[,] gestureMatrix = new Vector3 [poseSequence.Count, Pose.landmarkIds.Count];
-        for (int i = 0; i < poseSequence.Count; i++) {
-            for (int j = 0; j < Pose.landmarkIds.Count; j++) {
+    public static Vector3[,] GestureToMatrix(Gesture gesture) {
+        List<PoseInGesture> privatePoseSequence = gesture.poseSequence;
+
+        Vector3[,] gestureMatrix = new Vector3 [privatePoseSequence.Count, Pose.landmarkIds.Count];
+        int nrPoses = privatePoseSequence.Count;
+        int nrLandmarks = Pose.landmarkIds.Count;
+
+        for (int i = 0; i < nrPoses; i++) {
+            for (int j = 0; j < nrLandmarks; j++) {
                 Pose.Landmark landmark = Pose.landmarkIds[j];
-                Dictionary<Pose.Landmark, Vector3> landmarkArrangement = poseSequence[i].
-                                                                                                    poseToMatch.
-                                                                                                    landmarkArrangement;
+                Dictionary<Pose.Landmark, Vector3> landmarkArrangement = privatePoseSequence[i].
+                                                                         poseToMatch.
+                                                                         landmarkArrangement;
 
                 Vector3 pos = landmarkArrangement.ContainsKey(landmark) ?
                                         landmarkArrangement[landmark]: Vector3.zero;
@@ -75,6 +100,32 @@ public class Gesture : MonoBehaviour
             }
         }
         return gestureMatrix;
+    }
+
+    /// <summary>
+    /// Converts matrix of coordinates, where each row represents a pose
+    /// and each column represents a landmark, to a gesture.
+    /// matrix[i, j] represents the position of landmark "j" in pose "i"
+    /// </summary>
+    public static Gesture MatrixToGesture(Vector3[,] gestureMatrix)
+    {
+        Gesture gesture = new Gesture();
+        int nrPoses = gestureMatrix.Length;
+        int nrLandmarks = Pose.landmarkIds.Count;
+
+        for (int i = 0; i < nrPoses; i++)
+        {
+            Pose pose = new Pose();
+
+            for (int j = 0; j < nrLandmarks; j++)
+            {
+                Pose.Landmark landmark = Pose.landmarkIds[j];
+                pose.landmarkArrangement.Add(landmark, gestureMatrix[i, j]);
+            }
+
+            gesture.AddPose(pose);
+        }
+        return gesture;
     }
 
     /// <summary>

@@ -20,9 +20,11 @@ public class Pose : MonoBehaviour
 
     /// <summary> Match between a landmark and its position on the pose, relative to the player's location.
     /// Not all landmarks are relevant for a given pose. </summary>
-    public Dictionary<Landmark, Vector3> landmarkArrangement = new Dictionary<Landmark, Vector3>();
+    public Dictionary<Landmark, Vector3> landmarkArrangement;
     
-    public Pose() {}
+    public Pose() {
+        landmarkArrangement = new Dictionary<Landmark, Vector3>();
+    }
 
     public Pose(Dictionary<Landmark, Vector3> arranjement) {
         landmarkArrangement = arranjement;
