@@ -15,9 +15,11 @@ public class LevelManager : MonoBehaviour
     public GameObject PlayerUI;
     public GameObject InfoBox;
     private bool connected = false; //used for events
-
+    private DictionaryManager dictionary;
+    
     void Start()
     {
+        dictionary = new DictionaryManager();
         compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<PanopticToIK>();
 
@@ -113,19 +115,22 @@ public class LevelManager : MonoBehaviour
     }
 
     //private int pickIndex = 0;
-    //GestureDictionary.GestureDictionary gestureDictionaryScript;
+    //DictionaryManager gestureDictionaryScript;
     private Dictionary<Gesture, string> myDictionary;
     List<Gesture> gestureList;
     public Vector3[,] pickFromDictionary()
     {
-        myDictionary = Helper.GetComponent<GestureDictionary.GestureDictionary>().GetGestureRegistry();
+        myDictionary = dictionary.GetGestureRegistry();
+        if (myDictionary == null)
+        {
+            Debug.Log("Missing gestureDict");
+        }
+        
         gestureList = new List<Gesture>(myDictionary.Keys);
-
-        /*
         if (gestureList == null)
         {
-            Debug.Log("Missing gestureList");
-        }*/
+            Debug.Log("Missing gestureLst");
+        }
 
         return Gesture.GestureToMatrix(gestureList[0]);
         /*if(pickIndex % 2 == 0)

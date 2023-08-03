@@ -4,7 +4,7 @@ using UnityEngine;
 using GestureDictionary.ContentGenerators;
 
 namespace GestureDictionary {
-    public class GestureDictionary : MonoBehaviour
+    public class DictionaryManager
     {
         private Dictionary<Gesture, string> _gestureToMeaning;
         private Dictionary<Gesture, string> _metaGestureToMeaning;
@@ -12,14 +12,18 @@ namespace GestureDictionary {
 
         private Dictionary<string, Pose> _knownPoses;
 
-        public void Start() {
+        public DictionaryManager() {
             _gestureToMeaning = new Dictionary<Gesture, string>();
+            _metaGestureToMeaning = new Dictionary<Gesture, string>();
             _meaningToGesture = new Dictionary<string, Gesture>();
             _knownPoses = new Dictionary<string, Pose>();
 
             PoseGenerator.GenerateStarterPoses(this);
             GestureGenerator.GenerateMetaGestures(this);
             GestureGenerator.GenerateStarterGestures(this);
+
+            Debug.Log("GTM:" + _gestureToMeaning.Keys.Count);
+            Debug.Log("MGTM:" + _meaningToGesture.Keys.Count);
         }
 
         public Dictionary<string, Pose> GetKnownPoses()

@@ -13,7 +13,7 @@ namespace GestureDictionary.ContentGenerators {
     public static class PoseGenerator
     {
         /// <summary> Generates basic known poses </summary>
-        public static void GenerateStarterPoses(GestureDictionary gestureDictionary) {
+        public static void GenerateStarterPoses(DictionaryManager gestureDictionary) {
             Dictionary<string, Pose> poseRegistry = gestureDictionary.GetKnownPoses();
 
             Dictionary<Pose.Landmark, Vector3> dictPoseLeftHandUp = 

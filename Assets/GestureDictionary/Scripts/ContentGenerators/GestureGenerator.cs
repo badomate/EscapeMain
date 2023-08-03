@@ -14,7 +14,7 @@ namespace GestureDictionary.ContentGenerators {
     {
         /// <summary> Generates known metagestures </summary>
         public static void GenerateMetaGestures(
-            GestureDictionary gestureDictionary) {
+            DictionaryManager gestureDictionary) {
 
             Dictionary<string, Pose> poseRegistry = gestureDictionary.GetKnownPoses();
             Dictionary<string, Gesture> meaningToGesture = gestureDictionary.GetMeaningRegistry();
@@ -24,7 +24,7 @@ namespace GestureDictionary.ContentGenerators {
         }
 
         /// <summary> Generates basic known gestures </summary>
-        public static void GenerateStarterGestures(GestureDictionary gestureDictionary) {
+        public static void GenerateStarterGestures(DictionaryManager gestureDictionary) {
             Dictionary<string, Pose> poseRegistry = gestureDictionary.GetKnownPoses();
 
 
