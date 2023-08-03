@@ -3,7 +3,7 @@ using System.Text;
 using UnityEngine;
 
 /// <summary> A pose corresponds to a specific (and static) set of landmark positions. </summary>
-public class Pose : MonoBehaviour
+public class Pose
 {
     /// <summary>
     /// Valid landmarks. Each correspond to a point in the player's body.

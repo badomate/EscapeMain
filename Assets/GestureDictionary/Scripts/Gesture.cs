@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 /// <summary> A list of sequential poses, with a specific frame (time) interval and (pose) match threshold. </summary>
-public class Gesture : MonoBehaviour
+public class Gesture
 {
     /// <summary>
     /// Pose within a gesture,
