@@ -6,14 +6,13 @@ using UnityEngine.Events;
 public class CompareGesture : MonoBehaviour
 {
     public static int recordingLength = 2; //how many frames do we save for comparison? should match the dictionary
-    public static int sampleLength = 3; //how many coordinates are we receiving in total? (e.g. 3 keypoints are likely equal to a sample length of 9)
+    public static int sampleLength = 1; //how many coordinates are we receiving in total? (e.g. 3 keypoints are likely equal to a sample length of 9)
     public int stillnessFramesRequired = 2;
 
 
     public bool recording = false;
 
-    public float[,] characterGesture = new float[recordingLength, sampleLength];
-    public float[,] goalGesture = new float[recordingLength, sampleLength];
+    public Vector3[,] characterGesture = new Vector3[recordingLength, sampleLength];
     private int recordingProgress = 0; //how many samples of the currently playing gesture have we saved so far
     public float matchThreshold = 0.01f; //0 would mean an absolute perfect match across all samples
     public float stillnessThreshold = 0.1f; //used to "lock in" a pose
@@ -66,7 +65,7 @@ public class CompareGesture : MonoBehaviour
         {
             for (int sampleIndex = 0; sampleIndex < sampleLength; sampleIndex++)
             {
-                if (System.Math.Abs(characterGesture[recordingIndex, sampleIndex] - characterGesture[recordingIndex + 1, sampleIndex]) > stillnessThreshold)
+                if (Vector3.Distance(characterGesture[recordingIndex, sampleIndex],characterGesture[recordingIndex + 1, sampleIndex]) > stillnessThreshold)
                 {
                     //Debug.Log("Not still");
                     return; // Difference exceeded the threshold
@@ -80,13 +79,14 @@ public class CompareGesture : MonoBehaviour
         else
         {
             m_StillnessEvent = new UnityEvent();
+            m_StillnessEvent.Invoke();
         }
 
     }
 
-    public bool goalGestureCompleted(float[,] gestureToCompare)
+    public bool goalGestureCompleted(Vector3[,] gestureToCompare)
     {
-        return recording && recordingProgress == recordingLength && MeanSquaredError(gestureToCompare, goalGesture) < matchThreshold;
+        return recording && recordingProgress == recordingLength && false;//MeanSquaredError(gestureToCompare, goalGesture) < matchThreshold; TODO: fix
 
     }
 
@@ -98,15 +98,12 @@ public class CompareGesture : MonoBehaviour
         if (recording)
         {
             TcpScript = GetComponent<Socket_toHl2>();
-            float[] currentPositions = { TcpScript.position.x, TcpScript.position.y, TcpScript.position.z };
+            //float[] currentPositions = { TcpScript.position.x, TcpScript.position.y, TcpScript.position.z }; this will have to be a matrix built from pieces of the tcpscript
 
             
             if (recordingProgress < recordingLength) //building up the matrix
             {
-                for (int i = 0; i < sampleLength; i++)
-                {
-                    characterGesture[recordingProgress, i] = currentPositions[i];
-                }
+                characterGesture[recordingProgress, 0] = TcpScript.position;
                 recordingProgress++;
             }
             else //updating the matrix
@@ -120,7 +117,7 @@ public class CompareGesture : MonoBehaviour
                 }
                 for (int i = 0; i < sampleLength; i++)
                 {
-                    characterGesture[characterGesture.GetLength(0) - 1, i] = currentPositions[i];
+                    characterGesture[characterGesture.GetLength(0) - 1, i] = TcpScript.position;
                 }
 
             }

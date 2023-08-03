@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GestureDictionary;
 
 public class LevelManager : MonoBehaviour
 {
     public GameObject Helper;
     public GameObject GoalDisplayCharacter;
     public int currentPlayer = 1; //0-player, 1-A.I
-    public float[,] goalGesture = new float[2, 3]; //change these according to gesture dictionary
+    public Vector3[,] goalGesture = null;//new float[2, 3]; //change these according to gesture dictionary
 
     PanopticToIK estimationToIkScript;
     CompareGesture compareGestureScript;
@@ -21,7 +22,6 @@ public class LevelManager : MonoBehaviour
         estimationToIkScript = Helper.GetComponent<PanopticToIK>();
 
         goalGesture = pickFromDictionary();
-        compareGestureScript.goalGesture = goalGesture;
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
 
 
@@ -101,7 +101,6 @@ public class LevelManager : MonoBehaviour
     {
         UpdateText("Puzzle Solved!");
         goalGesture = pickFromDictionary();
-        compareGestureScript.goalGesture = goalGesture;
         if (currentPlayer == 1)
         {
             currentPlayer = 0;
@@ -113,10 +112,23 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
     }
 
-    private int pickIndex = 0;
-    public float[,] pickFromDictionary()
+    //private int pickIndex = 0;
+    //GestureDictionary.GestureDictionary gestureDictionaryScript;
+    private Dictionary<Gesture, string> myDictionary;
+    List<Gesture> gestureList;
+    public Vector3[,] pickFromDictionary()
     {
-        if(pickIndex % 2 == 0)
+        myDictionary = Helper.GetComponent<GestureDictionary.GestureDictionary>().GetGestureRegistry();
+        gestureList = new List<Gesture>(myDictionary.Keys);
+
+        /*
+        if (gestureList == null)
+        {
+            Debug.Log("Missing gestureList");
+        }*/
+
+        return Gesture.GestureToMatrix(gestureList[0]);
+        /*if(pickIndex % 2 == 0)
         {
             pickIndex++;
             return new float[,] { { 5, 0, 0 }, { 5, 0, 0 } }; //example value for testing
@@ -125,7 +137,7 @@ public class LevelManager : MonoBehaviour
         {
             pickIndex++;
             return new float[,] { { 2, 2, 2 }, { 2, 2, 2 } }; //example value for testing
-        }
+        }*/
     }
     public void UpdateText(string newText)
     {

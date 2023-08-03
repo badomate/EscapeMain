@@ -18,7 +18,7 @@ public class PanopticToIK : MonoBehaviour
     protected Animator animator;
     public bool Looping = true; //TODO: fix the False setting, perhaps by introducing a new bool to check for the animation finishing.
 
-    float[] angles;
+    Vector3[] angles;
     public float scaleFactor = 0.02f; //0.005f; // Adjust the scaling factor as needed
     private int frameCount;
     private int smoothingFrameCount = 0;
@@ -87,11 +87,8 @@ public class PanopticToIK : MonoBehaviour
 
     private Vector3 goalFromIndex(int index)
     {
-        int offset = 3; //how many coordinates per keypoint, hololens has 3, panoptic has 4
-        float neckX = angles[index * offset] * scaleFactor; // x-axis pos
-        float neckY = angles[index * offset + 1] * scaleFactor; // y-axis pos
-        float neckZ = angles[index * offset + 2] * scaleFactor; // z-axis pos - positive values in Z is going to the right
-        return origin + new Vector3(-neckX, neckY, neckZ); //Y is inverted, but how about the others?
+        Vector3 currentPos = angles[index] * scaleFactor; // x-axis pos
+        return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
     }
 
     private void SetIKPosition(int index, AvatarIKGoal limb) //, AvatarIKHint hintlimb
@@ -163,14 +160,13 @@ public class PanopticToIK : MonoBehaviour
             TcpScript = GetComponent<Socket_toHl2>();
         }
         //Debug.Log(TcpScript.position);
-        float[] test  = { TcpScript.position.x, TcpScript.position.y, TcpScript.position.z };
-        angles = test;
+        angles[0] = TcpScript.position;
     }
 
-    private float[,] savedRecording;
-    public void saveRecording(float[,] recording)
+    private Vector3[,] savedRecording;
+    public void saveRecording(Vector3[,] recording)
     {
-        savedRecording = new float[recording.GetLength(0), recording.GetLength(1)];
+        savedRecording = new Vector3[recording.GetLength(0), recording.GetLength(1)];
         Array.Copy(recording, savedRecording, recording.GetLength(0) * recording.GetLength(1));
     }
 
@@ -183,7 +179,7 @@ public class PanopticToIK : MonoBehaviour
         startFrame = 0;
 
 
-        angles = new float[savedRecording.GetLength(1)];
+        angles = new Vector3[savedRecording.GetLength(1)];
 
         //copy goalGesture into current angles so we can do the animation
         for (int j = 0; j < savedRecording.GetLength(1); j++)
@@ -221,7 +217,7 @@ public class PanopticToIK : MonoBehaviour
                     {
                         for (int i = 0; i < angles.Length; i++)
                         {
-                            angles[i] = 0;
+                            angles[i] = new Vector3(0,0,0);
                         }
                     }
                     editLimbWeights(0);
@@ -313,7 +309,19 @@ public class PanopticToIK : MonoBehaviour
         BodyData bodyData = JsonUtility.FromJson<BodyData>(jsonString);
 
         // Extract the joint angles from the body data
-        angles = bodyData.bodies[0].joints19;
+
+        int vectorCount = bodyData.bodies[0].joints19.Length / 4;
+        angles = new Vector3[vectorCount];
+
+        for (int i = 0; i < vectorCount; i++)
+        {
+            int index = i * 4;
+            float x = bodyData.bodies[0].joints19[index];
+            float y = bodyData.bodies[0].joints19[index + 1];
+            float z = bodyData.bodies[0].joints19[index + 2];
+            Vector3 vector = new Vector3(x, y, z);
+            angles[i] = vector;
+        }
 
     }
 
