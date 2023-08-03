@@ -12,7 +12,7 @@ namespace GestureDictionary {
 
         private Dictionary<string, Pose> _knownPoses;
 
-        public GestureDictionary() {
+        public void Start() {
             _gestureToMeaning = new Dictionary<Gesture, string>();
             _meaningToGesture = new Dictionary<string, Gesture>();
             _knownPoses = new Dictionary<string, Pose>();
