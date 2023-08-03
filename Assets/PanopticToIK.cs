@@ -160,6 +160,7 @@ public class PanopticToIK : MonoBehaviour
             TcpScript = GetComponent<Socket_toHl2>();
         }
         //Debug.Log(TcpScript.position);
+        angles = new Vector3[1];
         angles[0] = TcpScript.position;
     }
 
