@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 /// <summary> A pose corresponds to a specific (and static) set of landmark positions. </summary>
@@ -31,7 +32,6 @@ public class Pose
     public Pose(Dictionary<Landmark, Vector3> arranjement) {
         _landmarkArrangement = arranjement;
     }
-
 
     public float MatchVariance(Pose otherPose) {
         float matchVarianceSquared = 0f;
@@ -93,5 +93,30 @@ public class Pose
 
         string poseString = poseStringBuilder.ToString();
         return poseString;
+    }
+
+    /// <summary> Format: "[[lm00Pos_x, lm00Pos_y,  lm00Pos_z] [lm01Pos_x, lm01Pos_y,  lm01Pos_z]]" </summary>
+    public static Pose GetPoseFromString(string poseString, Regex poseRegex)
+    {
+        Pose pose = new Pose();
+
+        MatchCollection landmarkPositions = poseRegex.Matches(poseString);
+        int nrLandmarksRegistered = 0;
+
+        foreach (Match landmarkPosition in landmarkPositions)
+        {
+            GroupCollection landmarkCoordinate = landmarkPosition.Groups;
+            Landmark currentLandmarkId = LandmarkIds[nrLandmarksRegistered];
+            pose._landmarkArrangement[currentLandmarkId] = 
+                new Vector3(
+                    float.Parse(landmarkCoordinate["x"].Value),
+                    float.Parse(landmarkCoordinate["y"].Value),
+                    float.Parse(landmarkCoordinate["z"].Value))
+                ;
+            nrLandmarksRegistered++;
+        }
+
+        return pose;
+
     }
 }
