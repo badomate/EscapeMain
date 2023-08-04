@@ -84,9 +84,11 @@ public class CompareGesture : MonoBehaviour
 
     }
 
-    public bool goalGestureCompleted(Vector3[,] gestureToCompare)
+    public bool goalGestureCompleted(Vector3[,] gestureToCompareMatrix)
     {
-        return recording && recordingProgress == recordingLength && false;//MeanSquaredError(gestureToCompare, goalGesture) < matchThreshold; TODO: fix
+        Gesture gestureToCompare = Gesture.MatrixToGesture(gestureToCompareMatrix);
+        Gesture goalGesture = Gesture.MatrixToGesture(LevelManagerScript.goalGesture);
+        return recording && recordingProgress == recordingLength && goalGesture.GestureMatches(gestureToCompare);//MeanSquaredError(gestureToCompare, goalGesture) < matchThreshold; TODO: fix
 
     }
 

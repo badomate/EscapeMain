@@ -25,7 +25,8 @@ public class LevelManager : MonoBehaviour
         _poseRegex = new Regex("\\[(?<x><[-]?\\d+(?:\\.\\d+)?),\\s(?<y>[-]?\\d+(?:\\.\\d+)?),\\s\\s(?<z>[-]?\\d+(?:\\.\\d+)?)\\]");
         compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<PanopticToIK>();
-
+        
+        PrepareGestureOptions();
         goalGesture = pickFromDictionary();
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
 
@@ -121,21 +122,29 @@ public class LevelManager : MonoBehaviour
     //DictionaryManager gestureDictionaryScript;
     private Dictionary<Gesture, string> myDictionary;
     List<Gesture> gestureList;
-    public Vector3[,] pickFromDictionary()
+
+    public void PrepareGestureOptions()
     {
         myDictionary = dictionary.GetGestureRegistry();
         if (myDictionary == null)
         {
             Debug.Log("Missing gestureDict");
         }
-        
+
         gestureList = new List<Gesture>(myDictionary.Keys);
         if (gestureList == null)
         {
             Debug.Log("Missing gestureLst");
         }
+    }
 
-        return Gesture.GestureToMatrix(gestureList[0]);
+    int nrGesturesChosen = 0;
+    public Vector3[,] pickFromDictionary()
+    {
+        int pickIndex = nrGesturesChosen % gestureList.Count;
+        nrGesturesChosen++;
+        return Gesture.GestureToMatrix(gestureList[pickIndex]);
+
         /*if(pickIndex % 2 == 0)
         {
             pickIndex++;
