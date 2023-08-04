@@ -18,7 +18,7 @@ public class PanopticToIK : MonoBehaviour
     protected Animator animator;
     public bool Looping = true; //TODO: fix the False setting, perhaps by introducing a new bool to check for the animation finishing.
 
-    Vector3[] angles;
+    Vector3[] landmarks;
     public float scaleFactor = 0.02f; //0.005f; // Adjust the scaling factor as needed
     private int frameCount;
     private int smoothingFrameCount = 0;
@@ -87,7 +87,7 @@ public class PanopticToIK : MonoBehaviour
 
     private Vector3 goalFromIndex(int index)
     {
-        Vector3 currentPos = angles[index] * scaleFactor; // x-axis pos
+        Vector3 currentPos = landmarks[index] * scaleFactor; // x-axis pos
         return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
     }
 
@@ -107,7 +107,7 @@ public class PanopticToIK : MonoBehaviour
         animator.SetIKHintPosition(limb, goal);
     }
 
-    private void SetJointAngles()
+    private void SetJointLandmarks()
     {
         //Endpoints:
         SetIKPosition(0, AvatarIKGoal.LeftHand);
@@ -152,7 +152,7 @@ public class PanopticToIK : MonoBehaviour
         }
     }
 
-    //this should rewrite our angles[] array
+    //this should rewrite our landmarks[] array
     private void getDataFromHololens()
     {
         if (TcpScript == null)
@@ -160,8 +160,8 @@ public class PanopticToIK : MonoBehaviour
             TcpScript = GetComponent<Socket_toHl2>();
         }
         //Debug.Log(TcpScript.position);
-        angles = new Vector3[1];
-        angles[0] = TcpScript.position;
+        landmarks = new Vector3[1];
+        landmarks[0] = TcpScript.position;
     }
 
     private Vector3[,] savedRecording;
@@ -180,12 +180,12 @@ public class PanopticToIK : MonoBehaviour
         startFrame = 0;
 
 
-        angles = new Vector3[savedRecording.GetLength(1)];
+        landmarks = new Vector3[savedRecording.GetLength(1)];
 
-        //copy goalGesture into current angles so we can do the animation
+        //copy goalGesture into current landmarks so we can do the animation
         for (int j = 0; j < savedRecording.GetLength(1); j++)
         {
-            angles[j] = savedRecording[frameCount, j];
+            landmarks[j] = savedRecording[frameCount, j];
         }
     }
 
@@ -214,21 +214,21 @@ public class PanopticToIK : MonoBehaviour
                 }
                 else //no data to gather, so reset weights
                 {
-                    if (angles != null)
+                    if (landmarks != null)
                     {
-                        for (int i = 0; i < angles.Length; i++)
+                        for (int i = 0; i < landmarks.Length; i++)
                         {
-                            angles[i] = new Vector3(0,0,0);
+                            landmarks[i] = new Vector3(0,0,0);
                         }
                     }
                     editLimbWeights(0);
                 }
                 lastProcessedFrame = frameCount;
             }
-            if(angles != null)
+            if(landmarks != null)
             {
                 SetCenterPosition(2); //move the center to the correct position
-                SetJointAngles();
+                SetJointLandmarks();
             }
         }
 
@@ -250,7 +250,7 @@ public class PanopticToIK : MonoBehaviour
     {
         //we still need to set the IK position to smooth out
         SetCenterPosition(2); 
-        SetJointAngles();
+        SetJointLandmarks();
 
         //set current weight
         float smoothWeight;
@@ -309,10 +309,10 @@ public class PanopticToIK : MonoBehaviour
         // Parse the JSON data into a data structure
         BodyData bodyData = JsonUtility.FromJson<BodyData>(jsonString);
 
-        // Extract the joint angles from the body data
+        // Extract the joint landmarks from the body data
 
         int vectorCount = bodyData.bodies[0].joints19.Length / 4;
-        angles = new Vector3[vectorCount];
+        landmarks = new Vector3[vectorCount];
 
         for (int i = 0; i < vectorCount; i++)
         {
@@ -321,7 +321,7 @@ public class PanopticToIK : MonoBehaviour
             float y = bodyData.bodies[0].joints19[index + 1];
             float z = bodyData.bodies[0].joints19[index + 2];
             Vector3 vector = new Vector3(x, y, z);
-            angles[i] = vector;
+            landmarks[i] = vector;
         }
 
     }
