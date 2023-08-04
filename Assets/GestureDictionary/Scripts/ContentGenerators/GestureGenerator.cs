@@ -1,4 +1,4 @@
-using System.Collections;
+using GestureDictionary.ContentGenerators.StarterGestures;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,38 +14,31 @@ namespace GestureDictionary.ContentGenerators {
     {
         /// <summary> Generates known metagestures </summary>
         public static void GenerateMetaGestures(
-            DictionaryManager gestureDictionary) {
+            DictionaryManager dictionaryManager) {
 
-            Dictionary<string, Pose> poseRegistry = gestureDictionary.GetKnownPoses();
-            Dictionary<string, Gesture> meaningToGesture = gestureDictionary.GetMeaningRegistry();
-            Dictionary<Gesture, string> metaGestureToMeaning = gestureDictionary.GetMetaGestureRegistry();
+            Dictionary<string, Pose> poseRegistry = dictionaryManager.GetKnownPoses();
+            Dictionary<string, Gesture> meaningToGesture = dictionaryManager.GetMeaningRegistry();
+            Dictionary<Gesture, string> metaGestureToMeaning = dictionaryManager.GetMetaGestureRegistry();
 
             Debug.Log("Added metagestures.");
         }
 
         /// <summary> Generates basic known gestures </summary>
-        public static void GenerateStarterGestures(DictionaryManager gestureDictionary) {
-            Dictionary<string, Pose> poseRegistry = gestureDictionary.GetKnownPoses();
+        public static void GenerateBasicGestures(DictionaryManager dictionaryManager) {
+            Dictionary<string, Pose> poseRegistry = dictionaryManager.GetKnownPoses();
 
+            AddStarterGesture(new GestureHandRises(poseRegistry), dictionaryManager);
+            AddStarterGesture(new GestureHandFalls(poseRegistry), dictionaryManager);
+            
+            Debug.Log("Added basic gestures.");
+        }
 
-            Gesture gestureHandRises = new Gesture();
-            List<Pose> gestureHandRisesPoses = new List<Pose>() {
-                poseRegistry[PoseID.HAND_LEFT_UP.ToString()],
-                poseRegistry[PoseID.HAND_LEFT_MIDDLE.ToString()],
-                poseRegistry[PoseID.HAND_LEFT_DOWN.ToString()]
-            };
-            gestureHandRises.AddPoses(gestureHandRisesPoses);
-
-            Gesture gestureHandFalls = new Gesture();
-            List<Pose> gestureHandFallsPoses = new List<Pose>() {
-                poseRegistry[PoseID.HAND_LEFT_DOWN.ToString()],
-                poseRegistry[PoseID.HAND_LEFT_MIDDLE.ToString()],
-                poseRegistry[PoseID.HAND_LEFT_UP.ToString()]
-            };
-            gestureHandRises.AddPoses(gestureHandFallsPoses);
-
-            gestureDictionary.AddGesture(gestureHandRises, GestureID.HAND_RISES.ToString());
-            gestureDictionary.AddGesture(gestureHandFalls, GestureID.HAND_FALLS.ToString());
+        public static void AddStarterGesture
+            (StarterGesture starterGesture, 
+            DictionaryManager dictionaryManager, bool isMetaGesture = false)
+        {
+            Debug.Log("Added starter gesture: " + starterGesture.gestureId);
+            dictionaryManager.AddGesture(starterGesture, starterGesture.gestureId, isMetaGesture);
         }
     }
 

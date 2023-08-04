@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GestureDictionary.ContentGenerators.StarterPoses;
 
 namespace GestureDictionary.ContentGenerators {
 
@@ -16,23 +17,15 @@ namespace GestureDictionary.ContentGenerators {
         public static void GenerateStarterPoses(DictionaryManager gestureDictionary) {
             Dictionary<string, Pose> poseRegistry = gestureDictionary.GetKnownPoses();
 
-            Dictionary<Pose.Landmark, Vector3> dictPoseLeftHandUp = 
-                new() {
-                    {Pose.Landmark.LEFT_WRIST, new Vector3(2, 5, 4)}
-                };
-            poseRegistry.Add(PoseID.HAND_LEFT_UP.ToString(), new Pose(dictPoseLeftHandUp));
+            AddStarterPose(new PoseLeftHandUp(), poseRegistry);
+            AddStarterPose(new PoseLeftHandDown(), poseRegistry);
+            AddStarterPose(new PoseLeftHandMiddle(), poseRegistry);
+        }
 
-            Dictionary<Pose.Landmark, Vector3> dictPoseLeftHandMiddle = 
-                new() {
-                    {Pose.Landmark.LEFT_WRIST, new Vector3(2, 3, 4)}
-                };
-            poseRegistry.Add(PoseID.HAND_LEFT_MIDDLE.ToString(), new Pose(dictPoseLeftHandMiddle));
-
-            Dictionary<Pose.Landmark, Vector3> dictPoseLeftHandDown = 
-                new() {
-                    {Pose.Landmark.LEFT_WRIST, new Vector3(2, 0, 4)}
-                };
-            poseRegistry.Add(PoseID.HAND_LEFT_DOWN.ToString(), new Pose(dictPoseLeftHandDown));
+        public static void AddStarterPose(StarterPose starterPose, Dictionary<string, Pose> poseRegistry)
+        {
+            Debug.Log("Added StarterPose: " + starterPose.poseId);
+            poseRegistry.Add(starterPose.poseId, starterPose);
         }
     }
 }
