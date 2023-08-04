@@ -109,8 +109,10 @@ public class Socket_toHl2 : MonoBehaviour
     }
 
     // Use-case specific function, need to re-write this to interpret whatever data is being sent
-    public static Vector3 ParseData(string dataString)
+    public static Vector3[] ParseData(string dataString)
     {
+
+        /*
         dataString = dataString.Replace("[", "").Replace("]", "").Trim();
         string[] arrayData = dataString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         //Debug.Log(dataString);
@@ -121,10 +123,12 @@ public class Socket_toHl2 : MonoBehaviour
             float.Parse(arrayData[1]),
             float.Parse(arrayData[2]));
         return result;
+        */
+        return Pose.GetPoseVectorFromString(dataString, LevelManager._poseRegex);
     }
 
     // Position is the data being received in this example
-    public Vector3 position = new Vector3(0,0,0);
+    public Vector3[] position;
 
     void Update()
     {

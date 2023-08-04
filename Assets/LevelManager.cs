@@ -17,12 +17,12 @@ public class LevelManager : MonoBehaviour
     public GameObject InfoBox;
     private bool connected = false; //used for events
     private DictionaryManager dictionary;
-    private Regex _poseRegex;
+    public static Regex _poseRegex;
 
     void Start()
     {
         dictionary = new DictionaryManager();
-        _poseRegex = new Regex("\\[(?<x><[-]?\\d+(?:\\.\\d+)?),\\s(?<y>[-]?\\d+(?:\\.\\d+)?),\\s\\s(?<z>[-]?\\d+(?:\\.\\d+)?)\\]");
+        _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<PanopticToIK>();
         

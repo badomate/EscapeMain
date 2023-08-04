@@ -21,8 +21,10 @@ public class Pose
         Landmark.LEFT_WRIST
     };
 
-    /// <summary> Match between a landmark and its position on the pose, relative to the player's location.
-    /// Not all landmarks are relevant for a given pose. </summary>
+    /// <summary> 
+    /// Match between a landmark and its position on the pose, relative to the player's location.
+    /// Not all landmarks are relevant for a given pose. 
+    /// </summary>
     public Dictionary<Landmark, Vector3> _landmarkArrangement;
 
     public Pose() {
@@ -59,7 +61,10 @@ public class Pose
         return Mathf.Sqrt(varianceSquared);
     }
 
-    /// <summary> Returns the squared variance between a landmark's position and its reference value </summary>
+    /// <summary> 
+    /// Returns the squared variance between 
+    /// a landmark's position and its reference value 
+    /// </summary>
     public float GetLandmarkVarianceSquared(Vector3 reference, Vector3 toCompare) {
         float varianceSquared = 0f;
 
@@ -72,30 +77,24 @@ public class Pose
         return varianceSquared;
     }
 
-    /// <summary> Format: "[[lm00Pos_x, lm00Pos_y,  lm00Pos_z] [lm01Pos_x, lm01Pos_y,  lm01Pos_z]]" </summary>
+    /// <summary> Format: "LM0 Position=[lm00Pos_x, lm00Pos_y,  lm00Pos_z]. LM1 Position=[lm01Pos_x, lm01Pos_y,  lm01Pos_z]" </summary>
     public override string ToString()
     {
         StringBuilder poseStringBuilder = new StringBuilder();
-        poseStringBuilder.Append("[");
 
         for (int j = 0; j < LandmarkIds.Count; j++) {
             Landmark landmark = LandmarkIds[j];
             Vector3 landmarkPos = _landmarkArrangement[landmark];
             string landmarkPosString = 
-                $"[{landmarkPos[0]}, {landmarkPos[1]},  {landmarkPos[2]}] ";
+                $" {landmark}: Position=[{landmarkPos[0]}, {landmarkPos[1]},  {landmarkPos[2]}].";
             poseStringBuilder.Append(landmarkPosString);
         }
-
-        if (LandmarkIds.Count > 0)
-            poseStringBuilder.Remove(poseStringBuilder.Length - 1, poseStringBuilder.Length);
-
-        poseStringBuilder.Append("]");
 
         string poseString = poseStringBuilder.ToString();
         return poseString;
     }
 
-    /// <summary> Format: "[[lm00Pos_x, lm00Pos_y,  lm00Pos_z] [lm01Pos_x, lm01Pos_y,  lm01Pos_z]]" </summary>
+    /// <summary> Format: " LM0 Position=[lm00Pos_x, lm00Pos_y,  lm00Pos_z]. LM1 Position=[lm01Pos_x, lm01Pos_y,  lm01Pos_z]." </summary>
     public static Pose GetPoseFromString(string poseString, Regex poseRegex)
     {
         Pose pose = new Pose();
@@ -117,6 +116,32 @@ public class Pose
         }
 
         return pose;
+    }
 
+    /// <summary> Format: " LM0 Position=[lm00Pos_x, lm00Pos_y,  lm00Pos_z]. LM1 Position=[lm01Pos_x, lm01Pos_y,  lm01Pos_z]." </summary>
+    public static Vector3[] GetPoseVectorFromString(string poseString, Regex poseRegex)
+    {
+        MatchCollection landmarkPositions = poseRegex.Matches(poseString);
+        int nrLandmarksRegistered = 0;
+
+        int totalLandmarks = landmarkPositions.Count;
+
+        Vector3[] poseVector = new Vector3[totalLandmarks];
+
+        foreach (Match landmarkPosition in landmarkPositions)
+        {
+            GroupCollection landmarkCoordinate = landmarkPosition.Groups;
+            Landmark currentLandmarkId = LandmarkIds[nrLandmarksRegistered];
+            Vector3 landmarkVector = new Vector3(
+                    float.Parse(landmarkCoordinate["x"].Value),
+                    float.Parse(landmarkCoordinate["y"].Value),
+                    float.Parse(landmarkCoordinate["z"].Value))
+                ;
+
+            poseVector[nrLandmarksRegistered] = landmarkVector;
+            nrLandmarksRegistered++;
+        }
+
+        return poseVector;
     }
 }

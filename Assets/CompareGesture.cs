@@ -105,7 +105,7 @@ public class CompareGesture : MonoBehaviour
             
             if (recordingProgress < recordingLength) //building up the matrix
             {
-                characterGesture[recordingProgress, 0] = TcpScript.position;
+                characterGesture[recordingProgress, 0] = TcpScript.position[0];
                 recordingProgress++;
             }
             else //updating the matrix
@@ -119,7 +119,7 @@ public class CompareGesture : MonoBehaviour
                 }
                 for (int i = 0; i < sampleLength; i++)
                 {
-                    characterGesture[characterGesture.GetLength(0) - 1, i] = TcpScript.position;
+                    characterGesture[characterGesture.GetLength(0) - 1, i] = TcpScript.position[i];
                 }
 
             }

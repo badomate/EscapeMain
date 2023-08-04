@@ -161,7 +161,7 @@ public class PanopticToIK : MonoBehaviour
         }
         //Debug.Log(TcpScript.position);
         landmarks = new Vector3[1];
-        landmarks[0] = TcpScript.position;
+        landmarks[0] = TcpScript.position[0];
     }
 
     private Vector3[,] savedRecording;
