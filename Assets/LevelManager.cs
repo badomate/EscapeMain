@@ -25,11 +25,15 @@ public class LevelManager : MonoBehaviour
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<PanopticToIK>();
-        
+
+
+        estimationToIkScript.usingHololensTcp = false;
+        estimationToIkScript.usingPanoptic = false;
+
         PrepareGestureOptions();
         goalGesture = pickFromDictionary();
-        StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
 
+        StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
 
     }
 
@@ -60,21 +64,20 @@ public class LevelManager : MonoBehaviour
         if (currentPlayer == 0)
         {
             UpdateText("Next to demonstrate: A.I");
+
+            //hide the goaldisplay
             PlayerUI.SetActive(false);
+
             //mimic that gesture using the IK script
-            estimationToIkScript.usingHololensTcp = false;
-            estimationToIkScript.usingPanoptic = false;
             estimationToIkScript.saveRecording(goalGesture);
             estimationToIkScript.usingRecording = true;
-            //perhaps should also utilize the stillness mechanic to "lock in" the answer instead of doing it continously like now
         }
         else
         {
             UpdateText("Next to demonstrate: Player");
-            estimationToIkScript.usingHololensTcp = false;
-            estimationToIkScript.usingPanoptic = false;
             estimationToIkScript.usingRecording = false;
-            //show the player what to demonstrate
+
+            //show the goaldisplay, so the player knows what to demonstrate
             displayGoal(); 
         }
     }
@@ -95,10 +98,20 @@ public class LevelManager : MonoBehaviour
         if (currentPlayer == 1) //player demonstrates
         {
             //Debug.Log("Player locked in his demonstration");
-            estimationToIkScript.saveRecording(compareGestureScript.characterGesture); //give the temp memory to the estimation
-            estimationToIkScript.usingRecording = true;
             if (compareGestureScript.goalGestureCompleted(compareGestureScript.characterGesture)){
-                Success();
+                estimationToIkScript.saveRecording(compareGestureScript.characterGesture); //give the temp memory to the estimation
+                estimationToIkScript.usingRecording = true;
+
+                Success(); //for now, succeed automatically if we can directly mimic. But realistically, how does A.I know he is to mimic, and not interpret?
+            }
+            else //interpret the gesture
+            {
+                //INTERPRET the gesture as a shortcut for another, or a sequence, or a part of a sequence
+                Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
+                string meaning = dictionary.GetMeaningFromGesture(characterGesture);
+                //Debug.Log("Gesture was interpreted to mean: " + meaning);
+
+                //or interpret as a METAGESTURE and act accordingly
             }
         }
     }
@@ -144,18 +157,8 @@ public class LevelManager : MonoBehaviour
         int pickIndex = nrGesturesChosen % gestureList.Count;
         nrGesturesChosen++;
         return Gesture.GestureToMatrix(gestureList[pickIndex]);
-
-        /*if(pickIndex % 2 == 0)
-        {
-            pickIndex++;
-            return new float[,] { { 5, 0, 0 }, { 5, 0, 0 } }; //example value for testing
-        }
-        else
-        {
-            pickIndex++;
-            return new float[,] { { 2, 2, 2 }, { 2, 2, 2 } }; //example value for testing
-        }*/
     }
+
     public void UpdateText(string newText)
     {
         // Check if the InfoBox GameObject is not null

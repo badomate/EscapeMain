@@ -31,7 +31,7 @@ public class InteractWithHelper : MonoBehaviour
         {
             if (Input.GetKey("1") && !keyheld)
             {
-                Debug.Log("pressed");
+                //Debug.Log("pressed");
                 keyheld = true;
                 LevelManagerScript.Success();
             }
