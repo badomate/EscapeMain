@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 /// <summary> A list of sequential poses, with a specific frame (time) interval and (pose) match threshold. </summary>
@@ -155,5 +156,18 @@ public class Gesture
         }
 
         return Mathf.Sqrt(matchVarianceSquared);
+    }
+
+    public override string ToString()
+    {
+        StringBuilder gestureStringBuilder = new StringBuilder();
+
+        for (int i = 0; i < _poseSequence.Count; i++) {
+            gestureStringBuilder.Append("\nP" + i + ": ");
+            gestureStringBuilder.Append(_poseSequence[i]._poseToMatch.ToString());
+        }
+
+        string gestureString = gestureStringBuilder.ToString();
+        return gestureString;
     }
 }
