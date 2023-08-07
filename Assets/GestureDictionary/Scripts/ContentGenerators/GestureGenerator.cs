@@ -6,19 +6,28 @@ namespace GestureDictionary.ContentGenerators {
 
     public enum GestureID
     {
+        TEST_A,
+        TEST_B,
         HAND_RISES,
         HAND_FALLS
     }
 
     public static class GestureGenerator
     {
+
+        public static void GenerateStarterGestures(DictionaryManager dictionaryManager) {
+            GenerateMetaGestures(dictionaryManager);
+            GenerateBasicGestures(dictionaryManager);
+        }
+
         /// <summary> Generates known metagestures </summary>
         public static void GenerateMetaGestures(
             DictionaryManager dictionaryManager) {
 
             Dictionary<string, Pose> poseRegistry = dictionaryManager.GetKnownPoses();
-            Dictionary<string, Gesture> meaningToGesture = dictionaryManager.GetMeaningRegistry();
-            Dictionary<Gesture, string> metaGestureToMeaning = dictionaryManager.GetMetaGestureRegistry();
+
+            GenerateTestStarterGestures(poseRegistry, dictionaryManager, true);
+//            GenerateTrueStarterGestures(poseRegistry, dictionaryManager, true);
 
             Debug.Log("Added metagestures.");
         }
@@ -27,8 +36,8 @@ namespace GestureDictionary.ContentGenerators {
         public static void GenerateBasicGestures(DictionaryManager dictionaryManager) {
             Dictionary<string, Pose> poseRegistry = dictionaryManager.GetKnownPoses();
 
-            AddStarterGesture(new GestureHandRises(poseRegistry), dictionaryManager);
-            AddStarterGesture(new GestureHandFalls(poseRegistry), dictionaryManager);
+            GenerateTestStarterGestures(poseRegistry, dictionaryManager, false);
+        //    GenerateTrueStarterGestures(poseRegistry, dictionaryManager, false);
             
             Debug.Log("Added basic gestures.");
         }
@@ -39,6 +48,34 @@ namespace GestureDictionary.ContentGenerators {
         {
             Debug.Log("Added starter gesture: " + starterGesture.gestureId);
             dictionaryManager.AddGesture(starterGesture, starterGesture.gestureId, isMetaGesture);
+        }
+
+        public static void GenerateTrueStarterGestures(Dictionary<string, Pose> poseRegistry,
+            DictionaryManager dictionaryManager, bool isMetaGesture = false) {
+
+                if (isMetaGesture) {
+
+                }
+                else {
+                    AddStarterGesture(new GestureHandRises(poseRegistry), dictionaryManager);
+                    AddStarterGesture(new GestureHandFalls(poseRegistry), dictionaryManager);
+                }
+
+                Debug.Log("Added TRUE gestures.");
+        }
+
+        public static void GenerateTestStarterGestures(Dictionary<string, Pose> poseRegistry, 
+            DictionaryManager dictionaryManager, bool isMetaGesture=false) {
+
+                if (isMetaGesture) {
+                    // TODO
+                }
+                else {
+                    AddStarterGesture(new GestureTestA(poseRegistry), dictionaryManager);
+                    AddStarterGesture(new GestureTestB(poseRegistry), dictionaryManager);
+                }
+
+                Debug.Log("Added TEST gestures.");
         }
     }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -102,7 +103,7 @@ public class Pose
         MatchCollection landmarkPositions = poseRegex.Matches(poseString);
         int nrLandmarksRegistered = 0;
 
-        foreach (Match landmarkPosition in landmarkPositions)
+        foreach (Match landmarkPosition in landmarkPositions.Cast<Match>())
         {
             GroupCollection landmarkCoordinate = landmarkPosition.Groups;
             Landmark currentLandmarkId = LandmarkIds[nrLandmarksRegistered];
@@ -128,7 +129,7 @@ public class Pose
 
         Vector3[] poseVector = new Vector3[totalLandmarks];
 
-        foreach (Match landmarkPosition in landmarkPositions)
+        foreach (Match landmarkPosition in landmarkPositions.Cast<Match>())
         {
             GroupCollection landmarkCoordinate = landmarkPosition.Groups;
             Landmark currentLandmarkId = LandmarkIds[nrLandmarksRegistered];

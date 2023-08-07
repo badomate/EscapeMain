@@ -19,8 +19,7 @@ namespace GestureDictionary {
             _knownPoses = new Dictionary<string, Pose>();
 
             PoseGenerator.GenerateStarterPoses(this);
-            GestureGenerator.GenerateMetaGestures(this);
-            GestureGenerator.GenerateBasicGestures(this);
+            GestureGenerator.GenerateStarterGestures(this);
 
             Debug.Log("GTM:" + _gestureToMeaning.Keys.Count);
             Debug.Log("MGTM:" + _meaningToGesture.Keys.Count);
