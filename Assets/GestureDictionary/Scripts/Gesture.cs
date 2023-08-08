@@ -170,4 +170,24 @@ public class Gesture
         string gestureString = gestureStringBuilder.ToString();
         return gestureString;
     }
+
+    /// <summary>
+    /// Returns a list of which landmarks are used
+    /// at least once
+    /// by the poses inside this gesture
+    /// </summary>
+    public List<Pose.Landmark> relatedLandmarks()
+    {
+        List<Pose.Landmark> relatedLandmarkList = new List<Pose.Landmark>();
+
+        for (int i = 0; i < _poseSequence.Count; i++)
+        {
+            Pose poseRef = _poseSequence[i]._poseToMatch;
+            foreach (KeyValuePair<Pose.Landmark, Vector3> landmarkPos in poseRef._landmarkArrangement)
+            {
+                relatedLandmarkList.Add(landmarkPos.Key);
+            }
+        }
+        return relatedLandmarkList;
+    }
 }

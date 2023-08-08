@@ -156,6 +156,7 @@ public class LevelManager : MonoBehaviour
     {
         int pickIndex = nrGesturesChosen % gestureList.Count;
         nrGesturesChosen++;
+        //gestureList[pickIndex].relatedLandmarks() //pick a limb to lock for communication complexity
         return Gesture.GestureToMatrix(gestureList[pickIndex]);
     }
 
