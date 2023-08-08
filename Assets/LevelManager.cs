@@ -9,7 +9,10 @@ public class LevelManager : MonoBehaviour
     public GameObject Helper;
     public GameObject GoalDisplayCharacter;
     public int currentPlayer = 1; //0-player, 1-A.I
-    public Vector3[,] goalGesture = null;//new float[2, 3]; //change these according to gesture dictionary
+    private int levelCounter = 0;
+
+    public Gesture goalGesture = null;//change this from gesture dictionary
+    private Pose.Landmark lockedLimb;
 
     PanopticToIK estimationToIkScript;
     CompareGesture compareGestureScript;
@@ -21,6 +24,7 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
+        Debug.Log(lockedLimb);
         dictionary = new DictionaryManager();
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         compareGestureScript = Helper.GetComponent<CompareGesture>();
@@ -58,8 +62,17 @@ public class LevelManager : MonoBehaviour
 
     public void nextTurn()
     {
+        levelCounter++;
         //pick a gesture from the dictionary
         compareGestureScript.recording = true;
+
+        if(levelCounter > 2) //pick a random limb to lock down
+        {
+            List<Pose.Landmark> landmarkList = goalGesture.relatedLandmarks();
+            int randomIndex = new System.Random().Next(landmarkList.Count);
+            lockedLimb = landmarkList[randomIndex];
+        }
+
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
         {
@@ -69,7 +82,7 @@ public class LevelManager : MonoBehaviour
             PlayerUI.SetActive(false);
 
             //mimic that gesture using the IK script
-            estimationToIkScript.saveRecording(goalGesture);
+            estimationToIkScript.saveRecording(Gesture.GestureToMatrix(goalGesture));
             estimationToIkScript.usingRecording = true;
         }
         else
@@ -88,7 +101,7 @@ public class LevelManager : MonoBehaviour
         if(GoalDisplayCharacter != null)
         {
             PanopticToIK goalCharEstimator = GoalDisplayCharacter.GetComponent<PanopticToIK>();
-            goalCharEstimator.saveRecording(goalGesture);
+            goalCharEstimator.saveRecording(Gesture.GestureToMatrix(goalGesture));
             goalCharEstimator.usingRecording = true;
         }
     }
@@ -152,12 +165,11 @@ public class LevelManager : MonoBehaviour
     }
 
     int nrGesturesChosen = 0;
-    public Vector3[,] pickFromDictionary()
+    public Gesture pickFromDictionary()
     {
         int pickIndex = nrGesturesChosen % gestureList.Count;
         nrGesturesChosen++;
-        //gestureList[pickIndex].relatedLandmarks() //pick a limb to lock for communication complexity
-        return Gesture.GestureToMatrix(gestureList[pickIndex]);
+        return gestureList[pickIndex];
     }
 
     public void UpdateText(string newText)
