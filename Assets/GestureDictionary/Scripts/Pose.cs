@@ -95,13 +95,14 @@ public class Pose
         return poseString;
     }
 
-    /// <summary> Format: " LM0 Position=[lm00Pos_x, lm00Pos_y,  lm00Pos_z]. LM1 Position=[lm01Pos_x, lm01Pos_y,  lm01Pos_z]." </summary>
+    /// <summary> Format: " LM0 Position=[ lm00Pos_x, lm00Pos_y,  lm00Pos_z]. LM1 Position=[ lm01Pos_x, lm01Pos_y,  lm01Pos_z]." </summary>
     public static Pose GetPoseFromString(string poseString, Regex poseRegex)
     {
         Pose pose = new Pose();
 
         MatchCollection landmarkPositions = poseRegex.Matches(poseString);
         int nrLandmarksRegistered = 0;
+        Debug.Log("Pose str received:" + poseString);
 
         foreach (Match landmarkPosition in landmarkPositions.Cast<Match>())
         {
@@ -113,17 +114,22 @@ public class Pose
                     float.Parse(landmarkCoordinate["y"].Value),
                     float.Parse(landmarkCoordinate["z"].Value))
                 ;
+
+            Debug.Log("Pose[" + currentLandmarkId + "]: " + pose._landmarkArrangement[currentLandmarkId]);
             nrLandmarksRegistered++;
         }
 
         return pose;
     }
 
-    /// <summary> Format: " LM0 Position=[lm00Pos_x, lm00Pos_y,  lm00Pos_z]. LM1 Position=[lm01Pos_x, lm01Pos_y,  lm01Pos_z]." </summary>
+    /// <summary> Format: " LM0 Position=[ lm00Pos_x, lm00Pos_y,  lm00Pos_z]. LM1 Position=[ lm01Pos_x, lm01Pos_y,  lm01Pos_z]." </summary>
     public static Vector3[] GetPoseVectorFromString(string poseString, Regex poseRegex)
     {
         MatchCollection landmarkPositions = poseRegex.Matches(poseString);
         int nrLandmarksRegistered = 0;
+        
+        Debug.Log("Pose str received:" + poseString);
+        Debug.Log("Regex= " + poseRegex);
 
         int totalLandmarks = landmarkPositions.Count;
 
@@ -139,6 +145,8 @@ public class Pose
                     float.Parse(landmarkCoordinate["z"].Value))
                 ;
 
+            Debug.Log("Pose[" + currentLandmarkId + "]: " + landmarkVector);
+            
             poseVector[nrLandmarksRegistered] = landmarkVector;
             nrLandmarksRegistered++;
         }
