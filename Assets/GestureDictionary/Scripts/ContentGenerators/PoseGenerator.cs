@@ -27,7 +27,7 @@ namespace GestureDictionary.ContentGenerators {
 
         public static void AddStarterPose(StarterPose starterPose, Dictionary<string, Pose> poseRegistry)
         {
-            Debug.Log("Added StarterPose: " + starterPose.poseId);
+            Debug.Log("Added StarterPose: " + starterPose.poseId + starterPose.ToString());
             poseRegistry.Add(starterPose.poseId, starterPose);
         }
 

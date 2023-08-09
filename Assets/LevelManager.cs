@@ -143,7 +143,11 @@ public class LevelManager : MonoBehaviour
     {
         int pickIndex = nrGesturesChosen % gestureList.Count;
         nrGesturesChosen++;
-        return Gesture.GestureToMatrix(gestureList[pickIndex]);
+        Gesture gesture = gestureList[pickIndex];
+        Debug.Log("NEW GESTURE PICKED[" + pickIndex + "]: \n" + gesture.ToString());
+        Vector3[,] gestureMatrix = Gesture.GestureToMatrix(gesture);
+        Debug.Log("GESTURE MATRIX:\n" + gestureMatrix.ToString());
+        return gestureMatrix;
 
         /*if(pickIndex % 2 == 0)
         {

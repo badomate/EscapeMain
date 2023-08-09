@@ -67,7 +67,7 @@ public class CompareGesture : MonoBehaviour
             {
                 if (Vector3.Distance(characterGesture[recordingIndex, sampleIndex],characterGesture[recordingIndex + 1, sampleIndex]) > stillnessThreshold)
                 {
-                    //Debug.Log("Not still");
+                    Debug.Log("Not still");
                     return; // Difference exceeded the threshold
                 }
             }
@@ -86,10 +86,12 @@ public class CompareGesture : MonoBehaviour
 
     public bool goalGestureCompleted(Vector3[,] gestureToCompareMatrix)
     {
+        Debug.Log("CURRENT GESTURE MATRIX:\n" + gestureToCompareMatrix + "\n\nGOAL GESTURE MATRIX:\n" + LevelManagerScript.goalGesture);
+
         Gesture gestureToCompare = Gesture.MatrixToGesture(gestureToCompareMatrix);
         Gesture goalGesture = Gesture.MatrixToGesture(LevelManagerScript.goalGesture);
+        Debug.Log("CURRENT GESTURE:\n" + gestureToCompare + "\n\nGOAL GESTURE:\n" + goalGesture);
         return recording && recordingProgress == recordingLength && goalGesture.GestureMatches(gestureToCompare);//MeanSquaredError(gestureToCompare, goalGesture) < matchThreshold; TODO: fix
-
     }
 
     private Socket_toHl2 TcpScript;
