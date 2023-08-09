@@ -139,14 +139,15 @@ public class Socket_toHl2 : MonoBehaviour
 
     void OnApplicationQuit()
     {
+        running = false;
+        //Debug.Log("quitting");
         if (clientAccepted)
         {
+            Debug.Log("shutting down TCP thread");
             // Set the flag to stop the thread
-            running = false;
 
             // Wait for the thread to finish its execution
             thread.Join();
-
         }
     }
 
