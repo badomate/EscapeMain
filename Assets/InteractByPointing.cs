@@ -9,6 +9,10 @@ public class InteractByPointing : MonoBehaviour
 
     private LevelManager LevelManagerScript;
     private Socket_toHl2 TCPScript;
+    public Material highlightedMaterial;
+
+    private Vector3 fingertipPosition = new Vector3(-2.897f, 1.047f, 0);
+    private Vector3 fingertipDirection = new Vector3(100, 0, 0);
 
     // Start is called before the first frame update
     void Start()
@@ -24,16 +28,25 @@ public class InteractByPointing : MonoBehaviour
         }
     }
 
+    //should help draw the point ray
+    private void OnDrawGizmos()
+    {
+        // Draw ray as a line in the Scene view
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(fingertipPosition, fingertipDirection);
+    }
+
     // Update is called once per frame
     void Update()
     {
 
-            Ray ray = new Ray(new Vector3(0,1,0), new Vector3(1, 0, 0)); //mock data for now
+            Ray ray = new Ray(fingertipPosition, fingertipDirection); //mock data for now
             RaycastHit hitInfo;
             if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity)) //might need a mask?
             {
-                if (hitInfo.collider.gameObject == Helper)
+                if (hitInfo.collider.gameObject == Helper) //Issue: this is never true. Maybe Helper is missing collision?
                 {
+                    Debug.Log("Hit Helper");
                     // Get the Animator component of the Helper character
                     Animator helperAnimator = Helper.GetComponent<Animator>();
 
@@ -47,15 +60,16 @@ public class InteractByPointing : MonoBehaviour
                         float boneHitThreshold = 0.1f;
                         if (Vector3.Distance(hitInfo.point, leftArmBone.position) < boneHitThreshold)
                         {
-                            // we are pointing at left arm
+                            leftArmBone.GetComponent<Renderer>().material = highlightedMaterial;
                         }
                         else if (Vector3.Distance(hitInfo.point, rightArmBone.position) < boneHitThreshold)
                         {
-                            // we are pointing at right arm
+                            rightArmBone.GetComponent<Renderer>().material = highlightedMaterial;
                         }
+                    //TODO: if multiple bones are close enough, highlight the closest one
 
                     }
-                }
+            }
             }
 
     }
