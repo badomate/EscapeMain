@@ -111,7 +111,7 @@ public class Socket_toHl2 : MonoBehaviour
     // Use-case specific function, need to re-write this to interpret whatever data is being sent
     public static Vector3[] ParseData(string dataString)
     {
-        dataString = dataString.Replace("Position=[", "").Replace("]", "").Trim();
+        dataString = dataString.Replace("Position=[", "").Replace("]", "").Replace(",", "").Trim();
         string[] arrayData = dataString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         //Debug.Log(dataString);
         //Debug.Log(arrayData);
@@ -121,8 +121,7 @@ public class Socket_toHl2 : MonoBehaviour
             float.Parse(arrayData[1]),
             float.Parse(arrayData[2]));
 
-        Vector3[] result = Vector3[1];
-        result[0] = resultA; 
+        Vector3[] result = {resultA}; 
 
         return result;        
        // return Pose.GetPoseVectorFromString(dataString, LevelManager._poseRegex);
@@ -140,14 +139,15 @@ public class Socket_toHl2 : MonoBehaviour
 
     void OnApplicationQuit()
     {
+        running = false;
+        //Debug.Log("quitting");
         if (clientAccepted)
         {
+            Debug.Log("shutting down TCP thread");
             // Set the flag to stop the thread
-            running = false;
 
             // Wait for the thread to finish its execution
             thread.Join();
-
         }
     }
 
