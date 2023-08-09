@@ -127,11 +127,9 @@ public class Pose
     {
         MatchCollection landmarkPositions = poseRegex.Matches(poseString);
         int nrLandmarksRegistered = 0;
-        
-        Debug.Log("Pose str received:" + poseString);
-        Debug.Log("Regex= " + poseRegex);
 
         int totalLandmarks = landmarkPositions.Count;
+        Debug.Log("Received pose.");
 
         Vector3[] poseVector = new Vector3[totalLandmarks];
 
