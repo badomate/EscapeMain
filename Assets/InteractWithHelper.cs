@@ -6,37 +6,37 @@ public class InteractWithHelper : MonoBehaviour
 {
 
     [Tooltip("Reference to The AI helper")]
-    public GameObject aiHelper;
+    public GameObject Helper;
 
-    private Animator aiHelperAnimator;
+    private LevelManager LevelManagerScript;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (aiHelper != null)
+        if (Helper != null)
         {
-            aiHelperAnimator = aiHelper.GetComponent<Animator>();
-            aiHelperAnimator.SetBool("isWalking", true);
+            LevelManagerScript = Helper.GetComponent<LevelManager>();
         }
         else
         {
-            Debug.Log("I can't find the AiHelper.");
+            Debug.Log("I can't find the Helper.");
         }
     }
 
+    private bool keyheld = false;
     // Update is called once per frame
     void Update()
     {
-        if (aiHelperAnimator)
+        if (LevelManagerScript)
         {
-            if (Input.GetKey("1"))
+            if (Input.GetKey("1") && !keyheld)
             {
-                aiHelperAnimator.SetBool("isWalking", true);
-
-
+                //Debug.Log("pressed");
+                keyheld = true;
+                LevelManagerScript.Success();
             }
-            else { 
-                aiHelperAnimator.SetBool("isWalking", false);
+            else if(!Input.GetKey("1")) {
+                keyheld = false;
             }
         }
     }

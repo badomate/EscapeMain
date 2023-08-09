@@ -9,7 +9,10 @@ public class LevelManager : MonoBehaviour
     public GameObject Helper;
     public GameObject GoalDisplayCharacter;
     public int currentPlayer = 1; //0-player, 1-A.I
-    public Vector3[,] goalGesture = null;//new float[2, 3]; //change these according to gesture dictionary
+    private int levelCounter = 0;
+
+    public Gesture goalGesture = null;//change this from gesture dictionary
+    private Pose.Landmark lockedLimb;
 
     PanopticToIK estimationToIkScript;
     CompareGesture compareGestureScript;
@@ -21,15 +24,20 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
+        Debug.Log(lockedLimb);
         dictionary = new DictionaryManager();
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<PanopticToIK>();
-        
+
+
+        estimationToIkScript.usingHololensTcp = false;
+        estimationToIkScript.usingPanoptic = false;
+
         PrepareGestureOptions();
         goalGesture = pickFromDictionary();
-        StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
 
+        StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
 
     }
 
@@ -54,27 +62,35 @@ public class LevelManager : MonoBehaviour
 
     public void nextTurn()
     {
+        levelCounter++;
         //pick a gesture from the dictionary
         compareGestureScript.recording = true;
+
+        if(levelCounter > 2) //pick a random limb to lock down
+        {
+            List<Pose.Landmark> landmarkList = goalGesture.relatedLandmarks();
+            int randomIndex = new System.Random().Next(landmarkList.Count);
+            lockedLimb = landmarkList[randomIndex];
+        }
+
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
         {
             UpdateText("Next to demonstrate: A.I");
+
+            //hide the goaldisplay
             PlayerUI.SetActive(false);
+
             //mimic that gesture using the IK script
-            estimationToIkScript.usingHololensTcp = false;
-            estimationToIkScript.usingPanoptic = false;
-            estimationToIkScript.saveRecording(goalGesture);
+            estimationToIkScript.saveRecording(Gesture.GestureToMatrix(goalGesture));
             estimationToIkScript.usingRecording = true;
-            //perhaps should also utilize the stillness mechanic to "lock in" the answer instead of doing it continously like now
         }
         else
         {
             UpdateText("Next to demonstrate: Player");
-            estimationToIkScript.usingHololensTcp = false;
-            estimationToIkScript.usingPanoptic = false;
             estimationToIkScript.usingRecording = false;
-            //show the player what to demonstrate
+
+            //show the goaldisplay, so the player knows what to demonstrate
             displayGoal(); 
         }
     }
@@ -85,7 +101,7 @@ public class LevelManager : MonoBehaviour
         if(GoalDisplayCharacter != null)
         {
             PanopticToIK goalCharEstimator = GoalDisplayCharacter.GetComponent<PanopticToIK>();
-            goalCharEstimator.saveRecording(goalGesture);
+            goalCharEstimator.saveRecording(Gesture.GestureToMatrix(goalGesture));
             goalCharEstimator.usingRecording = true;
         }
     }
@@ -95,10 +111,20 @@ public class LevelManager : MonoBehaviour
         if (currentPlayer == 1) //player demonstrates
         {
             //Debug.Log("Player locked in his demonstration");
-            estimationToIkScript.saveRecording(compareGestureScript.characterGesture); //give the temp memory to the estimation
-            estimationToIkScript.usingRecording = true;
             if (compareGestureScript.goalGestureCompleted(compareGestureScript.characterGesture)){
-                Success();
+                estimationToIkScript.saveRecording(compareGestureScript.characterGesture); //give the temp memory to the estimation
+                estimationToIkScript.usingRecording = true;
+
+                Success(); //for now, succeed automatically if we can directly mimic. But realistically, how does A.I know he is to mimic, and not interpret?
+            }
+            else //interpret the gesture
+            {
+                //INTERPRET the gesture as a shortcut for another, or a sequence, or a part of a sequence
+                Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
+                string meaning = dictionary.GetMeaningFromGesture(characterGesture);
+                //Debug.Log("Gesture was interpreted to mean: " + meaning);
+
+                //or interpret as a METAGESTURE and act accordingly
             }
         }
     }
@@ -139,27 +165,13 @@ public class LevelManager : MonoBehaviour
     }
 
     int nrGesturesChosen = 0;
-    public Vector3[,] pickFromDictionary()
+    public Gesture pickFromDictionary()
     {
         int pickIndex = nrGesturesChosen % gestureList.Count;
         nrGesturesChosen++;
-        Gesture gesture = gestureList[pickIndex];
-        Debug.Log("NEW GESTURE PICKED[" + pickIndex + "]: \n" + gesture.ToString());
-        Vector3[,] gestureMatrix = Gesture.GestureToMatrix(gesture);
-        Debug.Log("GESTURE MATRIX:\n" + gestureMatrix.ToString());
-        return gestureMatrix;
-
-        /*if(pickIndex % 2 == 0)
-        {
-            pickIndex++;
-            return new float[,] { { 5, 0, 0 }, { 5, 0, 0 } }; //example value for testing
-        }
-        else
-        {
-            pickIndex++;
-            return new float[,] { { 2, 2, 2 }, { 2, 2, 2 } }; //example value for testing
-        }*/
+        return gestureList[pickIndex];
     }
+
     public void UpdateText(string newText)
     {
         // Check if the InfoBox GameObject is not null

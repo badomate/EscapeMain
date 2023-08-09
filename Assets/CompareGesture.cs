@@ -89,7 +89,7 @@ public class CompareGesture : MonoBehaviour
         Debug.Log("CURRENT GESTURE MATRIX:\n" + gestureToCompareMatrix + "\n\nGOAL GESTURE MATRIX:\n" + LevelManagerScript.goalGesture);
 
         Gesture gestureToCompare = Gesture.MatrixToGesture(gestureToCompareMatrix);
-        Gesture goalGesture = Gesture.MatrixToGesture(LevelManagerScript.goalGesture);
+        Gesture goalGesture = LevelManagerScript.goalGesture;
         Debug.Log("CURRENT GESTURE:\n" + gestureToCompare + "\n\nGOAL GESTURE:\n" + goalGesture);
         return recording && recordingProgress == recordingLength && goalGesture.GestureMatches(gestureToCompare);//MeanSquaredError(gestureToCompare, goalGesture) < matchThreshold; TODO: fix
     }
