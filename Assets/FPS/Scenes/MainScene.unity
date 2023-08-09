@@ -1177,9 +1177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectionPort: 25001
   position:
-  - {x: -1.183519e+22, y: 8.93e-43, z: 0.000000013282759}
-  - {x: 0.00000017060744, y: 1.0749395e+10, z: 8.97e-43}
-  - {x: 4.6e-44, y: 0.000013553817, z: -1.183519e+22}
+  - {x: 0, y: 0, z: 0}
 --- !u!114 &319678130
 MonoBehaviour:
   m_ObjectHideFlags: 0
