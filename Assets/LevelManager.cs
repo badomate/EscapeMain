@@ -144,8 +144,6 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
     }
 
-    //private int pickIndex = 0;
-    //DictionaryManager gestureDictionaryScript;
     private Dictionary<Gesture, string> myDictionary;
     List<Gesture> gestureList;
 
@@ -169,6 +167,10 @@ public class LevelManager : MonoBehaviour
     {
         int pickIndex = nrGesturesChosen % gestureList.Count;
         nrGesturesChosen++;
+
+        Gesture gesture = gestureList[pickIndex];
+        Debug.Log("NEW GESTURE PICKED[" + pickIndex + "] \n" + gesture.ToString());
+        
         return gestureList[pickIndex];
     }
 

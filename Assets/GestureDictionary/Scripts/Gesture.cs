@@ -179,15 +179,17 @@ public class Gesture
     public List<Pose.Landmark> relatedLandmarks()
     {
         List<Pose.Landmark> relatedLandmarkList = new List<Pose.Landmark>();
-
+      
         for (int i = 0; i < _poseSequence.Count; i++)
         {
             Pose poseRef = _poseSequence[i]._poseToMatch;
+
             foreach (KeyValuePair<Pose.Landmark, Vector3> landmarkPos in poseRef._landmarkArrangement)
             {
                 relatedLandmarkList.Add(landmarkPos.Key);
             }
         }
-        return relatedLandmarkList;
+
+        return relatedLandmarkList.Distinct().ToList();
     }
 }
