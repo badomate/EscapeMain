@@ -36,8 +36,8 @@ data = "Position=[ 1, 1,  1]"
 def on_press(key):
     global data, enable
 
-    # Check if the key is '1' and update movement data accordingly
-    if key == keyboard.KeyCode.from_char('1'):
+    # Check if the key is '5' and update movement data accordingly
+    if key == keyboard.KeyCode.from_char('5'):
         data = "Position=[ 5, 0,  0]"
 
     
