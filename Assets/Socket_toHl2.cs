@@ -121,7 +121,8 @@ public class Socket_toHl2 : MonoBehaviour
             float.Parse(arrayData[1]),
             float.Parse(arrayData[2]));
 
-        Vector3[] result = {resultA}; 
+        Vector3[] result = Vector3[1];
+        result[0] = resultA; 
 
         return result;        
        // return Pose.GetPoseVectorFromString(dataString, LevelManager._poseRegex);
