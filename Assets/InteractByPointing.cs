@@ -14,6 +14,10 @@ public class InteractByPointing : MonoBehaviour
     private Vector3 fingertipPosition = new Vector3(-2.897f, 1.047f, 0);
     private Vector3 fingertipDirection = new Vector3(100, 0, 0);
 
+
+    [Tooltip("Show a red ray along where the player is pointing.")]
+    public bool Visualize = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,9 +35,12 @@ public class InteractByPointing : MonoBehaviour
     //should help draw the point ray
     private void OnDrawGizmos()
     {
-        // Draw ray as a line in the Scene view
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(fingertipPosition, fingertipDirection);
+        if (Visualize)
+        {
+            // Draw ray as a line in the Scene view
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(fingertipPosition, fingertipDirection);
+        }
     }
 
     // Update is called once per frame
@@ -44,9 +51,8 @@ public class InteractByPointing : MonoBehaviour
             RaycastHit hitInfo;
             if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity)) //might need a mask?
             {
-                if (hitInfo.collider.gameObject == Helper) //Issue: this is never true. Maybe Helper is missing collision?
+                if (hitInfo.collider.gameObject == Helper)
                 {
-                    Debug.Log("Hit Helper");
                     // Get the Animator component of the Helper character
                     Animator helperAnimator = Helper.GetComponent<Animator>();
 
@@ -57,14 +63,15 @@ public class InteractByPointing : MonoBehaviour
                         Transform rightArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightUpperArm);
 
                         // Check if the hit point is close to any of the bones
-                        float boneHitThreshold = 0.1f;
+                        float boneHitThreshold = 1.0f;
                         if (Vector3.Distance(hitInfo.point, leftArmBone.position) < boneHitThreshold)
                         {
-                            leftArmBone.GetComponent<Renderer>().material = highlightedMaterial;
+                            //Debug.Log("left arm hit");
+                            //leftArmBone.GetComponent<Renderer>().material = highlightedMaterial; //Issue: bones dont have renderers
                         }
                         else if (Vector3.Distance(hitInfo.point, rightArmBone.position) < boneHitThreshold)
                         {
-                            rightArmBone.GetComponent<Renderer>().material = highlightedMaterial;
+                            //rightArmBone.GetComponent<Renderer>().material = highlightedMaterial;
                         }
                     //TODO: if multiple bones are close enough, highlight the closest one
 
