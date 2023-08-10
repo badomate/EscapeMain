@@ -57,39 +57,56 @@ public class InteractByPointing : MonoBehaviour
         }
 
         Ray ray = new Ray(fingertipPosition, fingertipDirection); //mock data for now
-            RaycastHit hitInfo;
-            if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity)) //might need a mask?
+        RaycastHit hitInfo;
+
+        if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity)) //might need a mask?
+        {
+            if (hitInfo.collider.gameObject == Helper)
             {
-                if (hitInfo.collider.gameObject == Helper)
+                // Get the Animator component of the Helper character
+                Animator helperAnimator = Helper.GetComponent<Animator>();
+
+                if (helperAnimator != null)
                 {
-                    // Get the Animator component of the Helper character
-                    Animator helperAnimator = Helper.GetComponent<Animator>();
+                    // Get the bones of the Helper's skeleton
+                    Transform leftArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftUpperArm); //HumanBodyBones is a built-in enum
+                    Transform rightArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightUpperArm);
 
-                    if (helperAnimator != null)
+                    // Check if the hit point is close to any of the bones
+                    Transform[] bonesToCheck = new Transform[] { leftArmBone, rightArmBone };
+                    Transform[] boneHits = new Transform[bonesToCheck.Length];
+                    int boneHitCount = 0;
+
+                    for (int i = 0; i < bonesToCheck.Length; i++)
                     {
-                        // Get the bones of the Helper's skeleton
-                        Transform leftArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftUpperArm); //HumanBodyBones is a built-in enum
-                        Transform rightArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightUpperArm);
-
-                        // Check if the hit point is close to any of the bones
-                        
-                        if (Vector3.Distance(hitInfo.point, leftArmBone.position) < boneHitThreshold)
+                        if (Vector3.Distance(hitInfo.point, bonesToCheck[i].position) < boneHitThreshold)
                         {
-                            Debug.Log("leftarm");
-                            //leftArmRenderer = leftArmBone.GetComponent<SkinnedMeshRenderer>();
-                            //Debug.Log("left arm hit");
-                            //leftArmBone.GetComponent<Renderer>().material = highlightedMaterial; //Issue: bones dont have renderers
+                            boneHits[boneHitCount] = bonesToCheck[i];
+                            boneHitCount++;
                         }
-                        else if (Vector3.Distance(hitInfo.point, rightArmBone.position) < boneHitThreshold)
-                        {
-                        Debug.Log("rightarm");
-                            //rightArmBone.GetComponent<Renderer>().material = highlightedMaterial;
-                        }
-                    //TODO: if multiple bones are close enough, highlight the closest one
-
                     }
+                    Transform closestHitLimb = boneHits[0];
+
+                    //if we had mulitple hits, check if any were closer to the point of the hit
+                    if (boneHitCount > 1)
+                    {
+                        float closestDistance = Vector3.Distance(boneHits[0].transform.position, hitInfo.point);
+
+                        for (int i = 1; i < boneHitCount; i++)
+                        {
+                            float distance = Vector3.Distance(boneHits[i].transform.position, hitInfo.point);
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestHitLimb = boneHits[i];
+                            }
+                        }
+                    }
+                    Debug.Log(closestHitLimb.name);
+                    //TODO: process what happens with closestHitLimb
                 }
             }
+        }
 
     }
 }
