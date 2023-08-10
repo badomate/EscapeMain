@@ -46,10 +46,11 @@ public class PanopticToIK : MonoBehaviour
     private bool fadingIn = false;
 
 
-    //Where to receive data. LevelManager might overwrite these if active.
+    //Where to receive data. LevelManager might overwrite these if active. TODO: with so many options, but only one being used at a time, we should really make this an enum for example
     public bool usingHololensTcp = false; 
     public bool usingPanoptic = false;
     public bool usingRecording = false;
+    public bool usingPointedDircetions = false;
 
     [System.Serializable]
     public class BodyData

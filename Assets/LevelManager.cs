@@ -17,7 +17,8 @@ public class LevelManager : MonoBehaviour
     PanopticToIK estimationToIkScript;
     CompareGesture compareGestureScript;
     public GameObject PlayerUI;
-    public GameObject InfoBox;
+    public TextMesh InfoBox;
+    public TextMesh LevelInfoBox;
     private bool connected = false; //used for events
     private DictionaryManager dictionary;
     public static Regex _poseRegex;
@@ -76,7 +77,7 @@ public class LevelManager : MonoBehaviour
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
         {
-            UpdateText("Next to demonstrate: A.I");
+            UpdateText("Next to demonstrate: A.I", "LEVEL "+levelCounter);
 
             //hide the goaldisplay
             PlayerUI.SetActive(false);
@@ -87,7 +88,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            UpdateText("Next to demonstrate: Player");
+            UpdateText("Next to demonstrate: Player", "LEVEL " + levelCounter);
             estimationToIkScript.usingRecording = false;
 
             //show the goaldisplay, so the player knows what to demonstrate
@@ -122,6 +123,7 @@ public class LevelManager : MonoBehaviour
                 //INTERPRET the gesture as a shortcut for another, or a sequence, or a part of a sequence
                 Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
                 string meaning = dictionary.GetMeaningFromGesture(characterGesture);
+                estimationToIkScript.usingPointedDircetions = true;
                 //Debug.Log("Gesture was interpreted to mean: " + meaning);
 
                 //or interpret as a METAGESTURE and act accordingly
@@ -131,7 +133,7 @@ public class LevelManager : MonoBehaviour
 
     public void Success()
     {
-        UpdateText("Puzzle Solved!");
+        UpdateText("Puzzle Solved!", "");
         goalGesture = pickFromDictionary();
         if (currentPlayer == 1)
         {
@@ -174,30 +176,26 @@ public class LevelManager : MonoBehaviour
         return gestureList[pickIndex];
     }
 
-    public void UpdateText(string newText)
+    public void UpdateText(string newText, string newText2)
     {
-        // Check if the InfoBox GameObject is not null
+        //theres 2 seperate objects for showing level/puzzle related information
         if (InfoBox != null)
         {
-            // Get the TextMesh component attached to the InfoBox GameObject
-            TextMesh textMeshComponent = InfoBox.GetComponent<TextMesh>();
-
-            // Check if the TextMesh component is not null
-            if (textMeshComponent != null)
-            {
-                // Update the text of the TextMesh component
-                textMeshComponent.text = newText;
-            }
-            else
-            {
-                Debug.LogError("TextMesh component not found on InfoBox GameObject.");
-            }
+                InfoBox.text = newText;
         }
         else
         {
-            Debug.LogError("InfoBox GameObject is not assigned.");
+            Debug.LogError("InfoBox is not assigned.");
         }
 
+        if (LevelInfoBox != null)
+        {
+            LevelInfoBox.text = newText2;
+        }
+        else
+        {
+            Debug.LogError("LevelInfoBox is not assigned.");
+        }
 
     }
 }

@@ -71,7 +71,7 @@ public class InteractByPointing : MonoBehaviour
         Ray ray = new Ray(fingertipPosition, fingertipDirection); //mock data for now
         RaycastHit hitInfo;
 
-        if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity)) //might need a mask?
+        if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity) && LevelManagerScript.currentPlayer == 1) //Disabled unless it's player's turn to explain, not sure if it has a use otherwise
         {
 
             //Get the Animator component of the Helper
@@ -140,6 +140,10 @@ public class InteractByPointing : MonoBehaviour
             }
             else //a limb is currently locked in
             {
+                //Once the limb is locked in, this block here runs every frame.
+                //We can get reset to the normal selection mechanic (release the selection lock) by setting "hoveredLimb" to null anywhere.
+                PanopticToIK estimationScript = Helper.GetComponent<PanopticToIK>();
+                //estimationScript.landmarks = hitInfo.point;
                 Debug.Log("Limb locked in: " + hoveredLimb.name);
             }
         }
