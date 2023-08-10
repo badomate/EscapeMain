@@ -36,7 +36,10 @@ public class InteractByPointing : MonoBehaviour
         }
     }
 
-    //should help draw the point ray
+    //used to put a sphere Gizmo at the hit impact
+    private Vector3 hitPoint;
+        
+    //for visualization in Scene view
     private void OnDrawGizmos()
     {
         if (Visualize)
@@ -44,8 +47,17 @@ public class InteractByPointing : MonoBehaviour
             // Draw ray as a line in the Scene view
             Gizmos.color = Color.red;
             Gizmos.DrawRay(fingertipPosition, fingertipDirection);
+
+            if (hitPoint != new Vector3(0,0,0))
+            {
+                Gizmos.DrawSphere(hitPoint, 0.1f);
+            }
         }
     }
+
+
+    private Transform hoveredLimb = null;
+    private float startTime; // Stores when hovering the current limb started;
 
     // Update is called once per frame
     void Update()
@@ -61,52 +73,77 @@ public class InteractByPointing : MonoBehaviour
 
         if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity)) //might need a mask?
         {
-            if (hitInfo.collider.gameObject == Helper)
+
+            //Get the Animator component of the Helper
+            Animator helperAnimator = Helper.GetComponent<Animator>();
+
+            if (Time.time - startTime < 3.0f || !hoveredLimb)
             {
-                // Get the Animator component of the Helper character
-                Animator helperAnimator = Helper.GetComponent<Animator>();
-
-                if (helperAnimator != null)
+                if (hitInfo.collider.gameObject == Helper)
                 {
-                    // Get the bones of the Helper's skeleton
-                    Transform leftArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftUpperArm); //HumanBodyBones is a built-in enum
-                    Transform rightArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightUpperArm);
-
-                    // Check if the hit point is close to any of the bones
-                    Transform[] bonesToCheck = new Transform[] { leftArmBone, rightArmBone };
-                    Transform[] boneHits = new Transform[bonesToCheck.Length];
-                    int boneHitCount = 0;
-
-                    for (int i = 0; i < bonesToCheck.Length; i++)
+                    if (Visualize)
                     {
-                        if (Vector3.Distance(hitInfo.point, bonesToCheck[i].position) < boneHitThreshold)
-                        {
-                            boneHits[boneHitCount] = bonesToCheck[i];
-                            boneHitCount++;
-                        }
+                        hitPoint = hitInfo.point; //save this so the Gizmos can use it
                     }
-                    Transform closestHitLimb = boneHits[0];
 
-                    //if we had mulitple hits, check if any were closer to the point of the hit
-                    if (boneHitCount > 1)
+                    if (helperAnimator != null)
                     {
-                        float closestDistance = Vector3.Distance(boneHits[0].transform.position, hitInfo.point);
+                        //Get the bones of the Helper's skeleton
+                        Transform leftArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftUpperArm); //HumanBodyBones is a built-in enum
+                        Transform rightArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightUpperArm);
 
-                        for (int i = 1; i < boneHitCount; i++)
+                        //Check if the hit point is close to any of the interesting bones
+                        Transform[] bonesToCheck = new Transform[] { leftArmBone, rightArmBone };
+                        Transform[] boneHits = new Transform[bonesToCheck.Length];
+                        int boneHitCount = 0;
+
+                        for (int i = 0; i < bonesToCheck.Length; i++)
                         {
-                            float distance = Vector3.Distance(boneHits[i].transform.position, hitInfo.point);
-                            if (distance < closestDistance)
+                            if (Vector3.Distance(hitInfo.point, bonesToCheck[i].position) < boneHitThreshold)
                             {
-                                closestDistance = distance;
-                                closestHitLimb = boneHits[i];
+                                boneHits[boneHitCount] = bonesToCheck[i];
+                                boneHitCount++;
                             }
                         }
+                        Transform closestHitLimb = boneHits[0];
+
+                        //if we had mulitple hits, check if any were closer to the point of the hit
+                        if (boneHitCount > 1)
+                        {
+                            float closestDistance = Vector3.Distance(boneHits[0].transform.position, hitInfo.point);
+
+                            for (int i = 1; i < boneHitCount; i++)
+                            {
+                                float distance = Vector3.Distance(boneHits[i].transform.position, hitInfo.point);
+                                if (distance < closestDistance)
+                                {
+                                    closestDistance = distance;
+                                    closestHitLimb = boneHits[i];
+                                }
+                            }
+                        }
+                        if (hoveredLimb != closestHitLimb)
+                        {
+                            hoveredLimb = closestHitLimb;
+                            startTime = Time.time;
+
+                        }
+                            Debug.Log("Locking in the following limb: " + hoveredLimb + "...");
+                        //TODO: process what happens with closestHitLimb,
+                        //such as highlighting it to show that it is being "hovered" with the pointer
                     }
-                    Debug.Log(closestHitLimb.name);
-                    //TODO: process what happens with closestHitLimb
+                }
+                else //we never hit the Helper's (generous) collision box, so he is not being pointed at
+                {
+                    hoveredLimb = null; 
                 }
             }
+            else //a limb is currently locked in
+            {
+                Debug.Log("Limb locked in: " + hoveredLimb.name);
+            }
         }
+        
 
     }
 }

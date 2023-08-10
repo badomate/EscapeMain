@@ -722,6 +722,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8955316372418814459, guid: b0d61dc70153b3647926c65ee14291df,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.586
+      objectReference: {fileID: 0}
+    - target: {fileID: -8955316372418814459, guid: b0d61dc70153b3647926c65ee14291df,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
       propertyPath: m_RootOrder
@@ -4552,7 +4562,7 @@ MonoBehaviour:
   highlightedMaterial: {fileID: 2100004, guid: bd232805ec57aa245a81c2df3f69f66a, type: 3}
   Visualize: 1
   moveWithMouse: 1
-  boneHitThreshold: 1
+  boneHitThreshold: 2
 --- !u!1001 &2729281214287269654
 PrefabInstance:
   m_ObjectHideFlags: 0
