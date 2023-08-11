@@ -180,7 +180,6 @@ public class InteractByPointing : MonoBehaviour
                 {
                     hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
                     //TODO: have this triggure using some positive feedback metagesture, like a nod or a thumbs up (would thumbs up mess up the pointing?)
-                
                 }
 
             }

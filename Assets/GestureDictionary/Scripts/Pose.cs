@@ -19,7 +19,7 @@ public class Pose
     }
 
     public static List<Landmark> LandmarkIds = new List<Landmark>() {
-        Landmark.LEFT_WRIST
+        Landmark.LEFT_WRIST //TODO: please add (and test) RIGHT_WRIST so we can manipulate that as well
     };
 
     /// <summary> 

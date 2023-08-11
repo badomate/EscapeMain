@@ -88,8 +88,16 @@ public class PanopticToIK : MonoBehaviour
 
     private Vector3 goalFromIndex(int index)
     {
-        Vector3 currentPos = landmarks[index] * scaleFactor; // x-axis pos
-        return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
+        if(index  < landmarks.Length)
+        {
+            Vector3 currentPos = landmarks[index] * scaleFactor; // x-axis pos
+            return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
+        }
+        else
+        {
+            //Debug.LogWarning("goalFromIndex is trying to index landmarks that were not received.");
+            return new Vector3(0, 0, 0);
+        }
     }
 
     private void SetIKPosition(int index, AvatarIKGoal limb) //, AvatarIKHint hintlimb
@@ -112,7 +120,7 @@ public class PanopticToIK : MonoBehaviour
     {
         //Endpoints:
         SetIKPosition(0, AvatarIKGoal.LeftHand);
-        //SetIKPosition(11, AvatarIKGoal.RightHand);
+        SetIKPosition(1, AvatarIKGoal.RightHand);
 
         if (usingPanoptic)
         {
@@ -205,10 +213,6 @@ public class PanopticToIK : MonoBehaviour
                     landmarks[j] = builtDirectionMatrix[0, j]; //TODO: rotation issue. Character is moving his hand backwards if the pointing hit was in front of it.
                 }
             }
-            else
-            {
-                Debug.LogWarning("Direction matrix is empty.");
-            }
         }
         else
         {
@@ -288,7 +292,6 @@ public class PanopticToIK : MonoBehaviour
         if (fadingOutWards)
         {
             smoothWeight = 1.0f - smoothingFrameCount / (float)smoothingFrames;
-
         }
         else
         {
