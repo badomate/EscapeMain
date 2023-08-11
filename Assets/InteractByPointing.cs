@@ -12,6 +12,7 @@ public class InteractByPointing : MonoBehaviour
     private LevelManager LevelManagerScript;
     private Socket_toHl2 TCPScript;
     public Material highlightedMaterial;
+    public Material regularMaterial;
 
     private Vector3 fingertipPosition = new Vector3(-2.897f, 1.047f, 0);
     private Vector3 fingertipDirection = new Vector3(100, 0, 0);
@@ -124,17 +125,23 @@ public class InteractByPointing : MonoBehaviour
                         }
                         if (hoveredLimb != closestHitLimb)
                         {
+                            /*if (hoveredLimb!=null)
+                                hoveredLimb.gameObject.GetComponent<Renderer>().material = regularMaterial;
+                            */
                             hoveredLimb = closestHitLimb;
                             startTime = Time.time;
 
                         }
-                            Debug.Log("Locking in the following limb: " + hoveredLimb + "...");
+                        Debug.Log("Locking in the following limb: " + hoveredLimb + "...");
+                        //hoveredLimb.gameObject.GetComponent<Renderer>().material = highlightedMaterial;
+
                         //TODO: process what happens with closestHitLimb,
                         //such as highlighting it to show that it is being "hovered" with the pointer
                     }
                 }
                 else //we never hit the Helper's (generous) collision box, so he is not being pointed at
                 {
+//                    hoveredLimb.gameObject.GetComponent<Renderer>().material = regularMaterial;
                     hoveredLimb = null; 
                 }
             }
