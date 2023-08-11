@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1707125, g: 0.40076286, b: 0.35276, a: 1}
+  m_IndirectSpecularColor: {r: 0.17071304, g: 0.40076345, b: 0.3527613, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1066,6 +1066,7 @@ MonoBehaviour:
   Helper: {fileID: 319678117}
   GoalDisplayCharacter: {fileID: 1204171163}
   currentPlayer: 1
+  pointerScript: {fileID: 2729281214152228945}
   PlayerUI: {fileID: 206531942}
   InfoBox: {fileID: 998058053}
   LevelInfoBox: {fileID: 672437112}

@@ -16,6 +16,7 @@ public class LevelManager : MonoBehaviour
 
     PanopticToIK estimationToIkScript;
     CompareGesture compareGestureScript;
+    public InteractByPointing pointerScript;
     public GameObject PlayerUI;
     public TextMesh InfoBox;
     public TextMesh LevelInfoBox;
@@ -107,7 +108,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    void handlePlayerConfirmedGesture()
+    void handlePlayerConfirmedGesture() //TODO: instead of checking the various ways the puzzle can be solved, perhaps we could just get whatever the Helper is doing and compare that directly
     {
         if (currentPlayer == 1) //player demonstrates
         {
@@ -120,13 +121,32 @@ public class LevelManager : MonoBehaviour
             }
             else //interpret the gesture
             {
-                //INTERPRET the gesture as a shortcut for another, or a sequence, or a part of a sequence
-                Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
-                string meaning = dictionary.GetMeaningFromGesture(characterGesture);
-                estimationToIkScript.usingPointedDircetions = true; //could also be set from the pointing script?
-                //Debug.Log("Gesture was interpreted to mean: " + meaning);
+                if (estimationToIkScript.usingPointedDircetions) //are we following the directions the player is giving us via pointing?
+                {
+                    if (pointerScript)
+                    {
+                        if (pointerScript.GestureBeingBuilt._poseSequence.Count > 0 &&
+                            compareGestureScript.goalGestureCompleted(Gesture.GestureToMatrix(pointerScript.GestureBeingBuilt)))
+                        {
+                            //Puzzle was completed using directions given via pointing
+                            Success();
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning("No Pointer script found. Please check script paramters.");
+                    }
+                }
+                else
+                {
+                    //INTERPRET the gesture as a shortcut for another, or a sequence, or a part of a sequence
+                    Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
+                    string meaning = dictionary.GetMeaningFromGesture(characterGesture);
+                    estimationToIkScript.usingPointedDircetions = true; //could also be set from the pointing script?
+                    //Debug.Log("Gesture was interpreted to mean: " + meaning);
+                }
 
-                //or interpret as a METAGESTURE and act accordingly
+                //or interpret as a METAGESTURE and act accordingly. But perhaps metagestures should trigger events instead
             }
         }
     }
