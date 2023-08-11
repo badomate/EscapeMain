@@ -124,6 +124,24 @@ public class Pose
         return pose;
     }
 
+    public static Pose GetPoseFromArray(Vector3[] poseArray)
+    {
+        Pose pose = new Pose();
+
+        int totalLandmarks = LandmarkIds.Count;
+
+        for (int i = 0; i < totalLandmarks; i++)
+        {
+            Landmark landmark = LandmarkIds[i];
+            Vector3 landmarkPosition = poseArray[i];
+            bool isLandmarkRelevant = !landmarkPosition.Equals(Vector3.zero);
+
+            if (isLandmarkRelevant)
+                pose._landmarkArrangement.Add(landmark, landmarkPosition);
+        }
+        return pose;
+    }
+
     /// <summary> Format: " LM0 Position=[ lm00Pos_x, lm00Pos_y,  lm00Pos_z]. LM1 Position=[ lm01Pos_x, lm01Pos_y,  lm01Pos_z]." </summary>
     public static Vector3[] GetPoseVectorFromString(string poseString, Regex poseRegex)
     {
