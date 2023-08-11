@@ -58,6 +58,9 @@ public class InteractByPointing : MonoBehaviour
 
     private Transform hoveredLimb = null;
     private float startTime; // Stores when hovering the current limb started;
+    private Pose PoseBeingBuilt;
+    Dictionary<Pose.Landmark, Vector3> LandmarksForPose = new Dictionary<Pose.Landmark, Vector3>();
+    public Gesture GestureBeingBuilt = new Gesture();
 
     // Update is called once per frame
     void Update()
@@ -141,13 +144,42 @@ public class InteractByPointing : MonoBehaviour
             else //a limb is currently locked in
             {
                 //Once the limb is locked in, this block here runs every frame.
-                //We can get reset to the normal selection mechanic (release the selection lock) by setting "hoveredLimb" to null anywhere.
+
                 PanopticToIK estimationScript = Helper.GetComponent<PanopticToIK>();
                 //estimationScript.landmarks = hitInfo.point;
+                Pose.Landmark landmarkSelected;
+                switch (hoveredLimb.name)
+                {
+                    case "mixamorig:LeftArm": //if we had saved the HumanBody enum from earlier, we could be switching on that 
+                        landmarkSelected = Pose.Landmark.LEFT_WRIST;
+                        break;
+                    case "mixamorig:RightArm":
+                        landmarkSelected = Pose.Landmark.RIGHT_WRIST;
+                        break;
+                    default:
+                        landmarkSelected = Pose.Landmark.LEFT_WRIST;
+                        break;
+                }
                 Debug.Log("Limb locked in: " + hoveredLimb.name);
+                LandmarksForPose[landmarkSelected] = hitInfo.point;
+
+                PoseBeingBuilt = new Pose(LandmarksForPose);
+                if(GestureBeingBuilt._poseSequence.Count < 1)
+                {
+                    GestureBeingBuilt.AddPose(PoseBeingBuilt);
+                }
+
+                if (Input.GetKey("q"))
+                {
+                    hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
+                    //TODO: have this triggure using some positive feedback metagesture, like a nod or a thumbs up (would thumbs up mess up the pointing?)
+                
+                }
+
             }
         }
         
+
 
     }
 }

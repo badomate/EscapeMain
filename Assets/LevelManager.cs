@@ -123,7 +123,7 @@ public class LevelManager : MonoBehaviour
                 //INTERPRET the gesture as a shortcut for another, or a sequence, or a part of a sequence
                 Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
                 string meaning = dictionary.GetMeaningFromGesture(characterGesture);
-                estimationToIkScript.usingPointedDircetions = true;
+                estimationToIkScript.usingPointedDircetions = true; //could also be set from the pointing script?
                 //Debug.Log("Gesture was interpreted to mean: " + meaning);
 
                 //or interpret as a METAGESTURE and act accordingly

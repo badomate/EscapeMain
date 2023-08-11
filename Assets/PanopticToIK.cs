@@ -190,6 +190,32 @@ public class PanopticToIK : MonoBehaviour
         }
     }
 
+
+    public InteractByPointing PointingScript;
+    private void getDataFromPointing()
+    {
+        if (PointingScript) //TODO: this block is very similar to getDataFromRecording. We could probably move the redundant part to a seperate function
+        {
+            Vector3[,] builtDirectionMatrix = Gesture.GestureToMatrix(PointingScript.GestureBeingBuilt);
+            if(builtDirectionMatrix.GetLength(0) > 0)
+            {
+                landmarks = new Vector3[builtDirectionMatrix.GetLength(1)];
+                for (int j = 0; j < builtDirectionMatrix.GetLength(1); j++)
+                {
+                    landmarks[j] = builtDirectionMatrix[0, j]; //TODO: rotation issue. Character is moving his hand backwards if the pointing hit was in front of it.
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Direction matrix is empty.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Trying to follow pointing directions, but can't find the pointing script. Check script parameters.");
+        }
+    }
+
     void OnAnimatorIK()
     {
         if (fadingIn && smoothing) //each step of fading in
@@ -212,6 +238,10 @@ public class PanopticToIK : MonoBehaviour
                 else if(usingRecording)
                 {
                     getDataFromRecording();
+                }
+                else if(usingPointedDircetions) //TODO: test if this messes up resetting on player's turn to demonstrate
+                {
+                    getDataFromPointing();
                 }
                 else //no data to gather, so reset weights
                 {

@@ -1016,6 +1016,7 @@ MonoBehaviour:
   usingPanoptic: 0
   usingRecording: 0
   usingPointedDircetions: 0
+  PointingScript: {fileID: 2729281214152228945}
 --- !u!114 &319678127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3014,6 +3015,7 @@ MonoBehaviour:
   usingPanoptic: 0
   usingRecording: 0
   usingPointedDircetions: 0
+  PointingScript: {fileID: 0}
 --- !u!4 &1220487859 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2141676431450117668, guid: cd17687759887a0438ee021e51abc9d9,
@@ -3747,6 +3749,7 @@ MonoBehaviour:
   usingPanoptic: 0
   usingRecording: 0
   usingPointedDircetions: 0
+  PointingScript: {fileID: 0}
 --- !u!1 &1590240075 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b0d61dc70153b3647926c65ee14291df,
