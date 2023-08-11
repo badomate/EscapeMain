@@ -28,6 +28,8 @@ public class Pose
     /// </summary>
     public Dictionary<Landmark, Vector3> _landmarkArrangement;
 
+    private static Vector3 DefaultLandmarkPosition = Vector3.zero;
+
     public Pose() {
         _landmarkArrangement = new Dictionary<Landmark, Vector3>();
     }
@@ -150,5 +152,24 @@ public class Pose
         }
 
         return poseVector;
+    }
+
+
+    public static Vector3[] GetPoseVectors(Pose pose)
+    {
+        int totalLandmarks = LandmarkIds.Count;
+        Vector3[] poseVectors = new Vector3[totalLandmarks];
+
+        for (int i = 0; i < totalLandmarks; i++)
+        {
+            Landmark landmark = LandmarkIds[i];
+            bool isLandmarkRelevant = pose._landmarkArrangement.
+                                                    TryGetValue(landmark, out Vector3 landmarkPosition);
+            if (!isLandmarkRelevant)
+                landmarkPosition = DefaultLandmarkPosition;
+
+            poseVectors[i] = landmarkPosition;
+        }
+        return poseVectors;
     }
 }
