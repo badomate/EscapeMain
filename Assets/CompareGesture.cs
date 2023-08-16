@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using AuxiliarContent;
 
 public class CompareGesture : MonoBehaviour
 {
     public static int recordingLength = 2; //how many frames do we save for comparison? should match the dictionary
-    public static int sampleLength = 1; //how many coordinates are we receiving in total? (e.g. 3 keypoints are likely equal to a sample length of 9)
+    public static int sampleLength = Pose.LandmarkIds.Count; //how many landmarks are we receiving in total?
     public int stillnessFramesRequired = 2;
 
 
@@ -107,7 +108,12 @@ public class CompareGesture : MonoBehaviour
             
             if (recordingProgress < recordingLength) //building up the matrix
             {
-                characterGesture[recordingProgress, 0] = TcpScript.position[0];
+                CustomDebug.LogAlex("Position: Len=" + TcpScript.position.Length + ". Items=" + string.Join(", ", TcpScript.position));
+                for (int k = 0; k < sampleLength; k++) {
+                    CustomDebug.LogAlex("SAVING FRAME: charaterGesture[" + recordingProgress + "," + k + "].");
+                    Vector3 posA = TcpScript.position[k];
+                    characterGesture[recordingProgress, k] = posA;
+                }
                 recordingProgress++;
             }
             else //updating the matrix

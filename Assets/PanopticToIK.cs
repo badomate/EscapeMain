@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System;
+using AuxiliarContent;
 
 public class PanopticToIK : MonoBehaviour
 {
@@ -169,7 +170,7 @@ public class PanopticToIK : MonoBehaviour
             TcpScript = GetComponent<Socket_toHl2>();
         }
         //Debug.Log(TcpScript.position);
-        landmarks = new Vector3[1];
+        landmarks = new Vector3[Pose.LandmarkIds.Count];
         landmarks[0] = TcpScript.position[0];
     }
 
@@ -177,6 +178,7 @@ public class PanopticToIK : MonoBehaviour
     public void saveRecording(Vector3[,] recording)
     {
         savedRecording = new Vector3[recording.GetLength(0), recording.GetLength(1)];
+        CustomDebug.LogAlex("#2 Len saved recording = [" + savedRecording.GetLength(0) + ", " + savedRecording.GetLength(1) + "]");
         Array.Copy(recording, savedRecording, recording.GetLength(0) * recording.GetLength(1));
     }
 
@@ -190,6 +192,7 @@ public class PanopticToIK : MonoBehaviour
 
 
         landmarks = new Vector3[savedRecording.GetLength(1)];
+        CustomDebug.LogAlex("Len saved recording = [" + savedRecording.GetLength(0) + ", " + savedRecording.GetLength(1) + "]");
 
         //copy goalGesture into current landmarks so we can do the animation
         for (int j = 0; j < savedRecording.GetLength(1); j++)
@@ -205,6 +208,7 @@ public class PanopticToIK : MonoBehaviour
         if (PointingScript) //TODO: this block is very similar to getDataFromRecording. We could probably move the redundant part to a seperate function
         {
             Vector3[,] builtDirectionMatrix = Gesture.GestureToMatrix(PointingScript.GestureBeingBuilt);
+            CustomDebug.LogAlex("BDM len =" + builtDirectionMatrix.GetLength(0) + builtDirectionMatrix.GetLength(1));
             if(builtDirectionMatrix.GetLength(0) > 0)
             {
                 landmarks = new Vector3[builtDirectionMatrix.GetLength(1)];
@@ -319,9 +323,9 @@ public class PanopticToIK : MonoBehaviour
         animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, newWeight);
 
-        /*
         animator.SetIKPositionWeight(AvatarIKGoal.RightHand, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.RightHand, newWeight);
+        /*
         animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, newWeight);
 

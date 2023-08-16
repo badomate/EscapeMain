@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using AuxiliarContent;
 
 /// <summary> A list of sequential poses, with a specific frame (time) interval and (pose) match threshold. </summary>
 public class Gesture
@@ -103,8 +104,11 @@ public class Gesture
     public static Gesture MatrixToGesture(Vector3[,] gestureMatrix)
     {
         Gesture gesture = new Gesture();
-        int nrPoses = gestureMatrix.Length;
+        int nrPoses = gestureMatrix.GetLength(0);
         int nrLandmarks = Pose.LandmarkIds.Count;
+        CustomDebug.LogAlex("MatrixToGesture: Poses=" + nrPoses + ". LM =" + nrLandmarks +
+        "\nCols =" + gestureMatrix.Length + ", Lines=" + gestureMatrix.LongLength  +
+        "\nLINES =" + gestureMatrix.GetLength(0) + ", COLS=" + gestureMatrix.GetLength(1));
 
         for (int i = 0; i < nrPoses; i++)
         {
@@ -113,6 +117,7 @@ public class Gesture
             for (int j = 0; j < nrLandmarks; j++)
             {
                 Pose.Landmark landmark = Pose.LandmarkIds[j];
+                CustomDebug.LogAlex("MtG: " + i + ", "+ j);
                 pose._landmarkArrangement.Add(landmark, gestureMatrix[i, j]);
             }
 
@@ -164,7 +169,7 @@ public class Gesture
 
         for (int i = 0; i < _poseSequence.Count; i++) {
             gestureStringBuilder.Append("\nP" + i + ": ");
-            gestureStringBuilder.Append(_poseSequence[i]._poseToMatch.ToString());
+            gestureStringBuilder.Append(_poseSequence[i]._poseToMatch.ToString(false));
         }
 
         string gestureString = gestureStringBuilder.ToString();

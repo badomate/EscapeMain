@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using AuxiliarContent;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary> A pose corresponds to a specific (and static) set of landmark positions. </summary>
@@ -18,8 +20,11 @@ public class Pose
         RIGHT_FOOT
     }
 
+    private const float DEFAULT_VARIANCE = 3;
+
     public static List<Landmark> LandmarkIds = new List<Landmark>() {
-        Landmark.LEFT_WRIST //TODO: please add (and test) RIGHT_WRIST so we can manipulate that as well
+        Landmark.LEFT_WRIST,
+        Landmark.RIGHT_WRIST
     };
 
     /// <summary> 
@@ -47,10 +52,11 @@ public class Pose
             Debug.Log("LM: landmarkPos.Key" + ". Ref ": + refArranjement + ". Other: " + otherArranjement + ".");
             */
 
-            float landmarkVarianceSquared =  GetLandmarkVarianceSquared(
+            float landmarkVarianceSquared =  otherPose._landmarkArrangement.ContainsKey(landmarkPos.Key)?
+            GetLandmarkVarianceSquared(
                 landmarkPos.Value,
                 otherPose._landmarkArrangement[landmarkPos.Key]
-            );     
+            ) : DEFAULT_VARIANCE;     
             // matchVarianceSquared += Mathf.Pow(landmarkVariance, 2); // sqrt(a)**2 = a
             matchVarianceSquared += landmarkVarianceSquared;
         }
@@ -81,16 +87,22 @@ public class Pose
     }
 
     /// <summary> Format: "LM0 Position=[lm00Pos_x, lm00Pos_y,  lm00Pos_z]. LM1 Position=[lm01Pos_x, lm01Pos_y,  lm01Pos_z]" </summary>
-    public override string ToString()
+    public string ToString(bool allLandmarks = false)
     {
         StringBuilder poseStringBuilder = new StringBuilder();
 
-        for (int j = 0; j < LandmarkIds.Count; j++) {
-            Landmark landmark = LandmarkIds[j];
-            Vector3 landmarkPos = _landmarkArrangement[landmark];
-            string landmarkPosString = 
-                $" {landmark}: Position=[{landmarkPos[0]}, {landmarkPos[1]},  {landmarkPos[2]}].";
-            poseStringBuilder.Append(landmarkPosString);
+        for (int i = 0; i < LandmarkIds.Count; i++) {
+            Landmark landmark = LandmarkIds[i];
+            bool isLandmarkRelevant = _landmarkArrangement.
+                                                    TryGetValue(landmark, out Vector3 landmarkPos);
+            if (!isLandmarkRelevant)
+                landmarkPos = DefaultLandmarkPosition;
+
+            if (allLandmarks) {
+                string landmarkPosString = 
+                    $" {landmark}: Position=[{landmarkPos[0]}, {landmarkPos[1]},  {landmarkPos[2]}].";
+                poseStringBuilder.Append(landmarkPosString);
+            }
         }
 
         string poseString = poseStringBuilder.ToString();
@@ -149,7 +161,7 @@ public class Pose
         int nrLandmarksRegistered = 0;
 
         int totalLandmarks = landmarkPositions.Count;
-        Debug.Log("Received pose.");
+        CustomDebug.LogAlex("Received pose. #LM=" + totalLandmarks);
 
         Vector3[] poseVector = new Vector3[totalLandmarks];
 
