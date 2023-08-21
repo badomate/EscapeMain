@@ -152,7 +152,7 @@ public class InteractByPointing : MonoBehaviour
             {
                 //Once the limb is locked in, this block here runs every frame.
 
-                PanopticToIK estimationScript = Helper.GetComponent<PanopticToIK>();
+                EstimationToIK estimationScript = Helper.GetComponent<EstimationToIK>();
                 //estimationScript.landmarks = hitInfo.point;
                 Pose.Landmark landmarkSelected;
                 switch (hoveredLimb.name)

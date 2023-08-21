@@ -996,7 +996,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 319678117}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d856052d8fc23f84f9c997527c0b8dbc, type: 3}
+  m_Script: {fileID: 11500000, guid: 384f82084bb682e4b9e7e0f0fbae24e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
@@ -1012,10 +1012,7 @@ MonoBehaviour:
   smoothingFrames: 20
   selectedAnimName: coverFace
   smoothing: 0
-  usingHololensTcp: 1
-  usingPanoptic: 0
-  usingRecording: 0
-  usingPointedDircetions: 0
+  currentEstimationSource: 0
   PointingScript: {fileID: 2729281214152228945}
 --- !u!114 &319678127
 MonoBehaviour:
@@ -2996,10 +2993,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1204171163}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d856052d8fc23f84f9c997527c0b8dbc, type: 3}
+  m_Script: {fileID: 11500000, guid: 384f82084bb682e4b9e7e0f0fbae24e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TcpScript: {fileID: 0}
+  TcpScript: {fileID: 319678127}
   keypointBones:
   - {fileID: 1204171164}
   leftHand: {fileID: 725765932}
@@ -3012,10 +3009,7 @@ MonoBehaviour:
   smoothingFrames: 20
   selectedAnimName: coverFace
   smoothing: 0
-  usingHololensTcp: 0
-  usingPanoptic: 0
-  usingRecording: 0
-  usingPointedDircetions: 0
+  currentEstimationSource: 0
   PointingScript: {fileID: 0}
 --- !u!4 &1220487859 stripped
 Transform:
@@ -3730,7 +3724,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1528204665}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d856052d8fc23f84f9c997527c0b8dbc, type: 3}
+  m_Script: {fileID: 11500000, guid: 384f82084bb682e4b9e7e0f0fbae24e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
@@ -3746,10 +3740,7 @@ MonoBehaviour:
   smoothingFrames: 20
   selectedAnimName: coverFace
   smoothing: 0
-  usingHololensTcp: 1
-  usingPanoptic: 0
-  usingRecording: 0
-  usingPointedDircetions: 0
+  currentEstimationSource: 1
   PointingScript: {fileID: 0}
 --- !u!1 &1590240075 stripped
 GameObject:

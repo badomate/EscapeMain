@@ -14,7 +14,7 @@ public class LevelManager : MonoBehaviour
     public Gesture goalGesture = null;//change this from gesture dictionary
     private Pose.Landmark lockedLimb;
 
-    PanopticToIK estimationToIkScript;
+    EstimationToIK estimationToIkScript;
     CompareGesture compareGestureScript;
     public InteractByPointing pointerScript;
     public GameObject PlayerUI;
@@ -30,11 +30,7 @@ public class LevelManager : MonoBehaviour
         dictionary = new DictionaryManager();
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         compareGestureScript = Helper.GetComponent<CompareGesture>();
-        estimationToIkScript = Helper.GetComponent<PanopticToIK>();
-
-
-        estimationToIkScript.usingHololensTcp = false;
-        estimationToIkScript.usingPanoptic = false;
+        estimationToIkScript = Helper.GetComponent<EstimationToIK>();
 
         PrepareGestureOptions();
         goalGesture = pickFromDictionary();
@@ -85,12 +81,12 @@ public class LevelManager : MonoBehaviour
 
             //mimic that gesture using the IK script
             estimationToIkScript.saveRecording(Gesture.GestureToMatrix(goalGesture));
-            estimationToIkScript.usingRecording = true;
+            estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
         }
         else
         {
             UpdateText("Next to demonstrate: Player", "LEVEL " + levelCounter);
-            estimationToIkScript.usingRecording = false;
+            estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.None;
 
             //show the goaldisplay, so the player knows what to demonstrate
             displayGoal(); 
@@ -102,9 +98,9 @@ public class LevelManager : MonoBehaviour
         PlayerUI.SetActive(true);
         if(GoalDisplayCharacter != null)
         {
-            PanopticToIK goalCharEstimator = GoalDisplayCharacter.GetComponent<PanopticToIK>();
+            EstimationToIK goalCharEstimator = GoalDisplayCharacter.GetComponent<EstimationToIK>();
             goalCharEstimator.saveRecording(Gesture.GestureToMatrix(goalGesture));
-            goalCharEstimator.usingRecording = true;
+            goalCharEstimator.currentEstimationSource = EstimationToIK.estimationSource.Recording;
         }
     }
 
@@ -115,13 +111,13 @@ public class LevelManager : MonoBehaviour
             //Debug.Log("Player locked in his demonstration");
             if (compareGestureScript.goalGestureCompleted(compareGestureScript.characterGesture)){
                 estimationToIkScript.saveRecording(compareGestureScript.characterGesture); //give the temp memory to the estimation
-                estimationToIkScript.usingRecording = true;
+                estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
 
                 Success(); //for now, succeed automatically if we can directly mimic. But realistically, how does A.I know he is to mimic, and not interpret?
             }
             else //interpret the gesture
             {
-                if (estimationToIkScript.usingPointedDircetions) //are we following the directions the player is giving us via pointing?
+                if (estimationToIkScript.currentEstimationSource == EstimationToIK.estimationSource.PointedDircetions) //are we following the directions the player is giving us via pointing?
                 {
                     if (pointerScript)
                     {
@@ -142,7 +138,7 @@ public class LevelManager : MonoBehaviour
                     //INTERPRET the gesture as a shortcut for another, or a sequence, or a part of a sequence
                     Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
                     string meaning = dictionary.GetMeaningFromGesture(characterGesture);
-                    estimationToIkScript.usingPointedDircetions = true; //could also be set from the pointing script?
+                    estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.PointedDircetions; //could also be set from the pointing script?
                     //Debug.Log("Gesture was interpreted to mean: " + meaning);
                 }
 

@@ -9,7 +9,7 @@ using System.Threading;
 using System;
 using AuxiliarContent;
 
-public class PanopticToIK : MonoBehaviour
+public class EstimationToIK : MonoBehaviour
 {
     public Socket_toHl2 TcpScript = null;
 
@@ -47,11 +47,9 @@ public class PanopticToIK : MonoBehaviour
     private bool fadingIn = false;
 
 
-    //Where to receive data. LevelManager might overwrite these if active. TODO: with so many options, but only one being used at a time, we should really make this an enum for example
-    public bool usingHololensTcp = false; 
-    public bool usingPanoptic = false;
-    public bool usingRecording = false;
-    public bool usingPointedDircetions = false;
+    //Where to receive data. LevelManager might overwrite these if active.
+    public enum estimationSource {None, HololensTcp, Panoptic, Recording, PointedDircetions, MediaPipe};
+    public estimationSource currentEstimationSource;
 
     [System.Serializable]
     public class BodyData
@@ -123,7 +121,7 @@ public class PanopticToIK : MonoBehaviour
         SetIKPosition(0, AvatarIKGoal.LeftHand);
         SetIKPosition(1, AvatarIKGoal.RightHand);
 
-        if (usingPanoptic)
+        if (currentEstimationSource == estimationSource.Panoptic)
         {
             SetIKPosition(8, AvatarIKGoal.LeftFoot);
             SetIKPosition(14, AvatarIKGoal.RightFoot);
@@ -139,7 +137,7 @@ public class PanopticToIK : MonoBehaviour
     //index is index in the json
     private void SetCenterPosition(int index)
     {
-        if (!usingHololensTcp && usingPanoptic)
+        if (currentEstimationSource == estimationSource.Panoptic)
         {
             Vector3 goal = goalFromIndex(index);
             //GameObject hips = GameObject.Find("mixamorig:Hips");
@@ -234,35 +232,36 @@ public class PanopticToIK : MonoBehaviour
         //do animation
         if ((frameCount <= endFrame || Looping) && !fadingOut && !fadingIn) 
         {
-            if(lastProcessedFrame != frameCount + startFrame)
+            if (lastProcessedFrame != frameCount + startFrame)
             {
-                if (usingHololensTcp)
+                switch (currentEstimationSource)
                 {
-                    getDataFromHololens();
-                }
-                else if(usingPanoptic){
-                    LoadJSONData(basePath + selectedAnimName + "/body3DScene_" + (frameCount + startFrame).ToString("D8") + ".json");
-                }
-                else if(usingRecording)
-                {
-                    getDataFromRecording();
-                }
-                else if(usingPointedDircetions) //TODO: test if this messes up resetting on player's turn to demonstrate
-                {
-                    getDataFromPointing();
-                }
-                else //no data to gather, so reset weights
-                {
-                    if (landmarks != null)
-                    {
-                        for (int i = 0; i < landmarks.Length; i++)
+
+                    case (estimationSource.HololensTcp):
+                        getDataFromHololens();
+                        break;
+                    case (estimationSource.Panoptic):
+                        LoadJSONData(basePath + selectedAnimName + "/body3DScene_" + (frameCount + startFrame).ToString("D8") + ".json");
+                        break;
+                    case (estimationSource.Recording):
+                        getDataFromRecording();
+                        break;
+                    case (estimationSource.PointedDircetions): //TODO: test if this messes up resetting on player's turn to demonstrate
+                        getDataFromPointing();
+                        break;
+                    default: //no data to gather, so reset weights
+                        if (landmarks != null)
                         {
-                            landmarks[i] = new Vector3(0,0,0);
+                            for (int i = 0; i < landmarks.Length; i++)
+                            {
+                                landmarks[i] = new Vector3(0, 0, 0);
+                            }
                         }
-                    }
-                    editLimbWeights(0);
+                        editLimbWeights(0);
+                        break;
                 }
                 lastProcessedFrame = frameCount;
+
             }
             if(landmarks != null)
             {
