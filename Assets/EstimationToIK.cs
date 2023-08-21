@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System;
 using AuxiliarContent;
+using static EstimationToIK;
 
 public class EstimationToIK : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class EstimationToIK : MonoBehaviour
     private float fadeStartTime = 0.0f;
     private float animStartTime = 0.0f;
 
-    private string basePath = "assets/PanopticAnimations/";
+    private string basePath = "assets/GestureDictionary/";
     public string selectedAnimName = "coverFace";
 
     //used to not re-read  the same data multiple times if FPS is high
@@ -155,7 +156,7 @@ public class EstimationToIK : MonoBehaviour
         if (smoothing)
         {
             fadeStartTime = Time.time;
-            LoadJSONData(basePath + selectedAnimName + "/body3DScene_" + (1 + startFrame).ToString("D8") + ".json");
+            LoadPanopticJSONData(basePath + "Panoptic/" + selectedAnimName + "/body3DScene_" + (frameCount + startFrame).ToString("D8") + ".json");
             fadingIn = true;
         }
     }
@@ -184,7 +185,7 @@ public class EstimationToIK : MonoBehaviour
     public void getDataFromRecording()
     {
         LevelManagerScript = GetComponent<LevelManager>();
-        frameCount = 0;
+        frameCount = 0; //Is this needed?
         endFrame = savedRecording.GetLength(0); //TODO: make this more dynamic, use switchToAnimation or fadeIn
         startFrame = 0;
 
@@ -241,13 +242,16 @@ public class EstimationToIK : MonoBehaviour
                         getDataFromHololens();
                         break;
                     case (estimationSource.Panoptic):
-                        LoadJSONData(basePath + selectedAnimName + "/body3DScene_" + (frameCount + startFrame).ToString("D8") + ".json");
+                        LoadPanopticJSONData(basePath + "Panoptic/" + selectedAnimName + "/body3DScene_" + (frameCount + startFrame).ToString("D8") + ".json");
                         break;
                     case (estimationSource.Recording):
                         getDataFromRecording();
                         break;
                     case (estimationSource.PointedDircetions): //TODO: test if this messes up resetting on player's turn to demonstrate
                         getDataFromPointing();
+                        break;
+                    case (estimationSource.MediaPipe):
+                        //LoadMediaPipeJSONData(basePath + "Recordings/" + selectedAnimName + ".json");
                         break;
                     default: //no data to gather, so reset weights
                         if (landmarks != null)
@@ -339,7 +343,7 @@ public class EstimationToIK : MonoBehaviour
         */
     }
 
-    private void LoadJSONData(string filePath)
+    private void LoadPanopticJSONData(string filePath)
     {
         string jsonString = File.ReadAllText(filePath);
 
@@ -359,6 +363,44 @@ public class EstimationToIK : MonoBehaviour
             float z = bodyData.bodies[0].joints19[index + 2];
             Vector3 vector = new Vector3(x, y, z);
             landmarks[i] = vector;
+        }
+
+    }
+
+
+
+    //TODO: There must be an easier way to do this, without having to define multiple new classes
+    [System.Serializable]
+    public class MediaPipeData
+    {
+        public List<JSONVector3> bodies;
+    }
+
+    [System.Serializable]
+    public class JSONVector3
+    {
+        public float x;
+        public float y;
+        public float z;
+    }
+
+    private void LoadMediaPipeJSONData(string filePath)
+    {
+        string jsonString = File.ReadAllText(filePath);
+
+        MediaPipeData mediaPipeData = JsonUtility.FromJson<MediaPipeData>(jsonString);
+        List<JSONVector3> bodyData = mediaPipeData.bodies;
+
+        if (bodyData != null)
+        {
+            landmarks = new Vector3[bodyData.Count];
+
+            for (int i = 0; i < bodyData.Count; i++)
+            {
+                JSONVector3 jsonVector = bodyData[i];
+                Vector3 vector = new Vector3(jsonVector.x, jsonVector.y, jsonVector.z);
+                landmarks[i] = vector;
+            }
         }
 
     }
@@ -387,16 +429,22 @@ public class EstimationToIK : MonoBehaviour
     void Start()
     {
         origin = transform.position;
-        DirectoryInfo dir = new DirectoryInfo(basePath + selectedAnimName);
-        FileInfo[] info = dir.GetFiles("*.json");
+        if (currentEstimationSource == estimationSource.Panoptic)
+        {
+            DirectoryInfo dir = new DirectoryInfo(basePath + selectedAnimName);
+            FileInfo[] info = dir.GetFiles("*.json");
 
-        if(endFrame > info.Length || endFrame < 0)
+            if (endFrame > info.Length || endFrame < 0)
+            {
+                endFrame = info.Length; //cull endFrame if set over frame limit
+            }
+            if (startFrame > endFrame || startFrame < 0)
+            {
+                startFrame = 0; //cull startFrame if set over frame limit
+            }
+        }else if (currentEstimationSource == estimationSource.MediaPipe)
         {
-            endFrame = info.Length; //cull endFrame if set over frame limit
-        }
-        if (startFrame > endFrame || startFrame < 0)
-        {
-            startFrame = 0; //cull startFrame if set over frame limit
+            LoadMediaPipeJSONData(basePath + "Recordings/" + selectedAnimName + ".json");
         }
 
         animator = GetComponent<Animator>();

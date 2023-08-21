@@ -1010,7 +1010,7 @@ MonoBehaviour:
   startFrame: 0
   endFrame: 100
   smoothingFrames: 20
-  selectedAnimName: coverFace
+  selectedAnimName: index
   smoothing: 0
   currentEstimationSource: 0
   PointingScript: {fileID: 2729281214152228945}
