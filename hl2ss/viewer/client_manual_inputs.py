@@ -29,16 +29,20 @@ retry_delay = 5  # Retry after 5 seconds
 #------------------------------------------------------------------------------
 
 enable = True
-data = "[ 1, 1,  1]"
+data = "Position=[ 1, 1,  1], Position=[ 1, 1,  1]"
 
 
 
 def on_press(key):
     global data, enable
 
-    # Check if the key is '1' and update movement data accordingly
-    if key == keyboard.KeyCode.from_char('1'):
-        data = "[ 4, 5,  6]"
+    # Check if the key is '5' and update movement data accordingly
+    if key == keyboard.KeyCode.from_char('5'):
+        data = "Position=[ 5, 0,  0], Position=[ 1, 1,  1],"
+
+    
+    if key == keyboard.KeyCode.from_char('2'):
+        data = "Position=[ 2, 2,  2], Position=[ 1, 1,  1]"
     
     # Check if the key is 'esc' and set enable to False to quit the program
     if key == keyboard.Key.esc:

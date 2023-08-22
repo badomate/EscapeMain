@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System;
+using AuxiliarContent;
 
 public class Socket_toHl2 : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class Socket_toHl2 : MonoBehaviour
         ThreadStart ts = new ThreadStart(GetData);
         thread = new Thread(ts);
         thread.Start();
+        position = new Vector3[Pose.LandmarkIds.Count];
     }
 
     void GetData()
@@ -100,6 +102,7 @@ public class Socket_toHl2 : MonoBehaviour
         {
             // Convert the received string of data to the format we are using
             position = ParseData(dataReceived);
+            CustomDebug.LogAlex("NEW PARSED POSITION = " + string.Join(", ", position));
             nwStream.Write(buffer, 0, bytesRead);
         }
         else
@@ -109,22 +112,15 @@ public class Socket_toHl2 : MonoBehaviour
     }
 
     // Use-case specific function, need to re-write this to interpret whatever data is being sent
-    public static Vector3 ParseData(string dataString)
+    public static Vector3[] ParseData(string dataString)
     {
-        dataString = dataString.Replace("[", "").Replace("]", "").Trim();
-        string[] arrayData = dataString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        //Debug.Log(dataString);
-        //Debug.Log(arrayData);
-      
-        Vector3 result = new Vector3(
-            float.Parse(arrayData[0]),
-            float.Parse(arrayData[1]),
-            float.Parse(arrayData[2]));
-        return result;
+        Vector3[] parsedData = Pose.GetPoseVectorFromString(dataString, LevelManager._poseRegex);
+        CustomDebug.LogAlex("ParsedData: " + string.Join(", ", parsedData));
+        return parsedData;
     }
 
     // Position is the data being received in this example
-    public Vector3 position = new Vector3(0,0,0);
+    public Vector3[] position;
 
     void Update()
     {
@@ -135,14 +131,15 @@ public class Socket_toHl2 : MonoBehaviour
 
     void OnApplicationQuit()
     {
+        running = false;
+        //Debug.Log("quitting");
         if (clientAccepted)
         {
+            Debug.Log("shutting down TCP thread");
             // Set the flag to stop the thread
-            running = false;
 
             // Wait for the thread to finish its execution
             thread.Join();
-
         }
     }
 
