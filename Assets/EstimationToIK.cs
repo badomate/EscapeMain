@@ -93,7 +93,7 @@ public class EstimationToIK : MonoBehaviour
             Vector3 currentPos = landmarks[index] * scaleFactor; // x-axis pos
             if (currentEstimationSource == estimationSource.MediaPipe)
             {
-                Debug.Log(landmarks[index]);
+                //Debug.Log(landmarks[index]);
                 return origin + centerpointOffset + new Vector3(currentPos.z, -currentPos.y, -currentPos.x); //Y is inverted, but how about the others?
             }
             return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
@@ -125,8 +125,17 @@ public class EstimationToIK : MonoBehaviour
     {
         if(currentEstimationSource == estimationSource.MediaPipe)
         {
-            //SetIKPosition(15, AvatarIKGoal.LeftHand);
+            SetIKPosition(15, AvatarIKGoal.LeftHand);
             SetIKPosition(16, AvatarIKGoal.RightHand);
+
+            SetIKPosition(27, AvatarIKGoal.LeftFoot);
+            SetIKPosition(28, AvatarIKGoal.RightFoot);
+
+            //Hints:
+            SetIKPosition(13, AvatarIKHint.LeftElbow);
+            SetIKPosition(25, AvatarIKHint.LeftKnee);
+            SetIKPosition(14, AvatarIKHint.RightElbow);
+            SetIKPosition(26, AvatarIKHint.RightKnee);
         }
         else //currently everything except mediapipe and panoptic has these indices for hands
         {
@@ -162,6 +171,12 @@ public class EstimationToIK : MonoBehaviour
         else
         {
             //TODO: maybe we could set the center point based on the Head position from our hololens?
+            if (currentEstimationSource == estimationSource.MediaPipe)
+            {
+                Vector3 midpoint = (goalFromIndex(23) + goalFromIndex(24)) / 2;
+                Debug.Log(midpoint);
+                transform.position = midpoint; //lets just set the whole character for now
+            }
         }
     }
 
@@ -299,7 +314,7 @@ public class EstimationToIK : MonoBehaviour
             }
             if(landmarks != null)
             {
-                SetCenterPosition(2); //move the center to the correct position
+                //SetCenterPosition(2); //move the center to the correct position
                 SetJointLandmarks();
             }
         }
