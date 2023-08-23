@@ -49,7 +49,7 @@ public class EstimationToIK : MonoBehaviour
 
 
     //Where to receive data. LevelManager might overwrite these if active.
-    public enum estimationSource {None, HololensTcp, Panoptic, Recording, PointedDircetions, MediaPipe};
+    public enum estimationSource {None, HololensTcp, Panoptic, Recording, PointedDircetions, MediaPipe}; //later we could combine mediapipe and hololens
     public estimationSource currentEstimationSource;
 
     [System.Serializable]
@@ -91,6 +91,11 @@ public class EstimationToIK : MonoBehaviour
         if(index  < landmarks.Length)
         {
             Vector3 currentPos = landmarks[index] * scaleFactor; // x-axis pos
+            if (currentEstimationSource == estimationSource.MediaPipe)
+            {
+                Debug.Log(landmarks[index]);
+                return origin + centerpointOffset + new Vector3(currentPos.z, -currentPos.y, -currentPos.x); //Y is inverted, but how about the others?
+            }
             return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
         }
         else
@@ -118,9 +123,18 @@ public class EstimationToIK : MonoBehaviour
 
     private void SetJointLandmarks()
     {
-        //Endpoints:
-        SetIKPosition(0, AvatarIKGoal.LeftHand);
-        SetIKPosition(1, AvatarIKGoal.RightHand);
+        if(currentEstimationSource == estimationSource.MediaPipe)
+        {
+            //SetIKPosition(15, AvatarIKGoal.LeftHand);
+            SetIKPosition(16, AvatarIKGoal.RightHand);
+        }
+        else //currently everything except mediapipe and panoptic has these indices for hands
+        {
+            //Endpoints:
+            SetIKPosition(0, AvatarIKGoal.LeftHand);
+            SetIKPosition(1, AvatarIKGoal.RightHand);
+
+        }
 
         if (currentEstimationSource == estimationSource.Panoptic)
         {
@@ -223,6 +237,21 @@ public class EstimationToIK : MonoBehaviour
         }
     }
 
+    public CameraStream CameraStreamScript;
+    private void getDataFromMediapipeStream()
+    {
+        if (CameraStreamScript == null)
+        {
+            CameraStreamScript = GetComponent<CameraStream>();
+        }
+        if(CameraStreamScript.vector3List.Count > 0)
+        {
+            landmarks = new Vector3[CameraStreamScript.vector3List.Count];
+            landmarks = CameraStreamScript.vector3List.ToArray();
+        }
+
+    }
+
     void OnAnimatorIK()
     {
         if (fadingIn && smoothing) //each step of fading in
@@ -252,6 +281,7 @@ public class EstimationToIK : MonoBehaviour
                         break;
                     case (estimationSource.MediaPipe):
                         //LoadMediaPipeJSONData(basePath + "Recordings/" + selectedAnimName + ".json");
+                        getDataFromMediapipeStream();
                         break;
                     default: //no data to gather, so reset weights
                         if (landmarks != null)

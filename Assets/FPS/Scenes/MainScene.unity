@@ -755,17 +755,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.396
+      value: -1.48
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.848
+      value: 0.827
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0
+      value: -0.008
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
@@ -1005,15 +1005,16 @@ MonoBehaviour:
   leftHand: {fileID: 1697168632}
   rightHand: {fileID: 1353756050}
   Looping: 1
-  scaleFactor: 10
-  centerpointOffset: {x: 0, y: -0.81, z: 0}
+  scaleFactor: 1
+  centerpointOffset: {x: 0, y: 0, z: 0}
   startFrame: 0
   endFrame: 100
   smoothingFrames: 20
   selectedAnimName: index
   smoothing: 0
-  currentEstimationSource: 0
+  currentEstimationSource: 5
   PointingScript: {fileID: 2729281214152228945}
+  CameraStreamScript: {fileID: 319678139}
 --- !u!114 &319678127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1092,6 +1093,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 794d18eff160e5b43b1acbb7160355f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vector3List: []
 --- !u!1001 &409996927
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1232,7 +1234,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27724
+  m_Name: pb_Mesh27734
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1500,7 +1502,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27748
+  m_Name: pb_Mesh27758
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3023,6 +3025,7 @@ MonoBehaviour:
   smoothing: 0
   currentEstimationSource: 0
   PointingScript: {fileID: 0}
+  CameraStreamScript: {fileID: 0}
 --- !u!4 &1220487859 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2141676431450117668, guid: cd17687759887a0438ee021e51abc9d9,
@@ -3035,7 +3038,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27844
+  m_Name: pb_Mesh27854
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3754,6 +3757,7 @@ MonoBehaviour:
   smoothing: 0
   currentEstimationSource: 1
   PointingScript: {fileID: 0}
+  CameraStreamScript: {fileID: 0}
 --- !u!1 &1590240075 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b0d61dc70153b3647926c65ee14291df,
