@@ -47,7 +47,7 @@ public class CameraStream : MonoBehaviour
     }
 
     // Asynchronously stream pose landmarks data from the Flask API
-    async Task StreamLandmarksAsync(CancellationToken cancellationToken,
+    private async Task StreamLandmarksAsync(CancellationToken cancellationToken,
                                            string videoPath = null,
                                            bool staticImageMode = false,
                                            int modelComplexity = 1,
@@ -70,7 +70,7 @@ public class CameraStream : MonoBehaviour
 
             // Send the GET request to the API
             var responseStream = await client.GetStreamAsync(baseUrl + apiUrl + queryParams);
-
+            
             // Read the response stream and process each line of data
             using (var reader = new System.IO.StreamReader(responseStream))
             {
@@ -87,6 +87,7 @@ public class CameraStream : MonoBehaviour
                         // Process each line of landmarks data
                         ProcessLandmarksData(line);
                     }
+                    //await Task.Yield();
                 }
             }
         }
@@ -100,17 +101,15 @@ public class CameraStream : MonoBehaviour
         //string myJson = "data : {\"bodies\": [{\"id\": 0, \"landmarkName\": \"Nose\", \"data\": [0.017760001122951508, -0.5622981190681458, -0.2617194652557373, 0.501261830329895, 0.6356117129325867, -0.5766324400901794]}, {\"id\": 1, \"landmarkName\": \"Left eye inner\", \"data\": [0.02411283180117607, -0.6019347906112671, -0.24616317451000214, 0.5239912867546082, 0.5869146585464478, -0.5480535626411438]}]}";
         //BodyContainer dataContainer = JsonUtility.FromJson<BodyContainer>(myJson);
         //Debug.Log(dataContainer.bodies[0].data.Count);
-        //DataContainer dataContainer = JsonUtility.FromJson<DataContainer>(myJson);
-
 
         // Call the asynchronous method to stream pose landmarks data
-        myGet = StreamLandmarksAsync(cancellationTokenSource.Token,
+        myGet = Task.Run(() => StreamLandmarksAsync(cancellationTokenSource.Token,
                              videoPath: null,
                              staticImageMode: false,
                              modelComplexity: 1,
                              minDetectionConfidence: 0.5,
                              minTrackingConfidence: 0.5,
-                             detectSingle: true);
+                             detectSingle: true));
         
     }
 
