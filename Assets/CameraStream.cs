@@ -10,19 +10,18 @@ public class CameraStream : MonoBehaviour
 {
     private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-    [System.Serializable]
-    private class DataContainer
+    [Serializable]
+    private class BodyContainer
     {
-        public List<Vector3Data> data;
+        public List<BodyData> bodies;
     }
 
-
-    [System.Serializable]
-    private class Vector3Data
+    [Serializable]
+    private class BodyData
     {
-        public float x;
-        public float y;
-        public float z;
+        public int id;
+        public List<float> data;
+        public string landmarkName;
     }
 
     public List<Vector3> vector3List = new List<Vector3>();
@@ -30,24 +29,21 @@ public class CameraStream : MonoBehaviour
     // Process and handle the received landmarks data
     void ProcessLandmarksData(string jsonData)
     {
-        jsonData = "{\"data\": " + jsonData.Substring(5) + "}"; //this is for an old version of the API (cf410d14). With the new version and its format, different changes need to be made
+        jsonData = jsonData.Substring(5);
+        //jsonData = "{\"data\": " + jsonData.Substring(5) + "}"; //this is for an old version of the API (cf410d14). With the new version and its format, different changes need to be made
         vector3List.Clear(); // Clear the list before deserialization
 
         //Debug.Log(jsonData);
+
         // Deserialize the JSON string into an array of Vector3Data objects
-        DataContainer dataContainer = JsonUtility.FromJson<DataContainer>(jsonData);
+        BodyContainer dataContainer = JsonUtility.FromJson<BodyContainer>(jsonData);
 
-
-        //Debug.Log("Processed");
-
-        foreach (Vector3Data data in dataContainer.data) //the amount of landmarks seems to always be 33 no matter how obscured the person is
+        
+        foreach (BodyData body in dataContainer.bodies) //the amount of landmarks seems to always be 33 no matter how obscured the person is
         {
-            Vector3 vector3 = new Vector3(data.x, data.y, data.z);
+            Vector3 vector3 = new Vector3(body.data[0], body.data[1], body.data[2]);
             vector3List.Add(vector3);
         }
-
-        //Debug.Log("Vector3 List Count: " + vector3List.Count);
-        
     }
 
     // Asynchronously stream pose landmarks data from the Flask API
@@ -95,15 +91,18 @@ public class CameraStream : MonoBehaviour
             }
         }
     }
-
-    //string myJson = "{'data': [{'x': 0.53, 'y': 0.59, 'z': -0.57}, { 'x': 0.5321588516235352, 'y': 0.5559157133102417, 'z': -0.5116672515869141}]}";
-
     private Task myGet;
+
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Start");
+        //Debug.Log("Connecting...");
+        //string myJson = "data : {\"bodies\": [{\"id\": 0, \"landmarkName\": \"Nose\", \"data\": [0.017760001122951508, -0.5622981190681458, -0.2617194652557373, 0.501261830329895, 0.6356117129325867, -0.5766324400901794]}, {\"id\": 1, \"landmarkName\": \"Left eye inner\", \"data\": [0.02411283180117607, -0.6019347906112671, -0.24616317451000214, 0.5239912867546082, 0.5869146585464478, -0.5480535626411438]}]}";
+        //BodyContainer dataContainer = JsonUtility.FromJson<BodyContainer>(myJson);
+        //Debug.Log(dataContainer.bodies[0].data.Count);
         //DataContainer dataContainer = JsonUtility.FromJson<DataContainer>(myJson);
+
+
         // Call the asynchronous method to stream pose landmarks data
         myGet = StreamLandmarksAsync(cancellationTokenSource.Token,
                              videoPath: null,
@@ -112,6 +111,7 @@ public class CameraStream : MonoBehaviour
                              minDetectionConfidence: 0.5,
                              minTrackingConfidence: 0.5,
                              detectSingle: true);
+        
     }
 
     // Update is called once per frame
