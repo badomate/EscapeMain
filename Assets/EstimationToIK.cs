@@ -173,8 +173,9 @@ public class EstimationToIK : MonoBehaviour
             //TODO: maybe we could set the center point based on the Head position from our hololens?
             if (currentEstimationSource == estimationSource.MediaPipe)
             {
-                Vector3 midpoint = (goalFromIndex(23) + goalFromIndex(24)) / 2;
-                Debug.Log(midpoint);
+                //Vector3 midpoint = (goalFromIndex(23) + goalFromIndex(24)) / 2; 
+                Vector3 midpoint = CameraStreamScript.centerLandmarkOffset + origin;
+                //Debug.Log(midpoint);
                 transform.position = midpoint; //lets just set the whole character for now
             }
         }

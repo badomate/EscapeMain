@@ -24,7 +24,8 @@ public class CameraStream : MonoBehaviour
         public string landmarkName;
     }
 
-    public List<Vector3> vector3List = new List<Vector3>();
+    public List<Vector3> vector3List = new List<Vector3>(); //coordinates are based on position relative to the center
+    public Vector3 centerLandmarkOffset = new Vector3(); //coordinates of that center
 
     // Process and handle the received landmarks data
     void ProcessLandmarksData(string jsonData)
@@ -37,13 +38,25 @@ public class CameraStream : MonoBehaviour
 
         // Deserialize the JSON string into an array of Vector3Data objects
         BodyContainer dataContainer = JsonUtility.FromJson<BodyContainer>(jsonData);
+        Vector3 Left = new Vector3(0, 0, 0);
+        Vector3 Right = new Vector3(0, 0, 0);
 
-        
         foreach (BodyData body in dataContainer.bodies) //the amount of landmarks seems to always be 33 no matter how obscured the person is
         {
             Vector3 vector3 = new Vector3(body.data[0], body.data[1], body.data[2]);
             vector3List.Add(vector3);
+            if (body.landmarkName == "Right hip")
+            {
+                Right = new Vector3(body.data[3], body.data[4], body.data[5]);
+            }
+            else if (body.landmarkName == "Left hip")
+            {
+                Left = new Vector3(body.data[3], body.data[4], body.data[5]);
+            }
         }
+        centerLandmarkOffset = (Right + Left) / 2;
+        //Debug.Log(centerLandmarkOffset);
+
     }
 
     // Asynchronously stream pose landmarks data from the Flask API
