@@ -94,7 +94,7 @@ public class EstimationToIK : MonoBehaviour
             if (currentEstimationSource == estimationSource.MediaPipe)
             {
                 //Debug.Log(landmarks[index]);
-                return origin + centerpointOffset + new Vector3(currentPos.z, -currentPos.y, -currentPos.x); //Y is inverted, but how about the others?
+                return transform.position + centerpointOffset + new Vector3(currentPos.z, -currentPos.y, -currentPos.x); //Y is inverted, but how about the others?
             }
             return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
         }
@@ -174,9 +174,9 @@ public class EstimationToIK : MonoBehaviour
             if (currentEstimationSource == estimationSource.MediaPipe)
             {
                 //Vector3 midpoint = (goalFromIndex(23) + goalFromIndex(24)) / 2; 
-                Vector3 midpoint = CameraStreamScript.centerLandmarkOffset + origin;
+                //Vector3 midpoint = CameraStreamScript.centerLandmarkOffset; //+origin?
                 //Debug.Log(midpoint);
-                transform.position = midpoint; //lets just set the whole character for now
+                transform.position = origin + new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x); //the helper's rotation might influence this!
             }
         }
     }
@@ -315,7 +315,7 @@ public class EstimationToIK : MonoBehaviour
             }
             if(landmarks != null)
             {
-                //SetCenterPosition(2); //move the center to the correct position
+                SetCenterPosition(2); //move the center to the correct position
                 SetJointLandmarks();
             }
         }

@@ -34,7 +34,7 @@ public class CameraStream : MonoBehaviour
         //jsonData = "{\"data\": " + jsonData.Substring(5) + "}"; //this is for an old version of the API (cf410d14). With the new version and its format, different changes need to be made
         vector3List.Clear(); // Clear the list before deserialization
 
-        //Debug.Log(jsonData);
+        Debug.Log(jsonData);
 
         // Deserialize the JSON string into an array of Vector3Data objects
         BodyContainer dataContainer = JsonUtility.FromJson<BodyContainer>(jsonData);
