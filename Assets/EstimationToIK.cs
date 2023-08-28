@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System;
 using AuxiliarContent;
+using UnityEngine.Animations.Rigging;
 using static EstimationToIK;
 
 public class EstimationToIK : MonoBehaviour
@@ -81,7 +82,7 @@ public class EstimationToIK : MonoBehaviour
     {
         if(rightHand != null && leftHand != null)
         {
-            rightHand.transform.rotation = rightHand.transform.parent.rotation;
+            //rightHand.transform.rotation = rightHand.transform.parent.rotation;
             leftHand.transform.rotation = leftHand.transform.parent.rotation;
         }
     }
@@ -110,7 +111,7 @@ public class EstimationToIK : MonoBehaviour
 
         Vector3 goal = goalFromIndex(index);
         animator.SetIKPositionWeight(limb, 1);
-        animator.SetIKRotationWeight(limb, 1);
+        //animator.SetIKRotationWeight(limb, 1);
         animator.SetIKPosition(limb, goal);
     }
 
@@ -119,6 +120,33 @@ public class EstimationToIK : MonoBehaviour
         Vector3 goal = goalFromIndex(index);
         animator.SetIKHintPositionWeight(limb, 1);
         animator.SetIKHintPosition(limb, goal);
+    }
+
+
+    public TwoBoneIKConstraint[] constraints; 
+    GameObject[] ikPointerObjects = new GameObject[10];
+
+    private void SetIKPosition(int index, string fingerName) //, AvatarIKHint hintlimb
+    {
+        Vector3 goal = goalFromIndex(index);
+
+        for(int i = 0; i < constraints.Length; i++)
+        {
+            if (constraints[i].data.tip != null && constraints[i].data.tip.name.Contains(fingerName))
+            {
+                if (ikPointerObjects[i] == null)
+                {
+                    ikPointerObjects[i] = new GameObject("TemporaryTargetObject" + i);
+                }
+
+                ikPointerObjects[i].transform.position = goal;
+                Transform convertedTransform = ikPointerObjects[i].transform;
+                constraints[i].data.target = convertedTransform;
+
+                RigBuilder rigbuilder = GetComponent<RigBuilder>();
+                rigbuilder.Build();
+            }
+        }
     }
 
     private void SetJointLandmarks()
@@ -136,6 +164,9 @@ public class EstimationToIK : MonoBehaviour
             SetIKPosition(25, AvatarIKHint.LeftKnee);
             SetIKPosition(14, AvatarIKHint.RightElbow);
             SetIKPosition(26, AvatarIKHint.RightKnee);
+
+            //Fingers:
+            //SetIKPosition(19, "mixamorig:RightHandIndex4");
         }
         else //currently everything except mediapipe and panoptic has these indices for hands
         {
@@ -176,7 +207,7 @@ public class EstimationToIK : MonoBehaviour
                 //Vector3 midpoint = (goalFromIndex(23) + goalFromIndex(24)) / 2; 
                 //Vector3 midpoint = CameraStreamScript.centerLandmarkOffset; //+origin?
                 //Debug.Log(midpoint);
-                transform.position = origin + new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x); //the helper's rotation might influence this!
+                transform.position = origin + 0.5f * new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x); //the helper's rotation might influence this!
             }
         }
     }
