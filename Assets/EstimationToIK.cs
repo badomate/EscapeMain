@@ -82,7 +82,7 @@ public class EstimationToIK : MonoBehaviour
     {
         if(rightHand != null && leftHand != null)
         {
-            //rightHand.transform.rotation = rightHand.transform.parent.rotation;
+            rightHand.transform.rotation = rightHand.transform.parent.rotation;
             leftHand.transform.rotation = leftHand.transform.parent.rotation;
         }
     }
@@ -106,7 +106,7 @@ public class EstimationToIK : MonoBehaviour
         }
     }
 
-    private void SetIKPosition(int index, AvatarIKGoal limb) //, AvatarIKHint hintlimb
+    private void SetIKPosition(int index, AvatarIKGoal limb)
     {
 
         Vector3 goal = goalFromIndex(index);
@@ -115,7 +115,7 @@ public class EstimationToIK : MonoBehaviour
         animator.SetIKPosition(limb, goal);
     }
 
-    private void SetIKPosition(int index, AvatarIKHint limb) //, AvatarIKHint hintlimb
+    private void SetIKPosition(int index, AvatarIKHint limb)
     {
         Vector3 goal = goalFromIndex(index);
         animator.SetIKHintPositionWeight(limb, 1);
@@ -125,8 +125,7 @@ public class EstimationToIK : MonoBehaviour
 
     public TwoBoneIKConstraint[] constraints; 
     GameObject[] ikPointerObjects = new GameObject[10];
-
-    private void SetIKPosition(int index, string fingerName) //, AvatarIKHint hintlimb
+    private void SetIKPosition(int index, string fingerName)
     {
         Vector3 goal = goalFromIndex(index);
 
@@ -144,7 +143,7 @@ public class EstimationToIK : MonoBehaviour
                 constraints[i].data.target = convertedTransform;
 
                 RigBuilder rigbuilder = GetComponent<RigBuilder>();
-                rigbuilder.Build();
+                rigbuilder.Build(); //only build if the object is new. Actually, better to just premake all these objects and move them around
             }
         }
     }
@@ -158,7 +157,7 @@ public class EstimationToIK : MonoBehaviour
 
             SetIKPosition(27, AvatarIKGoal.LeftFoot);
             SetIKPosition(28, AvatarIKGoal.RightFoot);
-
+             
             //Hints:
             SetIKPosition(13, AvatarIKHint.LeftElbow);
             SetIKPosition(25, AvatarIKHint.LeftKnee);
@@ -207,7 +206,7 @@ public class EstimationToIK : MonoBehaviour
                 //Vector3 midpoint = (goalFromIndex(23) + goalFromIndex(24)) / 2; 
                 //Vector3 midpoint = CameraStreamScript.centerLandmarkOffset; //+origin?
                 //Debug.Log(midpoint);
-                transform.position = origin + 0.5f * new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x); //the helper's rotation might influence this!
+                transform.position = origin + 1.0f * new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x); //the helper's rotation might influence this!
             }
         }
     }
@@ -499,7 +498,7 @@ public class EstimationToIK : MonoBehaviour
         else{ //TODO: dont have multiple frame counters
             frameCount = (Mathf.FloorToInt((Time.time - animStartTime) / frameTime) + 1) % (endFrame - startFrame); // Add 1 to start from frame 1, % by all frames of animation
         }
-        
+
     }
 
     // Start is called before the first frame update
@@ -521,10 +520,11 @@ public class EstimationToIK : MonoBehaviour
             }
         }else if (currentEstimationSource == estimationSource.MediaPipe)
         {
-            LoadMediaPipeJSONData(basePath + "Recordings/" + selectedAnimName + ".json");
+            //LoadMediaPipeJSONData(basePath + "Recordings/" + selectedAnimName + ".json");
         }
 
         animator = GetComponent<Animator>();
+
 
         fadeInStart();
     }
