@@ -13,11 +13,12 @@ using static EstimationToIK;
 
 public class EstimationToIK : MonoBehaviour
 {
-    public Socket_toHl2 TcpScript = null;
+    public Socket_toHl2 TcpScript;
+    public CameraStream CameraStreamScript;
 
-    public GameObject[] keypointBones = null; //for keypoints that are to be set specifically and not with 
-    public GameObject leftHand = null; //used for aesthetic adjustments after IK
-    public GameObject rightHand = null;
+    public GameObject[] keypointBones; //for keypoints that are to be set specifically and not with 
+    public GameObject leftHand; //used for aesthetic adjustments after IK
+    public GameObject rightHand;
     protected Animator animator;
     public bool Looping = true; //TODO: fix the False setting, perhaps by introducing a new bool to check for the animation finishing.
 
@@ -92,9 +93,10 @@ public class EstimationToIK : MonoBehaviour
         if(index  < landmarks.Length)
         {
             Vector3 currentPos = landmarks[index] * scaleFactor; // x-axis pos
+
             if (currentEstimationSource == estimationSource.MediaPipe)
             {
-                return transform.position + new Vector3(currentPos.z, -currentPos.y, -currentPos.x); //Y is inverted, but how about the others?
+                return transform.position + new Vector3(currentPos.z, -currentPos.y, -currentPos.x);
             }
             return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
         }
@@ -205,8 +207,7 @@ public class EstimationToIK : MonoBehaviour
                 //Vector3 midpoint = (goalFromIndex(23) + goalFromIndex(24)) / 2; 
                 //Vector3 midpoint = CameraStreamScript.centerLandmarkOffset; //+origin?
                 //Debug.Log(midpoint);
-                transform.position = origin + 1.0f * (new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x) - new Vector3(0.0f,0.5f,0.5f)); //the helper's rotation might influence this!
-                //Debug.Log(new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x));
+                transform.position = origin + 0.5f * (new Vector3(0, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x) - new Vector3(0.0f,0.5f,0.5f)); //the helper's rotation might influence this!
             }
         }
     }
@@ -283,21 +284,21 @@ public class EstimationToIK : MonoBehaviour
         }
     }
 
-    public CameraStream CameraStreamScript;
     private void getDataFromMediapipeStream()
     {
-        if (CameraStreamScript == null)
+        if (CameraStreamScript)
         {
-            CameraStreamScript = GetComponent<CameraStream>();
-        }
-        if(CameraStreamScript.vector3List.Count > 0)
-        {
-            landmarks = new Vector3[CameraStreamScript.vector3List.Count];
-            landmarks = CameraStreamScript.vector3List.ToArray();
+
+            if (CameraStreamScript.vector3List.Count > 0)
+            {
+                landmarks = new Vector3[CameraStreamScript.vector3List.Count];
+                landmarks = CameraStreamScript.vector3List.ToArray();
+            }
         }
 
     }
 
+    public bool moveCenter = false;
     void OnAnimatorIK()
     {
         if (fadingIn && smoothing) //each step of fading in
@@ -308,7 +309,14 @@ public class EstimationToIK : MonoBehaviour
 
         if (landmarks != null) //lets be one frame behind
         {
-            SetCenterPosition(2); //move the center to the correct position
+            if (moveCenter)
+            {
+                SetCenterPosition(2); //move the center to the correct position
+            }
+            else
+            {
+                transform.position = origin;
+            }
             SetJointLandmarks();
         }
 

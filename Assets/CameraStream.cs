@@ -48,15 +48,15 @@ public class CameraStream : MonoBehaviour
             vector3List.Add(vector3);
             if (body.landmarkName == "Right hip")
             {
-                Right = new Vector3(body.data[3], body.data[4], body.data[2]); //body.data[5]
+                Right = new Vector3(body.data[3], body.data[4], body.data[5]); //body.data[5]
             }
             else if (body.landmarkName == "Left hip")
             {
-                Left = new Vector3(body.data[3], body.data[4], body.data[2]);
+                Left = new Vector3(body.data[3], body.data[4], body.data[5]);
             }
         }
         centerLandmarkOffset = (Right + Left) / 2;
-        //Debug.Log(centerLandmarkOffset);
+        //UnityEngine.Debug.Log(centerLandmarkOffset.z);
 
     }
 
@@ -135,7 +135,7 @@ public class CameraStream : MonoBehaviour
         myGet = Task.Run(() => StreamLandmarksAsync(cancellationTokenSource.Token,
                              videoPath: null,
                              staticImageMode: false,
-                             modelComplexity: 1,
+                             modelComplexity: 0,
                              minDetectionConfidence: 0.5,
                              minTrackingConfidence: 0.5));
         

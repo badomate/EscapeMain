@@ -755,17 +755,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.56
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.897
+      value: 0.801
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.21
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
@@ -876,7 +876,7 @@ PrefabInstance:
     - target: {fileID: 2484128538761520324, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.539
       objectReference: {fileID: 0}
     - target: {fileID: 2916570863362053800, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
@@ -1025,12 +1025,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 319678117}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 384f82084bb682e4b9e7e0f0fbae24e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
+  CameraStreamScript: {fileID: 319678139}
   keypointBones:
   - {fileID: 319678118}
   leftHand: {fileID: 1697168632}
@@ -1043,11 +1044,11 @@ MonoBehaviour:
   smoothingFrames: 20
   selectedAnimName: index
   smoothing: 0
-  currentEstimationSource: 5
+  currentEstimationSource: 0
   constraints:
   - {fileID: 319678140}
   PointingScript: {fileID: 2729281214152228945}
-  CameraStreamScript: {fileID: 319678139}
+  moveCenter: 1
 --- !u!114 &319678127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3287,6 +3288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
+  CameraStreamScript: {fileID: 0}
   keypointBones:
   - {fileID: 1204171164}
   leftHand: {fileID: 725765932}
@@ -3302,7 +3304,7 @@ MonoBehaviour:
   currentEstimationSource: 0
   constraints: []
   PointingScript: {fileID: 0}
-  CameraStreamScript: {fileID: 0}
+  moveCenter: 0
 --- !u!4 &1220487859 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2141676431450117668, guid: cd17687759887a0438ee021e51abc9d9,
@@ -4057,22 +4059,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
+  CameraStreamScript: {fileID: 319678139}
   keypointBones:
   - {fileID: 1528204668}
   leftHand: {fileID: 1528204667}
   rightHand: {fileID: 1528204666}
   Looping: 1
-  scaleFactor: 10
+  scaleFactor: 1
   centerpointOffset: {x: 0, y: -0.81, z: 0}
   startFrame: 0
   endFrame: 100
   smoothingFrames: 20
   selectedAnimName: coverFace
   smoothing: 0
-  currentEstimationSource: 1
+  currentEstimationSource: 5
   constraints: []
   PointingScript: {fileID: 0}
-  CameraStreamScript: {fileID: 0}
+  moveCenter: 0
 --- !u!1 &1590240075 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b0d61dc70153b3647926c65ee14291df,
