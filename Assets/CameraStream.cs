@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class CameraStream : MonoBehaviour
@@ -26,12 +27,12 @@ public class CameraStream : MonoBehaviour
 
     public List<Vector3> vector3List = new List<Vector3>(); //coordinates are based on position relative to the center
     public Vector3 centerLandmarkOffset = new Vector3(); //coordinates of that center
+    public long animationFPS = 0;
 
     // Process and handle the received landmarks data
     void ProcessLandmarksData(string jsonData)
     {
         jsonData = jsonData.Substring(5);
-        //jsonData = "{\"data\": " + jsonData.Substring(5) + "}"; //this is for an old version of the API (cf410d14). With the new version and its format, different changes need to be made
         vector3List.Clear(); // Clear the list before deserialization
 
         //Debug.Log(jsonData);
@@ -43,15 +44,15 @@ public class CameraStream : MonoBehaviour
 
         foreach (BodyData body in dataContainer.bodies) //the amount of landmarks seems to always be 33 no matter how obscured the person is
         {
-            Vector3 vector3 = new Vector3(body.data[0], body.data[1], body.data[2]);
+            Vector3 vector3 = new Vector3(body.data[0], body.data[1], body.data[2]); //body.data[2]
             vector3List.Add(vector3);
             if (body.landmarkName == "Right hip")
             {
-                Right = new Vector3(body.data[3], body.data[4], body.data[5]);
+                Right = new Vector3(body.data[3], body.data[4], body.data[2]); //body.data[5]
             }
             else if (body.landmarkName == "Left hip")
             {
-                Left = new Vector3(body.data[3], body.data[4], body.data[5]);
+                Left = new Vector3(body.data[3], body.data[4], body.data[2]);
             }
         }
         centerLandmarkOffset = (Right + Left) / 2;
@@ -65,8 +66,7 @@ public class CameraStream : MonoBehaviour
                                            bool staticImageMode = false,
                                            int modelComplexity = 1,
                                            double minDetectionConfidence = 0.5,
-                                           double minTrackingConfidence = 0.5,
-                                           bool detectSingle = false)
+                                           double minTrackingConfidence = 0.5)
     {
         var baseUrl = "http://localhost:5000";
         var apiUrl = "/landmarks";
@@ -78,8 +78,7 @@ public class CameraStream : MonoBehaviour
                               $"&static_image_mode={staticImageMode}" +
                               $"&model_complexity={modelComplexity}" +
                               $"&min_detection_confidence={minDetectionConfidence}" +
-                              $"&min_tracking_confidence={minTrackingConfidence}" +
-                              $"&detect_single={detectSingle}";
+                              $"&min_tracking_confidence={minTrackingConfidence}";
 
             // Send the GET request to the API
             var responseStream = await client.GetStreamAsync(baseUrl + apiUrl + queryParams);
@@ -87,6 +86,9 @@ public class CameraStream : MonoBehaviour
             // Read the response stream and process each line of data
             using (var reader = new System.IO.StreamReader(responseStream))
             {
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
                 while (!reader.EndOfStream)
                 {
                     if (cancellationToken.IsCancellationRequested) //If requested, exit task
@@ -95,11 +97,25 @@ public class CameraStream : MonoBehaviour
                         break;
                     }
                     var line = await reader.ReadLineAsync();
+
+                    stopwatch.Stop();
+
+                    long elapsed = stopwatch.ElapsedMilliseconds;
+                    //long hz = 1000 / elapsed;
+                    if (elapsed > 0)
+                    {
+                        animationFPS = 1000 / elapsed;
+                        //UnityEngine.Debug.Log("Animation FPS: " + 1000 / elapsed);
+                    }
+
                     if (!string.IsNullOrEmpty(line))
                     {
                         // Process each line of landmarks data
                         ProcessLandmarksData(line);
                     }
+
+                    stopwatch.Reset();
+                    stopwatch.Start();
                     //await Task.Yield();
                 }
             }
@@ -121,8 +137,7 @@ public class CameraStream : MonoBehaviour
                              staticImageMode: false,
                              modelComplexity: 1,
                              minDetectionConfidence: 0.5,
-                             minTrackingConfidence: 0.5,
-                             detectSingle: true));
+                             minTrackingConfidence: 0.5));
         
     }
 

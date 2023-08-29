@@ -94,8 +94,7 @@ public class EstimationToIK : MonoBehaviour
             Vector3 currentPos = landmarks[index] * scaleFactor; // x-axis pos
             if (currentEstimationSource == estimationSource.MediaPipe)
             {
-                //Debug.Log(landmarks[index]);
-                return transform.position + centerpointOffset + new Vector3(currentPos.z, -currentPos.y, -currentPos.x); //Y is inverted, but how about the others?
+                return transform.position + new Vector3(currentPos.z, -currentPos.y, -currentPos.x); //Y is inverted, but how about the others?
             }
             return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
         }
@@ -206,7 +205,8 @@ public class EstimationToIK : MonoBehaviour
                 //Vector3 midpoint = (goalFromIndex(23) + goalFromIndex(24)) / 2; 
                 //Vector3 midpoint = CameraStreamScript.centerLandmarkOffset; //+origin?
                 //Debug.Log(midpoint);
-                transform.position = origin + 1.0f * new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x); //the helper's rotation might influence this!
+                transform.position = origin + 1.0f * (new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x) - new Vector3(0.0f,0.5f,0.5f)); //the helper's rotation might influence this!
+                //Debug.Log(new Vector3(CameraStreamScript.centerLandmarkOffset.z, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x));
             }
         }
     }
@@ -305,6 +305,13 @@ public class EstimationToIK : MonoBehaviour
             fadeReset(false);
         }
 
+
+        if (landmarks != null) //lets be one frame behind
+        {
+            SetCenterPosition(2); //move the center to the correct position
+            SetJointLandmarks();
+        }
+
         //do animation
         if ((frameCount <= endFrame || Looping) && !fadingOut && !fadingIn) 
         {
@@ -342,11 +349,6 @@ public class EstimationToIK : MonoBehaviour
                 }
                 lastProcessedFrame = frameCount;
 
-            }
-            if(landmarks != null)
-            {
-                SetCenterPosition(2); //move the center to the correct position
-                SetJointLandmarks();
             }
         }
 
@@ -404,7 +406,7 @@ public class EstimationToIK : MonoBehaviour
 
         animator.SetIKPositionWeight(AvatarIKGoal.RightHand, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.RightHand, newWeight);
-        /*
+        
         animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, newWeight);
 
@@ -416,7 +418,7 @@ public class EstimationToIK : MonoBehaviour
         animator.SetIKHintPositionWeight(AvatarIKHint.LeftKnee, newWeight);
         animator.SetIKHintPositionWeight(AvatarIKHint.RightElbow, newWeight);
         animator.SetIKHintPositionWeight(AvatarIKHint.RightKnee, newWeight);
-        */
+        
     }
 
     private void LoadPanopticJSONData(string filePath)
