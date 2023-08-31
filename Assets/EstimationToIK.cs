@@ -8,15 +8,17 @@ using System.Text;
 using System.Threading;
 using System;
 using AuxiliarContent;
+using UnityEngine.Animations.Rigging;
 using static EstimationToIK;
 
 public class EstimationToIK : MonoBehaviour
 {
-    public Socket_toHl2 TcpScript = null;
+    public Socket_toHl2 TcpScript;
+    public CameraStream CameraStreamScript;
 
-    public GameObject[] keypointBones = null; //for keypoints that are to be set specifically and not with 
-    public GameObject leftHand = null; //used for aesthetic adjustments after IK
-    public GameObject rightHand = null;
+    public GameObject[] keypointBones; //for keypoints that are to be set specifically and not with 
+    public GameObject leftHand; //used for aesthetic adjustments after IK
+    public GameObject rightHand;
     protected Animator animator;
     public bool Looping = true; //TODO: fix the False setting, perhaps by introducing a new bool to check for the animation finishing.
 
@@ -49,7 +51,7 @@ public class EstimationToIK : MonoBehaviour
 
 
     //Where to receive data. LevelManager might overwrite these if active.
-    public enum estimationSource {None, HololensTcp, Panoptic, Recording, PointedDircetions, MediaPipe};
+    public enum estimationSource {None, HololensTcp, Panoptic, Recording, PointedDircetions, MediaPipe}; //later we could combine mediapipe and hololens
     public estimationSource currentEstimationSource;
 
     [System.Serializable]
@@ -91,6 +93,11 @@ public class EstimationToIK : MonoBehaviour
         if(index  < landmarks.Length)
         {
             Vector3 currentPos = landmarks[index] * scaleFactor; // x-axis pos
+
+            if (currentEstimationSource == estimationSource.MediaPipe)
+            {
+                return transform.position + new Vector3(currentPos.z, -currentPos.y, -currentPos.x);
+            }
             return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
         }
         else
@@ -100,27 +107,74 @@ public class EstimationToIK : MonoBehaviour
         }
     }
 
-    private void SetIKPosition(int index, AvatarIKGoal limb) //, AvatarIKHint hintlimb
+    private void SetIKPosition(int index, AvatarIKGoal limb)
     {
 
         Vector3 goal = goalFromIndex(index);
         animator.SetIKPositionWeight(limb, 1);
-        animator.SetIKRotationWeight(limb, 1);
+        //animator.SetIKRotationWeight(limb, 1);
         animator.SetIKPosition(limb, goal);
     }
 
-    private void SetIKPosition(int index, AvatarIKHint limb) //, AvatarIKHint hintlimb
+    private void SetIKPosition(int index, AvatarIKHint limb)
     {
         Vector3 goal = goalFromIndex(index);
         animator.SetIKHintPositionWeight(limb, 1);
         animator.SetIKHintPosition(limb, goal);
     }
 
+
+    public TwoBoneIKConstraint[] constraints; 
+    GameObject[] ikPointerObjects = new GameObject[10];
+    private void SetIKPosition(int index, string fingerName)
+    {
+        Vector3 goal = goalFromIndex(index);
+
+        for(int i = 0; i < constraints.Length; i++)
+        {
+            if (constraints[i].data.tip != null && constraints[i].data.tip.name.Contains(fingerName))
+            {
+                if (ikPointerObjects[i] == null)
+                {
+                    ikPointerObjects[i] = new GameObject("TemporaryTargetObject" + i);
+                }
+
+                ikPointerObjects[i].transform.position = goal;
+                Transform convertedTransform = ikPointerObjects[i].transform;
+                constraints[i].data.target = convertedTransform;
+
+                RigBuilder rigbuilder = GetComponent<RigBuilder>();
+                rigbuilder.Build(); //only build if the object is new. Actually, better to just premake all these objects and move them around
+            }
+        }
+    }
+
     private void SetJointLandmarks()
     {
-        //Endpoints:
-        SetIKPosition(0, AvatarIKGoal.LeftHand);
-        SetIKPosition(1, AvatarIKGoal.RightHand);
+        if(currentEstimationSource == estimationSource.MediaPipe)
+        {
+            SetIKPosition(15, AvatarIKGoal.LeftHand);
+            SetIKPosition(16, AvatarIKGoal.RightHand);
+
+            SetIKPosition(27, AvatarIKGoal.LeftFoot);
+            SetIKPosition(28, AvatarIKGoal.RightFoot);
+             
+            //Hints:
+            SetIKPosition(13, AvatarIKHint.LeftElbow);
+            SetIKPosition(25, AvatarIKHint.LeftKnee);
+            SetIKPosition(14, AvatarIKHint.RightElbow);
+            SetIKPosition(26, AvatarIKHint.RightKnee);
+
+            //Fingers:
+            //SetIKPosition(19, "mixamorig:RightHandIndex4");
+        }
+        else //currently everything except mediapipe and panoptic has these indices for hands
+        {
+            //Endpoints:
+            SetIKPosition(0, AvatarIKGoal.LeftHand);
+            SetIKPosition(1, AvatarIKGoal.RightHand);
+
+        }
 
         if (currentEstimationSource == estimationSource.Panoptic)
         {
@@ -148,6 +202,13 @@ public class EstimationToIK : MonoBehaviour
         else
         {
             //TODO: maybe we could set the center point based on the Head position from our hololens?
+            if (currentEstimationSource == estimationSource.MediaPipe)
+            {
+                //Vector3 midpoint = (goalFromIndex(23) + goalFromIndex(24)) / 2; 
+                //Vector3 midpoint = CameraStreamScript.centerLandmarkOffset; //+origin?
+                //Debug.Log(midpoint);
+                transform.position = origin + 0.5f * (new Vector3(0, -CameraStreamScript.centerLandmarkOffset.y, CameraStreamScript.centerLandmarkOffset.x) - new Vector3(0.0f,0.5f,0.5f)); //the helper's rotation might influence this!
+            }
         }
     }
 
@@ -223,11 +284,40 @@ public class EstimationToIK : MonoBehaviour
         }
     }
 
+    private void getDataFromMediapipeStream()
+    {
+        if (CameraStreamScript)
+        {
+
+            if (CameraStreamScript.vector3List.Count > 0)
+            {
+                landmarks = new Vector3[CameraStreamScript.vector3List.Count];
+                landmarks = CameraStreamScript.vector3List.ToArray();
+            }
+        }
+
+    }
+
+    public bool moveCenter = false;
     void OnAnimatorIK()
     {
         if (fadingIn && smoothing) //each step of fading in
         {
             fadeReset(false);
+        }
+
+
+        if (landmarks != null) //lets be one frame behind
+        {
+            if (moveCenter)
+            {
+                SetCenterPosition(2); //move the center to the correct position
+            }
+            else
+            {
+                transform.position = origin;
+            }
+            SetJointLandmarks();
         }
 
         //do animation
@@ -252,6 +342,7 @@ public class EstimationToIK : MonoBehaviour
                         break;
                     case (estimationSource.MediaPipe):
                         //LoadMediaPipeJSONData(basePath + "Recordings/" + selectedAnimName + ".json");
+                        getDataFromMediapipeStream();
                         break;
                     default: //no data to gather, so reset weights
                         if (landmarks != null)
@@ -266,11 +357,6 @@ public class EstimationToIK : MonoBehaviour
                 }
                 lastProcessedFrame = frameCount;
 
-            }
-            if(landmarks != null)
-            {
-                SetCenterPosition(2); //move the center to the correct position
-                SetJointLandmarks();
             }
         }
 
@@ -328,7 +414,7 @@ public class EstimationToIK : MonoBehaviour
 
         animator.SetIKPositionWeight(AvatarIKGoal.RightHand, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.RightHand, newWeight);
-        /*
+        
         animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, newWeight);
         animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, newWeight);
 
@@ -340,7 +426,7 @@ public class EstimationToIK : MonoBehaviour
         animator.SetIKHintPositionWeight(AvatarIKHint.LeftKnee, newWeight);
         animator.SetIKHintPositionWeight(AvatarIKHint.RightElbow, newWeight);
         animator.SetIKHintPositionWeight(AvatarIKHint.RightKnee, newWeight);
-        */
+        
     }
 
     private void LoadPanopticJSONData(string filePath)
@@ -422,7 +508,7 @@ public class EstimationToIK : MonoBehaviour
         else{ //TODO: dont have multiple frame counters
             frameCount = (Mathf.FloorToInt((Time.time - animStartTime) / frameTime) + 1) % (endFrame - startFrame); // Add 1 to start from frame 1, % by all frames of animation
         }
-        
+
     }
 
     // Start is called before the first frame update
@@ -444,10 +530,11 @@ public class EstimationToIK : MonoBehaviour
             }
         }else if (currentEstimationSource == estimationSource.MediaPipe)
         {
-            LoadMediaPipeJSONData(basePath + "Recordings/" + selectedAnimName + ".json");
+            //LoadMediaPipeJSONData(basePath + "Recordings/" + selectedAnimName + ".json");
         }
 
         animator = GetComponent<Animator>();
+
 
         fadeInStart();
     }
