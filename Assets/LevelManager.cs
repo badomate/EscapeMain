@@ -26,7 +26,6 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log(lockedLimb);
         dictionary = new DictionaryManager();
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         compareGestureScript = Helper.GetComponent<CompareGesture>();
