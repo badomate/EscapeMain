@@ -11,8 +11,10 @@ public class LevelManager : MonoBehaviour
     public int currentPlayer = 1; //0-player, 1-A.I
     private int levelCounter = 0;
 
-    public Gesture goalGesture = null;//change this from gesture dictionary
+    private Gesture lastGoalGesture;//saved for the limb lock mechanic
+    public Gesture goalGesture;
     private Pose.Landmark lockedLimb;
+    private Vector3 lockedLimbPosition; //where must the locked limb stay
 
     EstimationToIK estimationToIkScript;
     CompareGesture compareGestureScript;
@@ -146,10 +148,16 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public GameObject[] lockVisualizationObjects = new GameObject[4];
     public void Success()
     {
         UpdateText("Puzzle Solved!", "");
+        lastGoalGesture = goalGesture;
         goalGesture = pickFromDictionary();
+
+        lockedLimbPosition = new Vector3(0, 0, 0); //TODO: get last frame of lastGoalGesture 
+        lockVisualizationObjects[(int)lockedLimb].transform.position = lockedLimbPosition;
+
         if (currentPlayer == 1)
         {
             currentPlayer = 0;
@@ -186,7 +194,7 @@ public class LevelManager : MonoBehaviour
         nrGesturesChosen++;
 
         Gesture gesture = gestureList[pickIndex];
-        Debug.Log("NEW GESTURE PICKED[" + pickIndex + "] \n" + gesture.ToString());
+        //Debug.Log("NEW GESTURE PICKED[" + pickIndex + "] \n" + gesture.ToString());
         
         return gestureList[pickIndex];
     }
