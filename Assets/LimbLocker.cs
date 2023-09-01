@@ -12,7 +12,7 @@ public class LimbLocker : MonoBehaviour
     public float Threshold = 0.5f; //maximum distance between the limb and the lock position
     public GameObject warningCanvas;
     private Pose.Landmark lockedLimb;
-    private int lockedLimbIndex = 16; //TODO: it would be good to be able to find out the index in the .landmarks data from knowing the lockedLimb
+    private int lockedLimbIndex = 0;
     private Vector3 lockedLimbPosition; //where must the locked limb stay
     public GameObject[] lockVisualizationObjects = new GameObject[2];
     public Vector3 playerBasePosition = new Vector3(-4, 0.801f, 0);
@@ -21,11 +21,6 @@ public class LimbLocker : MonoBehaviour
 
     private bool locked = false;
     private float warningTimer = 0f;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     void turnColor(bool correct)
     {
@@ -75,7 +70,9 @@ public class LimbLocker : MonoBehaviour
         locked = true;
         List<Pose.Landmark> landmarkList = goalGesture.relatedLandmarks();
         int randomIndex = new System.Random().Next(landmarkList.Count);
+
         lockedLimb = landmarkList[randomIndex];
+        lockedLimbIndex = LandmarkIndicesDictionary.mediapipeIndices[lockedLimb];
 
         lockedLimbPosition = ScaleFactor * lastGoalGesture._poseSequence[lastGoalGesture._poseSequence.Count - 1]._poseToMatch._landmarkArrangement[lockedLimb]; //the position of the locked limb in the last pose of the last gesture
         lockVisualizationObjects[0].transform.position = playerBasePosition + lockedLimbPosition; //+ players base position 
