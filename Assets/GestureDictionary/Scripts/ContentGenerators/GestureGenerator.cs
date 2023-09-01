@@ -1,6 +1,7 @@
 using GestureDictionary.ContentGenerators.StarterGestures;
 using System.Collections.Generic;
 using UnityEngine;
+using AuxiliarContent;
 
 namespace GestureDictionary.ContentGenerators {
 
@@ -27,9 +28,9 @@ namespace GestureDictionary.ContentGenerators {
             Dictionary<string, Pose> poseRegistry = dictionaryManager.GetKnownPoses();
 
             GenerateTestStarterGestures(poseRegistry, dictionaryManager, true);
-//            GenerateTrueStarterGestures(poseRegistry, dictionaryManager, true);
+            //            GenerateTrueStarterGestures(poseRegistry, dictionaryManager, true);
 
-            Debug.Log("Added metagestures.");
+            CustomDebug.LogGen("Added metagestures.");
         }
 
         /// <summary> Generates basic known gestures </summary>
@@ -37,16 +38,16 @@ namespace GestureDictionary.ContentGenerators {
             Dictionary<string, Pose> poseRegistry = dictionaryManager.GetKnownPoses();
 
             GenerateTestStarterGestures(poseRegistry, dictionaryManager, false);
-        //    GenerateTrueStarterGestures(poseRegistry, dictionaryManager, false);
-            
-            Debug.Log("Added basic gestures.");
+            //    GenerateTrueStarterGestures(poseRegistry, dictionaryManager, false);
+
+            CustomDebug.LogGen("Added basic gestures.");
         }
 
         public static void AddStarterGesture
             (StarterGesture starterGesture, 
             DictionaryManager dictionaryManager, bool isMetaGesture = false)
         {
-            Debug.Log("Added starter gesture: " + starterGesture.gestureId);
+            CustomDebug.LogGen("Added starter gesture: " + starterGesture.gestureId);
             dictionaryManager.AddGesture(starterGesture, starterGesture.gestureId, isMetaGesture);
         }
 
@@ -61,7 +62,7 @@ namespace GestureDictionary.ContentGenerators {
                     AddStarterGesture(new GestureHandFalls(poseRegistry), dictionaryManager);
                 }
 
-                Debug.Log("Added TRUE gestures.");
+            CustomDebug.LogGen("Added TRUE gestures.");
         }
 
         public static void GenerateTestStarterGestures(Dictionary<string, Pose> poseRegistry, 
@@ -75,7 +76,7 @@ namespace GestureDictionary.ContentGenerators {
                     AddStarterGesture(new GestureTestB(poseRegistry), dictionaryManager);
                 }
 
-                Debug.Log("Added TEST gestures.");
+            CustomDebug.LogGen("Added TEST gestures.");
         }
     }
 
