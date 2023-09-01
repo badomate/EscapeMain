@@ -1118,7 +1118,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 319678117}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 794d18eff160e5b43b1acbb7160355f4, type: 3}
   m_Name: 
@@ -5562,8 +5562,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05de2c7c206fa304e8d4c068dd7abe8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materialCorrect: {fileID: 2100000, guid: a8f80855e983a7e4290e228f45185f94, type: 2}
+  materialIncorrect: {fileID: 2100000, guid: f265aebb27994b642b7483b3ab817694, type: 2}
   ScaleFactor: 0.1
-  Threshold: 0.5
+  Threshold: 0.8
+  warningCanvas: {fileID: 1315728760}
   lockVisualizationObjects:
   - {fileID: 581730210}
   - {fileID: 819106839}
