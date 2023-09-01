@@ -65,12 +65,19 @@ public class LevelManager : MonoBehaviour
         //pick a gesture from the dictionary
         compareGestureScript.recording = true;
 
-        if(levelCounter > 2) //pick a random limb to lock down
+        lastGoalGesture = goalGesture;
+        goalGesture = pickFromDictionary();
+
+
+        if (levelCounter > 2) //pick a random limb to lock down
         {
             List<Pose.Landmark> landmarkList = goalGesture.relatedLandmarks();
             int randomIndex = new System.Random().Next(landmarkList.Count);
             lockedLimb = landmarkList[randomIndex];
         }
+
+        lockedLimbPosition = new Vector3(0, 0, 0); //TODO: get last frame of lastGoalGesture 
+        lockVisualizationObjects[(int)lockedLimb].transform.position = new Vector3(-4, 2, 0) + lastGoalGesture._poseSequence[lastGoalGesture._poseSequence.Count -1]._poseToMatch._landmarkArrangement[lockedLimb]; //players base position + the position of the locked limb in the last pose of the last gesture
 
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
@@ -152,11 +159,6 @@ public class LevelManager : MonoBehaviour
     public void Success()
     {
         UpdateText("Puzzle Solved!", "");
-        lastGoalGesture = goalGesture;
-        goalGesture = pickFromDictionary();
-
-        lockedLimbPosition = new Vector3(0, 0, 0); //TODO: get last frame of lastGoalGesture 
-        lockVisualizationObjects[(int)lockedLimb].transform.position = lockedLimbPosition;
 
         if (currentPlayer == 1)
         {
