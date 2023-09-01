@@ -13,11 +13,10 @@ public class LevelManager : MonoBehaviour
 
     private Gesture lastGoalGesture;//saved for the limb lock mechanic
     public Gesture goalGesture;
-    private Pose.Landmark lockedLimb;
-    private Vector3 lockedLimbPosition; //where must the locked limb stay
 
     EstimationToIK estimationToIkScript;
     CompareGesture compareGestureScript;
+    public LimbLocker limbLockerScript;
     public InteractByPointing pointerScript;
     public GameObject PlayerUI;
     public TextMesh InfoBox;
@@ -69,15 +68,15 @@ public class LevelManager : MonoBehaviour
         goalGesture = pickFromDictionary();
 
 
-        if (levelCounter > 2) //pick a random limb to lock down
+        if (levelCounter > 2 && currentPlayer == 1) //pick a random limb to lock down
         {
-            List<Pose.Landmark> landmarkList = goalGesture.relatedLandmarks();
-            int randomIndex = new System.Random().Next(landmarkList.Count);
-            lockedLimb = landmarkList[randomIndex];
+            limbLockerScript.lockLimb(goalGesture, lastGoalGesture);
+        }
+        else
+        {
+            limbLockerScript.releaseLockedLimb();
         }
 
-        lockedLimbPosition = new Vector3(0, 0, 0); //TODO: get last frame of lastGoalGesture 
-        lockVisualizationObjects[(int)lockedLimb].transform.position = new Vector3(-4, 2, 0) + lastGoalGesture._poseSequence[lastGoalGesture._poseSequence.Count -1]._poseToMatch._landmarkArrangement[lockedLimb]; //players base position + the position of the locked limb in the last pose of the last gesture
 
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
@@ -155,7 +154,6 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public GameObject[] lockVisualizationObjects = new GameObject[4];
     public void Success()
     {
         UpdateText("Puzzle Solved!", "");
