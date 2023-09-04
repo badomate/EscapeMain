@@ -307,7 +307,7 @@ public class EstimationToIK : MonoBehaviour
         }
 
 
-        if (landmarks != null) //lets be one frame behind
+        if (landmarks != null && currentEstimationSource != estimationSource.None) //lets be one frame behind
         {
             if (moveCenter)
             {
