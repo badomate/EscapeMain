@@ -10,7 +10,7 @@ public class LimbLocker : MonoBehaviour
 
     public float ScaleFactor = 0.1f;
     public float Threshold = 0.5f; //maximum distance between the limb and the lock position
-    public GameObject warningCanvas;
+    public Canvas warningCanvas;
     private Pose.Landmark lockedLimb;
     private int lockedLimbIndex = 0;
     private Vector3 lockedLimbPosition; //where must the locked limb stay
@@ -50,13 +50,13 @@ public class LimbLocker : MonoBehaviour
                     warningTimer += Time.deltaTime;
                     if (warningTimer >= 1f)
                     {
-                        warningCanvas.SetActive(true);
+                        warningCanvas.gameObject.SetActive(true);
                         turnColor(false);
                     }
                 }
                 else
                 {
-                    warningCanvas.SetActive(false);
+                    warningCanvas.gameObject.SetActive(false);
                     turnColor(true);
                     warningTimer = 0f;
                 }
@@ -74,6 +74,12 @@ public class LimbLocker : MonoBehaviour
         lockedLimb = landmarkList[randomIndex];
         lockedLimbIndex = LandmarkIndicesDictionary.mediapipeIndices[lockedLimb];
 
+        TextMesh textMesh = warningCanvas.GetComponentInChildren<TextMesh>();
+        if (textMesh != null)
+        {
+            textMesh.text = "You must keep your "+ lockedLimb + " in the sphere!";
+        }
+
         lockedLimbPosition = ScaleFactor * lastGoalGesture._poseSequence[lastGoalGesture._poseSequence.Count - 1]._poseToMatch._landmarkArrangement[lockedLimb]; //the position of the locked limb in the last pose of the last gesture
         lockVisualizationObjects[0].transform.position = playerBasePosition + lockedLimbPosition; //+ players base position 
         lockVisualizationObjects[1].transform.position = mirrorBasePosition + Vector3.Scale(lockedLimbPosition,new Vector3(-1,1,1)); //+ mirror's base position (vector scale is for inverting x since the mirror is inverted)
@@ -86,6 +92,6 @@ public class LimbLocker : MonoBehaviour
         locked = false;
         lockVisualizationObjects[0].SetActive(false);
         lockVisualizationObjects[1].SetActive(false);
-        warningCanvas.SetActive(false);
+        warningCanvas.gameObject.SetActive(false);
     }
 }

@@ -5566,7 +5566,7 @@ MonoBehaviour:
   materialIncorrect: {fileID: 2100000, guid: f265aebb27994b642b7483b3ab817694, type: 2}
   ScaleFactor: 0.1
   Threshold: 0.8
-  warningCanvas: {fileID: 1315728760}
+  warningCanvas: {fileID: 1315728763}
   lockVisualizationObjects:
   - {fileID: 581730210}
   - {fileID: 819106839}
