@@ -56,6 +56,44 @@ public class InteractByPointing : MonoBehaviour
         }
     }
 
+    public EstimationToIK estimationScript;
+    bool selfPointCheck(Ray ray)
+    {
+        int closestPointIndex = -1;
+        float closestDistance = boneHitThreshold;
+
+        for (int i = 0; i < estimationScript.landmarks.Length; i++)
+        {
+            Vector3 rayToPoint = estimationScript.landmarks[i] - ray.origin;
+            float projection = Vector3.Dot(ray.direction, rayToPoint);
+
+            if (projection < 0)
+            {
+                //Skip points behind the ray
+                continue;
+            }
+
+            Vector3 closestPoint = ray.origin + projection * ray.direction;
+            float distance = Vector3.Distance(estimationScript.landmarks[i], closestPoint);
+
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestPointIndex = i;
+            }
+        }
+
+        if (closestPointIndex != -1)
+        {
+            Debug.Log("Self-pointed at landmark: " + closestPointIndex);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
     private Transform hoveredLimb = null;
     private float startTime; // Stores when hovering the current limb started;
@@ -77,7 +115,7 @@ public class InteractByPointing : MonoBehaviour
 
         if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity) && LevelManagerScript.currentPlayer == 1) //Disabled unless it's player's turn to explain, not sure if it has a use otherwise
         {
-
+            selfPointCheck(ray);
             //Get the Animator component of the Helper
             Animator helperAnimator = Helper.GetComponent<Animator>();
 
@@ -135,7 +173,7 @@ public class InteractByPointing : MonoBehaviour
                             startTime = Time.time;
 
                         }
-                        Debug.Log("Locking in the following limb: " + hoveredLimb + "...");
+                        //Debug.Log("Locking in the following limb: " + hoveredLimb + "...");
                         //hoveredLimb.gameObject.GetComponent<Renderer>().material = highlightedMaterial;
 
                         //TODO: process what happens with closestHitLimb,
@@ -167,7 +205,7 @@ public class InteractByPointing : MonoBehaviour
                         landmarkSelected = Pose.Landmark.LEFT_WRIST;
                         break;
                 }
-                Debug.Log("Limb locked in: " + hoveredLimb.name);
+                //Debug.Log("Limb locked in: " + hoveredLimb.name);
                 LandmarksForPose[landmarkSelected] = hitInfo.point;
 
                 PoseBeingBuilt = new Pose(LandmarksForPose);

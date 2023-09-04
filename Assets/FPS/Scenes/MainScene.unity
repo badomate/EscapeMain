@@ -5555,6 +5555,7 @@ MonoBehaviour:
   Visualize: 1
   moveWithMouse: 1
   boneHitThreshold: 2
+  estimationScript: {fileID: 1528204669}
 --- !u!114 &2729281214152228946
 MonoBehaviour:
   m_ObjectHideFlags: 0
