@@ -11,11 +11,12 @@ public class LevelManager : MonoBehaviour
     public int currentPlayer = 1; //0-player, 1-A.I
     private int levelCounter = 0;
 
-    public Gesture goalGesture = null;//change this from gesture dictionary
-    private Pose.Landmark lockedLimb;
+    private Gesture lastGoalGesture;//saved for the limb lock mechanic
+    public Gesture goalGesture;
 
     EstimationToIK estimationToIkScript;
     CompareGesture compareGestureScript;
+    public LimbLocker limbLockerScript;
     public InteractByPointing pointerScript;
     public GameObject PlayerUI;
     public TextMesh InfoBox;
@@ -26,7 +27,6 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log(lockedLimb);
         dictionary = new DictionaryManager();
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         compareGestureScript = Helper.GetComponent<CompareGesture>();
@@ -64,12 +64,19 @@ public class LevelManager : MonoBehaviour
         //pick a gesture from the dictionary
         compareGestureScript.recording = true;
 
-        if(levelCounter > 2) //pick a random limb to lock down
+        lastGoalGesture = goalGesture;
+        goalGesture = pickFromDictionary();
+
+
+        if (levelCounter > 2 && currentPlayer == 1) //pick a random limb to lock down
         {
-            List<Pose.Landmark> landmarkList = goalGesture.relatedLandmarks();
-            int randomIndex = new System.Random().Next(landmarkList.Count);
-            lockedLimb = landmarkList[randomIndex];
+            limbLockerScript.lockLimb(goalGesture, lastGoalGesture);
         }
+        else
+        {
+            limbLockerScript.releaseLockedLimb();
+        }
+
 
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
@@ -150,7 +157,7 @@ public class LevelManager : MonoBehaviour
     public void Success()
     {
         UpdateText("Puzzle Solved!", "");
-        goalGesture = pickFromDictionary();
+
         if (currentPlayer == 1)
         {
             currentPlayer = 0;
@@ -187,7 +194,7 @@ public class LevelManager : MonoBehaviour
         nrGesturesChosen++;
 
         Gesture gesture = gestureList[pickIndex];
-        Debug.Log("NEW GESTURE PICKED[" + pickIndex + "] \n" + gesture.ToString());
+        //Debug.Log("NEW GESTURE PICKED[" + pickIndex + "] \n" + gesture.ToString());
         
         return gestureList[pickIndex];
     }

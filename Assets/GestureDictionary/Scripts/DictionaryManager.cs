@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GestureDictionary.ContentGenerators;
+using AuxiliarContent;
 
 namespace GestureDictionary {
     public class DictionaryManager
@@ -21,8 +22,8 @@ namespace GestureDictionary {
             PoseGenerator.GenerateStarterPoses(this);
             GestureGenerator.GenerateStarterGestures(this);
 
-            Debug.Log("GTM:" + _gestureToMeaning.Keys.Count);
-            Debug.Log("MGTM:" + _meaningToGesture.Keys.Count);
+            CustomDebug.LogGen("GTM:" + _gestureToMeaning.Keys.Count);
+            CustomDebug.LogGen("MGTM:" + _meaningToGesture.Keys.Count);
         }
 
         public Dictionary<string, Pose> GetKnownPoses()

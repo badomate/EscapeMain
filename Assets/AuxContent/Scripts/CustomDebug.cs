@@ -4,7 +4,7 @@ namespace AuxiliarContent
 {
     public static class CustomDebug
     {
-        public static bool genIsOn = true;
+        public static bool genIsOn = false;
         public static bool alexIsOn = false;
         public static bool janosIsOn = true;
         public static bool mateIsOn = true;

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GestureDictionary.ContentGenerators.StarterPoses;
+using AuxiliarContent;
 
 namespace GestureDictionary.ContentGenerators {
 
@@ -20,14 +21,14 @@ namespace GestureDictionary.ContentGenerators {
             Dictionary<string, Pose> poseRegistry = gestureDictionary.GetKnownPoses();
 
             GenerateTestStarterPoses(poseRegistry);
-//            GenerateTrueStarterPoses(poseRegistry);
+            //            GenerateTrueStarterPoses(poseRegistry);
 
-            Debug.Log("Added all starter poses defined.");
+            CustomDebug.LogGen("Added all starter poses defined.");
         }
 
         public static void AddStarterPose(StarterPose starterPose, Dictionary<string, Pose> poseRegistry)
         {
-            Debug.Log("Added StarterPose: " + starterPose.poseId + starterPose.ToString(false));
+            CustomDebug.LogGen("Added StarterPose: " + starterPose.poseId + starterPose.ToString(false));
             poseRegistry.Add(starterPose.poseId, starterPose);
         }
 
@@ -36,14 +37,14 @@ namespace GestureDictionary.ContentGenerators {
             AddStarterPose(new PoseLeftHandDown(), poseRegistry);
             AddStarterPose(new PoseLeftHandMiddle(), poseRegistry);
 
-            Debug.Log("Added TRUE starter poses");
+            CustomDebug.LogGen("Added TRUE starter poses");
         }
 
         public static void GenerateTestStarterPoses(Dictionary<string, Pose> poseRegistry) {
             AddStarterPose(new PoseTestA(), poseRegistry);
             AddStarterPose(new PoseTestB(), poseRegistry);
 
-            Debug.Log("Added TEST starter poses");
+            CustomDebug.LogGen("Added TEST starter poses");
         }
     }
 }
