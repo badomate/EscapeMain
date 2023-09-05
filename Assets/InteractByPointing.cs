@@ -88,11 +88,13 @@ public class InteractByPointing : MonoBehaviour
             }
         }
 
-        if (closestPointIndex != -1 && hoveredLimb.position != estimationScript.landmarks[closestPointIndex])
+        if (closestPointIndex != -1 && hoveredLimb.position != estimationScript.landmarks[closestPointIndex]
+            && LandmarkIndicesDictionary.mediapipeIndicesToLimbs.Values.Any(list => list.Contains(closestPointIndex)))
         {
             hoveredLimb = null;
             hoveredLimb.position = estimationScript.landmarks[closestPointIndex];
             Debug.Log("Self-pointed at landmark: " + closestPointIndex);
+
             startTime = Time.time;
 
             return true;
@@ -218,7 +220,7 @@ public class InteractByPointing : MonoBehaviour
                 Pose.Landmark landmarkSelected;
                 if (selfSelected)
                 {
-                    landmarkSelected = LandmarkIndicesDictionary.mediapipeIndices.FirstOrDefault(x => x.Value == closestPointIndex).Key;
+                    landmarkSelected = LandmarkIndicesDictionary.mediapipeIndicesToLimbs.FirstOrDefault(x => x.Value.Contains(closestPointIndex)).Key;
                 }
                 else
                 {
