@@ -93,7 +93,8 @@ public class InteractByPointing : MonoBehaviour
             hoveredLimb = null;
             hoveredLimb.position = estimationScript.landmarks[closestPointIndex];
             Debug.Log("Self-pointed at landmark: " + closestPointIndex);
-            
+            startTime = Time.time;
+
             return true;
         }
         else
@@ -102,7 +103,7 @@ public class InteractByPointing : MonoBehaviour
         }
     }
 
-    void helperPointCheck(Ray ray)
+    bool helperPointCheck(Ray ray)
     {
         if (hitInfo.collider.gameObject == Helper)
         {
@@ -154,7 +155,6 @@ public class InteractByPointing : MonoBehaviour
                     */
                     hoveredLimb = closestHitLimb;
                     startTime = Time.time;
-
                 }
                 //Debug.Log("Locking in the following limb: " + hoveredLimb + "...");
                 //hoveredLimb.gameObject.GetComponent<Renderer>().material = highlightedMaterial;
@@ -165,9 +165,9 @@ public class InteractByPointing : MonoBehaviour
         }
         else //we never hit the Helper's (generous) collision box, so he is not being pointed at
         {
-            //                    hoveredLimb.gameObject.GetComponent<Renderer>().material = regularMaterial;
-            hoveredLimb = null;
+            return false;
         }
+        return true;
     }
 
 
@@ -199,7 +199,10 @@ public class InteractByPointing : MonoBehaviour
             {
                 if (!selfPointCheck(ray))
                 {
-                    helperPointCheck(ray);
+                    if (!helperPointCheck(ray))
+                    {
+                        hoveredLimb = null;
+                    }
                     selfSelected = false;
                 }
                 else{
