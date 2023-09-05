@@ -22,7 +22,8 @@ public class InteractByPointing : MonoBehaviour
     [Tooltip("Show a red ray along where the player is pointing.")]
     public bool Visualize = true;
     public bool moveWithMouse = true;
-    public float boneHitThreshold = 1.0f;
+    public float boneHitThreshold = 2.0f;
+    public float selfHitThreshold = 2.0f;
 
     Animator helperAnimator;
     // Start is called before the first frame update
@@ -59,7 +60,7 @@ public class InteractByPointing : MonoBehaviour
         }
     }
 
-    bool selfSelected = false;
+    bool hoveringSomething = false;
     public EstimationToIK estimationScript;
     int closestPointIndex;
     bool selfPointCheck(Ray ray)
@@ -81,26 +82,28 @@ public class InteractByPointing : MonoBehaviour
             Vector3 closestPoint = ray.origin + projection * ray.direction;
             float distance = Vector3.Distance(estimationScript.landmarks[i], closestPoint);
 
-            if (distance < closestDistance)
+            if (distance < selfHitThreshold && distance < closestDistance)
             {
                 closestDistance = distance;
                 closestPointIndex = i;
             }
         }
 
-        if (closestPointIndex != -1 && hoveredLimb.position != estimationScript.landmarks[closestPointIndex]
+        if (closestPointIndex != -1
             && LandmarkIndicesDictionary.mediapipeIndicesToLimbs.Values.Any(list => list.Contains(closestPointIndex)))
         {
-            hoveredLimb = null;
-            hoveredLimb.position = estimationScript.landmarks[closestPointIndex];
+            Pose.Landmark currentLandmark = LandmarkIndicesDictionary.mediapipeIndicesToLimbs.FirstOrDefault(x => x.Value.Contains(closestPointIndex)).Key;  //TODO: we are going through the dictionary twice, we should fix that
+            if (currentLandmark != landmarkSelected) { //New major landmark is hovered
+                landmarkSelected = currentLandmark;
+            }
             Debug.Log("Self-pointed at landmark: " + closestPointIndex);
 
             startTime = Time.time;
-
             return true;
         }
         else
         {
+            Debug.Log("No self hit");
             return false;
         }
     }
@@ -152,17 +155,24 @@ public class InteractByPointing : MonoBehaviour
                 }
                 if (hoveredLimb != closestHitLimb)
                 {
-                    /*if (hoveredLimb!=null)
-                        hoveredLimb.gameObject.GetComponent<Renderer>().material = regularMaterial;
-                    */
                     hoveredLimb = closestHitLimb;
+                    switch (hoveredLimb.name)
+                    {
+                        case "mixamorig:LeftArm": //if we had saved the HumanBody enum from earlier, we could be switching on that 
+                            landmarkSelected = Pose.Landmark.LEFT_WRIST;
+                            break;
+                        case "mixamorig:RightArm":
+                            landmarkSelected = Pose.Landmark.RIGHT_WRIST;
+                            break;
+                        default:
+                            landmarkSelected = Pose.Landmark.LEFT_WRIST;
+                            break;
+                    }
                     startTime = Time.time;
                 }
                 //Debug.Log("Locking in the following limb: " + hoveredLimb + "...");
-                //hoveredLimb.gameObject.GetComponent<Renderer>().material = highlightedMaterial;
 
-                //TODO: process what happens with closestHitLimb,
-                //such as highlighting it to show that it is being "hovered" with the pointer
+                //TODO: feedback when a limb is in the process of selection or already seletced
             }
         }
         else //we never hit the Helper's (generous) collision box, so he is not being pointed at
@@ -180,6 +190,7 @@ public class InteractByPointing : MonoBehaviour
     public Gesture GestureBeingBuilt = new Gesture();
     RaycastHit hitInfo;
 
+    Pose.Landmark landmarkSelected;
     // Update is called once per frame
     void Update()
     {
@@ -197,46 +208,28 @@ public class InteractByPointing : MonoBehaviour
             //Get the Animator component of the Helper
             //Animator helperAnimator = Helper.GetComponent<Animator>();
 
-            if (Time.time - startTime < 3.0f || !hoveredLimb)
+            if (Time.time - startTime < 3.0f || !hoveringSomething)
             {
                 if (!selfPointCheck(ray))
                 {
                     if (!helperPointCheck(ray))
                     {
                         hoveredLimb = null;
+                        hoveringSomething = false;
                     }
-                    selfSelected = false;
+                    else
+                    {
+                        hoveringSomething = true;
+                    }
                 }
                 else{
-                    selfSelected = true;
+                    hoveringSomething = true;
                 }
             }
-            else //a limb is currently locked in
-            {
+            else { 
                 //Once the limb is locked in, this block here runs every frame.
 
                 EstimationToIK estimationScript = Helper.GetComponent<EstimationToIK>();
-                //estimationScript.landmarks = hitInfo.point;
-                Pose.Landmark landmarkSelected;
-                if (selfSelected)
-                {
-                    landmarkSelected = LandmarkIndicesDictionary.mediapipeIndicesToLimbs.FirstOrDefault(x => x.Value.Contains(closestPointIndex)).Key;
-                }
-                else
-                {
-                    switch (hoveredLimb.name)
-                    {
-                        case "mixamorig:LeftArm": //if we had saved the HumanBody enum from earlier, we could be switching on that 
-                            landmarkSelected = Pose.Landmark.LEFT_WRIST;
-                            break;
-                        case "mixamorig:RightArm":
-                            landmarkSelected = Pose.Landmark.RIGHT_WRIST;
-                            break;
-                        default:
-                            landmarkSelected = Pose.Landmark.LEFT_WRIST;
-                            break;
-                    }
-                }
                 //Debug.Log("Limb locked in: " + hoveredLimb.name);
                 LandmarksForPose[landmarkSelected] = hitInfo.point;
 
@@ -249,7 +242,9 @@ public class InteractByPointing : MonoBehaviour
                 if (Input.GetKey("q"))
                 {
                     hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
-                    //TODO: have this triggure using some positive feedback metagesture, like a nod or a thumbs up (would thumbs up mess up the pointing?)
+                    hoveringSomething = false;
+
+                    //TODO: have this be triggered using some positive feedback metagesture, like a nod or a thumbs up (would thumbs up mess up the pointing?)
                 }
 
             }
