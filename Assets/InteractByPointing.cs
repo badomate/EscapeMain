@@ -103,7 +103,6 @@ public class InteractByPointing : MonoBehaviour
         }
         else
         {
-            Debug.Log("No self hit");
             return false;
         }
     }
@@ -198,6 +197,14 @@ public class InteractByPointing : MonoBehaviour
         {
             fingertipPosition = playerCamera.transform.position;
             fingertipDirection = playerCamera.transform.forward*10 ;
+        }
+        else
+        {
+            if(estimationScript.landmarks.Length > 20)
+            {
+                fingertipPosition = estimationScript.landmarks[16];
+                fingertipDirection = estimationScript.landmarks[20];
+            }
         }
 
         Ray ray = new Ray(fingertipPosition, fingertipDirection); //mock data for now

@@ -4487,7 +4487,8 @@ MonoBehaviour:
   leftHand: {fileID: 1528204667}
   rightHand: {fileID: 1528204666}
   Looping: 1
-  landmarks: []
+  landmarks:
+  - {x: 0, y: 0, z: 0}
   scaleFactor: 1
   centerpointOffset: {x: 0, y: -0.81, z: 0}
   startFrame: 0
@@ -5553,8 +5554,9 @@ MonoBehaviour:
   highlightedMaterial: {fileID: 2100000, guid: 980c24c5a501a9a429356d191ad356a9, type: 2}
   regularMaterial: {fileID: 2100000, guid: 6487fdefd669d4dbc91709a177cd4b93, type: 2}
   Visualize: 1
-  moveWithMouse: 1
+  moveWithMouse: 0
   boneHitThreshold: 2
+  selfHitThreshold: 2
   estimationScript: {fileID: 1528204669}
 --- !u!114 &2729281214152228946
 MonoBehaviour:
