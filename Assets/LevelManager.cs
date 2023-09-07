@@ -113,7 +113,7 @@ public class LevelManager : MonoBehaviour
 
     void handlePlayerConfirmedGesture() //TODO: instead of checking the various ways the puzzle can be solved, perhaps we could just get whatever the Helper is doing and compare that directly
     {
-        if (currentPlayer == 1) //player demonstrates
+        if (currentPlayer == 1 && goalGesture != null) //player demonstrates
         {
             //Debug.Log("Player locked in his demonstration");
             if (compareGestureScript.goalGestureCompleted(compareGestureScript.characterGesture)){
