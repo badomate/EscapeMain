@@ -57,7 +57,8 @@ namespace GestureDictionary.ContentGenerators {
             DictionaryManager dictionaryManager, bool isMetaGesture = false) {
 
                 if (isMetaGesture) {
-                    AddStarterGesture(new GestureHandRises(poseRegistry), dictionaryManager, true);
+                    AddStarterGesture(new GestureNegative(poseRegistry), dictionaryManager, true);
+                    AddStarterGesture(new GesturePositive(poseRegistry), dictionaryManager, true);
                     
                 }
                 else {
