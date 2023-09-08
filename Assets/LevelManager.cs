@@ -22,7 +22,7 @@ public class LevelManager : MonoBehaviour
     public TextMesh InfoBox;
     public TextMesh LevelInfoBox;
     private bool connected = false; //used for events
-    private DictionaryManager dictionary;
+    public static DictionaryManager dictionary;
     public static Regex _poseRegex;
 
     void Start()

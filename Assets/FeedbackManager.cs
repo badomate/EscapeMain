@@ -8,16 +8,26 @@ public class FeedbackManager : MonoBehaviour
     public enum feedbackType { Positive, Negative, Dontunderstand }; //later we could combine mediapipe and hololens
     public feedbackType lastDetectedFeedback;
     public UnityEvent m_FeedbackEvent = new UnityEvent();
+
+    CompareGesture compareGestureScript;
     // Start is called before the first frame update
     void Start()
     {
-        
+        compareGestureScript = GetComponent<CompareGesture>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //TODO: we need to detect if feedback is being given. If so, fire m_FeedbackEvent and change lastDetectedFeedback.
-        //...perhaps we could use CompareGesture or the Gesture dictionary's functions for this or both
+        if (compareGestureScript != null)
+        {
+            Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
+            string meaning = LevelManager.dictionary.GetMeaningFromGesture(characterGesture);
+            if(meaning == "NEGATIVE")
+            {
+                m_FeedbackEvent.Invoke();
+            }
+        }
     }
 }
