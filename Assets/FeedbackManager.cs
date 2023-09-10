@@ -24,6 +24,14 @@ public class FeedbackManager : MonoBehaviour
         {
             Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
             string meaning = LevelManager.dictionary.GetMeaningFromGesture(characterGesture);
+            switch (meaning){
+                case "POSTIIVE":
+                    lastDetectedFeedback = feedbackType.Positive;
+                    break;
+                case "NEGATIVE":
+                    lastDetectedFeedback = feedbackType.Negative;
+                    break;
+            }
             if(meaning == "NEGATIVE" || meaning == "POSITIVE")
             {
                 m_FeedbackEvent.Invoke();

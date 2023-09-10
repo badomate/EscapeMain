@@ -23,7 +23,7 @@ public class EstimationToIK : MonoBehaviour
     public bool Looping = true; //TODO: fix the False setting, perhaps by introducing a new bool to check for the animation finishing.
 
     public Vector3[] landmarks;
-    public float scaleFactor = 0.02f; //0.005f; // Adjust the scaling factor as needed
+    public float scaleFactor = 0.02f; // Adjust the scaling factor as needed
     private int frameCount;
     private int smoothingFrameCount = 0;
 

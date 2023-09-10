@@ -46,7 +46,7 @@ public class InteractByPointing : MonoBehaviour
 
     private void handleFeedbackEvent()
     {
-        if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Negative)
+        if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Positive)
         {
             unselectLimb();
         }
