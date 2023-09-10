@@ -263,11 +263,6 @@ public class InteractByPointing : MonoBehaviour
                     GestureBeingBuilt.AddPose(PoseBeingBuilt);
                 }
 
-                if (Input.GetKey("q"))
-                {
-                    unselectLimb();
-                }
-
             }
         }
         

@@ -37,5 +37,17 @@ public class FeedbackManager : MonoBehaviour
                 m_FeedbackEvent.Invoke();
             }
         }
+
+
+        //keyboard shortcuts for testing purposes
+        if (Input.GetKey("n"))
+        {
+            lastDetectedFeedback = feedbackType.Negative;
+            m_FeedbackEvent.Invoke();
+        }else if (Input.GetKey("p"))
+        {
+            lastDetectedFeedback = feedbackType.Positive;
+            m_FeedbackEvent.Invoke();
+        }
     }
 }
