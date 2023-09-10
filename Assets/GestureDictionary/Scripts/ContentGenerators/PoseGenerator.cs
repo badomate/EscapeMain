@@ -43,6 +43,9 @@ namespace GestureDictionary.ContentGenerators {
         public static void GenerateTestStarterPoses(Dictionary<string, Pose> poseRegistry) {
             AddStarterPose(new PoseTestA(), poseRegistry);
             AddStarterPose(new PoseTestB(), poseRegistry);
+            AddStarterPose(new PoseLeftHandUp(), poseRegistry);
+            AddStarterPose(new PoseLeftHandDown(), poseRegistry);
+            AddStarterPose(new PoseLeftHandMiddle(), poseRegistry);
 
             CustomDebug.LogGen("Added TEST starter poses");
         }

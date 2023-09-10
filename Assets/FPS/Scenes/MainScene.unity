@@ -5570,7 +5570,7 @@ MonoBehaviour:
   highlightedMaterial: {fileID: 2100000, guid: 980c24c5a501a9a429356d191ad356a9, type: 2}
   regularMaterial: {fileID: 2100000, guid: 6487fdefd669d4dbc91709a177cd4b93, type: 2}
   Visualize: 1
-  moveWithMouse: 0
+  moveWithMouse: 1
   boneHitThreshold: 2
   selfHitThreshold: 2
   feedbackManager: {fileID: 319678149}

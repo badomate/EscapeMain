@@ -254,7 +254,6 @@ public class InteractByPointing : MonoBehaviour
             else { 
                 //Once the limb is locked in, this block here runs every frame.
 
-                EstimationToIK estimationScript = Helper.GetComponent<EstimationToIK>();
                 //Debug.Log("Limb locked in: " + hoveredLimb.name);
                 LandmarksForPose[landmarkSelected] = hitInfo.point;
 
