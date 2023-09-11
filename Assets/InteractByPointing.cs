@@ -7,26 +7,41 @@ public class InteractByPointing : MonoBehaviour
 {
     [Tooltip("Reference to The AI helper")]
     public GameObject Helper;
-
     public Camera playerCamera;
 
-    private LevelManager LevelManagerScript;
-    private Socket_toHl2 TCPScript;
     public Material highlightedMaterial;
     public Material regularMaterial;
 
-    private Vector3 fingertipPosition = new Vector3(-2.897f, 1.047f, 0);
-    private Vector3 fingertipDirection = new Vector3(100, 0, 0);
-
-
+    //settings
     [Tooltip("Show a red ray along where the player is pointing.")]
     public bool Visualize = true;
     public bool moveWithMouse = true;
     public float boneHitThreshold = 2.0f;
     public float selfHitThreshold = 2.0f;
+
+    //raycasting
+    private Vector3 fingertipPosition = new Vector3(-2.897f, 1.047f, 0);
+    private Vector3 fingertipDirection = new Vector3(100, 0, 0);
+    bool hoveringSomething = false;
+    public EstimationToIK estimationScript;
+    int closestPointIndex;
+
+    //gestire building
+    private Transform hoveredLimb = null;
+    private float startTime; // Stores when hovering the current limb started;
+    private Pose PoseBeingBuilt;
+    Dictionary<Pose.Landmark, Vector3> LandmarksForPose = new Dictionary<Pose.Landmark, Vector3>();
+    public Gesture GestureBeingBuilt = new Gesture();
+    RaycastHit hitInfo;
+    private int currentPoseIndex = 0;
+
+    private Vector3 hitPoint; //used to put a sphere Gizmo at the hit impact
+
+    private Animator helperAnimator;
+    private Socket_toHl2 TCPScript;
+    private LevelManager LevelManagerScript;
     public FeedbackManager feedbackManager;
 
-    Animator helperAnimator;
     // Start is called before the first frame update
     void Start()
     {
@@ -49,11 +64,13 @@ public class InteractByPointing : MonoBehaviour
         if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Positive)
         {
             unselectLimb();
+        }else if(feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Numeral)
+        {
+            unselectLimb();
+            currentPoseIndex = feedbackManager.lastDetectedNumeralFeedback;
         }
     }
 
-    //used to put a sphere Gizmo at the hit impact
-    private Vector3 hitPoint;
         
     //for visualization in Scene view
     private void OnDrawGizmos()
@@ -71,9 +88,6 @@ public class InteractByPointing : MonoBehaviour
         }
     }
 
-    bool hoveringSomething = false;
-    public EstimationToIK estimationScript;
-    int closestPointIndex;
     bool selfPointCheck(Ray ray)
     {
         closestPointIndex = -1;
@@ -193,12 +207,7 @@ public class InteractByPointing : MonoBehaviour
     }
 
 
-    private Transform hoveredLimb = null;
-    private float startTime; // Stores when hovering the current limb started;
-    private Pose PoseBeingBuilt;
-    Dictionary<Pose.Landmark, Vector3> LandmarksForPose = new Dictionary<Pose.Landmark, Vector3>();
-    public Gesture GestureBeingBuilt = new Gesture();
-    RaycastHit hitInfo;
+
 
     void unselectLimb()
     {
@@ -258,9 +267,13 @@ public class InteractByPointing : MonoBehaviour
                 LandmarksForPose[landmarkSelected] = hitInfo.point;
 
                 PoseBeingBuilt = new Pose(LandmarksForPose);
-                if(GestureBeingBuilt._poseSequence.Count < 1)
+                if(GestureBeingBuilt._poseSequence.Count < currentPoseIndex + 1)
                 {
                     GestureBeingBuilt.AddPose(PoseBeingBuilt);
+                }
+                else if(GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch != PoseBeingBuilt) //if it differs, set it to the one being built
+                {
+                    GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch = PoseBeingBuilt;
                 }
 
             }

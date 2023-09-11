@@ -15,6 +15,8 @@ public class EstimationToIK : MonoBehaviour
 {
     public Socket_toHl2 TcpScript;
     public CameraStream CameraStreamScript;
+    private LevelManager LevelManagerScript;
+    public InteractByPointing PointingScript;
 
     public GameObject[] keypointBones; //for keypoints that are to be set specifically and not with 
     public GameObject leftHand; //used for aesthetic adjustments after IK
@@ -45,6 +47,7 @@ public class EstimationToIK : MonoBehaviour
 
 
     //used to indicate that we are resetting to a starting pose
+    public bool moveCenter = false;
     public bool smoothing = true;
     private bool fadingOut = false;
     private bool fadingIn = false;
@@ -123,7 +126,7 @@ public class EstimationToIK : MonoBehaviour
         animator.SetIKHintPosition(limb, goal);
     }
 
-
+    /*
     public TwoBoneIKConstraint[] constraints; 
     GameObject[] ikPointerObjects = new GameObject[10];
     private void SetIKPosition(int index, string fingerName)
@@ -147,7 +150,7 @@ public class EstimationToIK : MonoBehaviour
                 rigbuilder.Build(); //only build if the object is new. Actually, better to just premake all these objects and move them around
             }
         }
-    }
+    }*/
 
     private void SetJointLandmarks()
     {
@@ -242,7 +245,6 @@ public class EstimationToIK : MonoBehaviour
         Array.Copy(recording, savedRecording, recording.GetLength(0) * recording.GetLength(1));
     }
 
-    private LevelManager LevelManagerScript;
     public void getDataFromRecording()
     {
         LevelManagerScript = GetComponent<LevelManager>();
@@ -262,7 +264,6 @@ public class EstimationToIK : MonoBehaviour
     }
 
 
-    public InteractByPointing PointingScript;
     private void getDataFromPointing()
     {
         if (PointingScript) //TODO: this block is very similar to getDataFromRecording. We could probably move the redundant part to a seperate function
@@ -298,7 +299,6 @@ public class EstimationToIK : MonoBehaviour
 
     }
 
-    public bool moveCenter = false;
     void OnAnimatorIK()
     {
         if (fadingIn && smoothing) //each step of fading in

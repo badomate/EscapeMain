@@ -18,12 +18,17 @@ public class LevelManager : MonoBehaviour
     CompareGesture compareGestureScript;
     public LimbLocker limbLockerScript;
     public InteractByPointing pointerScript;
+
     public GameObject PlayerUI;
     public TextMesh InfoBox;
     public TextMesh LevelInfoBox;
     private bool connected = false; //used for events
+
     public static DictionaryManager dictionary;
     public static Regex _poseRegex;
+    List<Gesture> gestureList;
+
+    int nrGesturesChosen = 0; //index used for picking a goal from the dictionary
 
     void Start()
     {
@@ -169,11 +174,12 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
     }
 
-    private Dictionary<Gesture, string> myDictionary;
-    List<Gesture> gestureList;
 
     public void PrepareGestureOptions()
     {
+
+
+        Dictionary<Gesture, string> myDictionary; 
         myDictionary = dictionary.GetGestureRegistry();
         if (myDictionary == null)
         {
@@ -187,7 +193,6 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    int nrGesturesChosen = 0;
     public Gesture pickFromDictionary()
     {
         int pickIndex = nrGesturesChosen % gestureList.Count;

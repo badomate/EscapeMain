@@ -5,8 +5,9 @@ using UnityEngine.Events;
 
 public class FeedbackManager : MonoBehaviour
 {
-    public enum feedbackType { Positive, Negative, Dontunderstand }; //later we could combine mediapipe and hololens
+    public enum feedbackType { Positive, Negative, Dontunderstand, Numeral }; //later we could combine mediapipe and hololens
     public feedbackType lastDetectedFeedback;
+    public int lastDetectedNumeralFeedback;
     public UnityEvent m_FeedbackEvent = new UnityEvent();
 
     CompareGesture compareGestureScript;
