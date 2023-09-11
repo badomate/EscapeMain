@@ -24,6 +24,7 @@ public class InteractByPointing : MonoBehaviour
     public bool moveWithMouse = true;
     public float boneHitThreshold = 2.0f;
     public float selfHitThreshold = 2.0f;
+    public FeedbackManager feedbackManager;
 
     Animator helperAnimator;
     // Start is called before the first frame update
@@ -38,6 +39,16 @@ public class InteractByPointing : MonoBehaviour
         else
         {
             Debug.Log("I can't find the Helper.");
+        }
+        feedbackManager.m_FeedbackEvent.AddListener(handleFeedbackEvent); //wait for player to "lock in" his gesture
+    }
+
+
+    private void handleFeedbackEvent()
+    {
+        if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Positive)
+        {
+            unselectLimb();
         }
     }
 
@@ -189,6 +200,13 @@ public class InteractByPointing : MonoBehaviour
     public Gesture GestureBeingBuilt = new Gesture();
     RaycastHit hitInfo;
 
+    void unselectLimb()
+    {
+       hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
+       hoveringSomething = false;
+    }
+
+
     Pose.Landmark landmarkSelected;
     // Update is called once per frame
     void Update()
@@ -236,7 +254,6 @@ public class InteractByPointing : MonoBehaviour
             else { 
                 //Once the limb is locked in, this block here runs every frame.
 
-                EstimationToIK estimationScript = Helper.GetComponent<EstimationToIK>();
                 //Debug.Log("Limb locked in: " + hoveredLimb.name);
                 LandmarksForPose[landmarkSelected] = hitInfo.point;
 
@@ -244,14 +261,6 @@ public class InteractByPointing : MonoBehaviour
                 if(GestureBeingBuilt._poseSequence.Count < 1)
                 {
                     GestureBeingBuilt.AddPose(PoseBeingBuilt);
-                }
-
-                if (Input.GetKey("q"))
-                {
-                    hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
-                    hoveringSomething = false;
-
-                    //TODO: have this be triggered using some positive feedback metagesture, like a nod or a thumbs up (would thumbs up mess up the pointing?)
                 }
 
             }

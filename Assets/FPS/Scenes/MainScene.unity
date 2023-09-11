@@ -1148,6 +1148,22 @@ MonoBehaviour:
   display_Text2: {fileID: 440225935}
   cameraStreamScript: {fileID: 319678139}
   updateInterval: 0.5
+--- !u!114 &319678149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319678117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef807976aec1f914fa51c52f06959dec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lastDetectedFeedback: 0
+  m_FeedbackEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &409996927
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5554,9 +5570,10 @@ MonoBehaviour:
   highlightedMaterial: {fileID: 2100000, guid: 980c24c5a501a9a429356d191ad356a9, type: 2}
   regularMaterial: {fileID: 2100000, guid: 6487fdefd669d4dbc91709a177cd4b93, type: 2}
   Visualize: 1
-  moveWithMouse: 0
+  moveWithMouse: 1
   boneHitThreshold: 2
   selfHitThreshold: 2
+  feedbackManager: {fileID: 319678149}
   estimationScript: {fileID: 1528204669}
 --- !u!114 &2729281214152228946
 MonoBehaviour:

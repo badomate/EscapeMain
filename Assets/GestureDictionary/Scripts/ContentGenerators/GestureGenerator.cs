@@ -10,7 +10,9 @@ namespace GestureDictionary.ContentGenerators {
         TEST_A,
         TEST_B,
         HAND_RISES,
-        HAND_FALLS
+        HAND_FALLS,
+        POSITIVE,
+        NEGATIVE
     }
 
     public static class GestureGenerator
@@ -55,7 +57,7 @@ namespace GestureDictionary.ContentGenerators {
             DictionaryManager dictionaryManager, bool isMetaGesture = false) {
 
                 if (isMetaGesture) {
-
+                    //TODO: I suppose we should have the actual gestures here that will be used in the game
                 }
                 else {
                     AddStarterGesture(new GestureHandRises(poseRegistry), dictionaryManager);
@@ -68,8 +70,10 @@ namespace GestureDictionary.ContentGenerators {
         public static void GenerateTestStarterGestures(Dictionary<string, Pose> poseRegistry, 
             DictionaryManager dictionaryManager, bool isMetaGesture=false) {
 
-                if (isMetaGesture) {
-                    // TODO
+                if (isMetaGesture)
+                {
+                    AddStarterGesture(new GestureNegative(poseRegistry), dictionaryManager, true);
+                    AddStarterGesture(new GesturePositive(poseRegistry), dictionaryManager, true);
                 }
                 else {
                     AddStarterGesture(new GestureTestA(poseRegistry), dictionaryManager);
