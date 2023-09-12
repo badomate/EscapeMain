@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class FeedbackManager : MonoBehaviour
 {
-    public enum feedbackType { Positive, Negative, Dontunderstand, Numeral }; //later we could combine mediapipe and hololens
+    public enum feedbackType { Positive, Negative, Dontunderstand, Numerical }; //later we could combine mediapipe and hololens
     public feedbackType lastDetectedFeedback;
     public int lastDetectedNumeralFeedback;
     public UnityEvent m_FeedbackEvent = new UnityEvent();
@@ -48,6 +48,12 @@ public class FeedbackManager : MonoBehaviour
         }else if (Input.GetKey("p"))
         {
             lastDetectedFeedback = feedbackType.Positive;
+            m_FeedbackEvent.Invoke();
+        }
+        else if (Input.GetKey("2"))
+        {
+            lastDetectedFeedback = feedbackType.Numerical;
+            lastDetectedNumeralFeedback = 1; // because it'll be used to set element index 1 of the sequence
             m_FeedbackEvent.Invoke();
         }
     }

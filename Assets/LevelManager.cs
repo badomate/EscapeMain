@@ -94,6 +94,7 @@ public class LevelManager : MonoBehaviour
             //mimic that gesture using the IK script
             estimationToIkScript.saveRecording(Gesture.GestureToMatrix(goalGesture));
             estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
+            estimationToIkScript.Looping = true;
         }
         else
         {
@@ -133,8 +134,9 @@ public class LevelManager : MonoBehaviour
                 {
                     if (pointerScript)
                     {
+                        Vector3[,] pointerBuiltGestureMatrix = Gesture.GestureToMatrix(pointerScript.GestureBeingBuilt);
                         if (pointerScript.GestureBeingBuilt._poseSequence.Count > 0 &&
-                            compareGestureScript.goalGestureCompleted(Gesture.GestureToMatrix(pointerScript.GestureBeingBuilt)))
+                            compareGestureScript.goalGestureCompleted(pointerBuiltGestureMatrix))
                         {
                             //Puzzle was completed using directions given via pointing
                             Success();

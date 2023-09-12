@@ -1026,6 +1026,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
   CameraStreamScript: {fileID: 319678139}
+  PointingScript: {fileID: 2729281214152228945}
   keypointBones:
   - {fileID: 319678118}
   leftHand: {fileID: 1697168632}
@@ -1038,12 +1039,9 @@ MonoBehaviour:
   endFrame: 100
   smoothingFrames: 20
   selectedAnimName: index
+  moveCenter: 1
   smoothing: 0
   currentEstimationSource: 0
-  constraints:
-  - {fileID: 0}
-  PointingScript: {fileID: 2729281214152228945}
-  moveCenter: 1
 --- !u!114 &319678127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1161,6 +1159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lastDetectedFeedback: 0
+  lastDetectedNumeralFeedback: 0
   m_FeedbackEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -3626,6 +3625,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
   CameraStreamScript: {fileID: 0}
+  PointingScript: {fileID: 0}
   keypointBones:
   - {fileID: 1204171164}
   leftHand: {fileID: 725765932}
@@ -3638,11 +3638,9 @@ MonoBehaviour:
   endFrame: 100
   smoothingFrames: 20
   selectedAnimName: coverFace
+  moveCenter: 0
   smoothing: 0
   currentEstimationSource: 0
-  constraints: []
-  PointingScript: {fileID: 0}
-  moveCenter: 0
 --- !u!4 &1220487859 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2141676431450117668, guid: cd17687759887a0438ee021e51abc9d9,
@@ -4498,6 +4496,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
   CameraStreamScript: {fileID: 319678139}
+  PointingScript: {fileID: 0}
   keypointBones:
   - {fileID: 1528204668}
   leftHand: {fileID: 1528204667}
@@ -4511,11 +4510,9 @@ MonoBehaviour:
   endFrame: 100
   smoothingFrames: 20
   selectedAnimName: coverFace
+  moveCenter: 0
   smoothing: 0
   currentEstimationSource: 5
-  constraints: []
-  PointingScript: {fileID: 0}
-  moveCenter: 0
 --- !u!1 &1590240075 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b0d61dc70153b3647926c65ee14291df,
@@ -5573,8 +5570,9 @@ MonoBehaviour:
   moveWithMouse: 1
   boneHitThreshold: 2
   selfHitThreshold: 2
-  feedbackManager: {fileID: 319678149}
   estimationScript: {fileID: 1528204669}
+  feedbackManager: {fileID: 319678149}
+  estimationToIkScript: {fileID: 319678124}
 --- !u!114 &2729281214152228946
 MonoBehaviour:
   m_ObjectHideFlags: 0

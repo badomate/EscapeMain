@@ -269,13 +269,24 @@ public class EstimationToIK : MonoBehaviour
         if (PointingScript) //TODO: this block is very similar to getDataFromRecording. We could probably move the redundant part to a seperate function
         {
             Vector3[,] builtDirectionMatrix = Gesture.GestureToMatrix(PointingScript.GestureBeingBuilt);
-            CustomDebug.LogAlex("BDM len =" + builtDirectionMatrix.GetLength(0) + builtDirectionMatrix.GetLength(1));
+            //CustomDebug.LogAlex("BDM len =" + builtDirectionMatrix.GetLength(0) + builtDirectionMatrix.GetLength(1));
             if(builtDirectionMatrix.GetLength(0) > 0)
             {
+                //Debug.Log(builtDirectionMatrix.GetLength(0));
+                int indexToDisplay = 0;
+                if(builtDirectionMatrix.GetLength(0) > PointingScript.currentPoseIndex)
+                {
+                    indexToDisplay = PointingScript.currentPoseIndex;
+                }
+                else
+                {
+                    indexToDisplay = PointingScript.currentPoseIndex -1;
+                }
+
                 landmarks = new Vector3[builtDirectionMatrix.GetLength(1)];
                 for (int j = 0; j < builtDirectionMatrix.GetLength(1); j++)
                 {
-                    landmarks[j] = builtDirectionMatrix[0, j]; //TODO: rotation issue. Character is moving his hand backwards if the pointing hit was in front of it.
+                    landmarks[j] = builtDirectionMatrix[indexToDisplay, j]; //TODO: rotation issue. Character is moving his hand backwards if the pointing hit was in front of it.
                 }
             }
         }
@@ -503,12 +514,24 @@ public class EstimationToIK : MonoBehaviour
         float frameTime = 1f / frameRate; // Time per frame
         if (fadingOut || fadingIn)
         {
-           smoothingFrameCount = (Mathf.FloorToInt((Time.time - fadeStartTime) / frameTime) + 1) % smoothingFrames; // Add 1 to start from frame 1, % by all frames of animation
+            smoothingFrameCount = (Mathf.FloorToInt((Time.time - fadeStartTime) / frameTime) + 1) % smoothingFrames; // Add 1 to start from frame 1, % by all frames of animation
         }
-        else{ //TODO: dont have multiple frame counters
-            frameCount = (Mathf.FloorToInt((Time.time - animStartTime) / frameTime) + 1) % (endFrame - startFrame); // Add 1 to start from frame 1, % by all frames of animation
-        }
+        else
+        { //TODO: dont have multiple frame counters
+            if (Looping)
+            {
+                frameCount = (Mathf.FloorToInt((Time.time - animStartTime) / frameTime) + 1) % (endFrame - startFrame); // Add 1 to start from frame 1, % by all frames of animation}
 
+            }
+            else
+            {
+                frameCount = (Mathf.FloorToInt((Time.time - animStartTime) / frameTime) + 1); // will need testing
+                if (frameCount > endFrame)
+                {
+                    frameCount = endFrame;
+                }
+            }
+        }
     }
 
     // Start is called before the first frame update

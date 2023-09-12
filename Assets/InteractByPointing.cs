@@ -33,7 +33,7 @@ public class InteractByPointing : MonoBehaviour
     Dictionary<Pose.Landmark, Vector3> LandmarksForPose = new Dictionary<Pose.Landmark, Vector3>();
     public Gesture GestureBeingBuilt = new Gesture();
     RaycastHit hitInfo;
-    private int currentPoseIndex = 0;
+    public int currentPoseIndex = 0;
 
     private Vector3 hitPoint; //used to put a sphere Gizmo at the hit impact
 
@@ -41,6 +41,7 @@ public class InteractByPointing : MonoBehaviour
     private Socket_toHl2 TCPScript;
     private LevelManager LevelManagerScript;
     public FeedbackManager feedbackManager;
+    public EstimationToIK estimationToIkScript;
 
     // Start is called before the first frame update
     void Start()
@@ -64,7 +65,7 @@ public class InteractByPointing : MonoBehaviour
         if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Positive)
         {
             unselectLimb();
-        }else if(feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Numeral)
+        }else if(feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Numerical)
         {
             unselectLimb();
             currentPoseIndex = feedbackManager.lastDetectedNumeralFeedback;
@@ -213,6 +214,17 @@ public class InteractByPointing : MonoBehaviour
     {
        hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
        hoveringSomething = false;
+
+        /*
+        //TODO: we must tell the estimation script to play the animation ONCE
+        Vector3[,] pointerBuiltGestureMatrix = Gesture.GestureToMatrix(GestureBeingBuilt);
+        if (GestureBeingBuilt._poseSequence.Count > 0)
+        {
+            estimationToIkScript.saveRecording(pointerBuiltGestureMatrix);
+            estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
+            estimationToIkScript.Looping = true;
+        }
+        */
     }
 
 
