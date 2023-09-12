@@ -32,6 +32,10 @@ public class FeedbackManager : MonoBehaviour
                 case "NEGATIVE":
                     lastDetectedFeedback = feedbackType.Negative;
                     break;
+                case "NUMERICAL":
+                    lastDetectedFeedback = feedbackType.Numerical;
+                    //lastDetectedNumeralFeedback = int.TryParse(meaning.Split(' ')[1], out int result) ? result : 0; //TODO: The meaning would need to hold numerical information, perhaps we could have meanings such as "NUMERICAL 5"
+                    break;
             }
             if(meaning == "NEGATIVE" || meaning == "POSITIVE")
             {
@@ -54,6 +58,12 @@ public class FeedbackManager : MonoBehaviour
         {
             lastDetectedFeedback = feedbackType.Numerical;
             lastDetectedNumeralFeedback = 1; // because it'll be used to set element index 1 of the sequence
+            m_FeedbackEvent.Invoke();
+        }
+        else if (Input.GetKey("3")) // we could add more shortcuts or add them in a cleaner way but it's only for testing
+        {
+            lastDetectedFeedback = feedbackType.Numerical;
+            lastDetectedNumeralFeedback = 2;
             m_FeedbackEvent.Invoke();
         }
     }
