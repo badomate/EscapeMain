@@ -202,4 +202,14 @@ public class Pose
         }
         return poseVectors;
     }
+
+    public void RotatePose(Quaternion rotation)
+    {
+        foreach (var landmark in _landmarkArrangement.Keys.ToList())
+        {
+            Vector3 originalPosition = _landmarkArrangement[landmark];
+            Vector3 rotatedPosition = rotation * originalPosition;
+            _landmarkArrangement[landmark] = rotatedPosition;
+        }
+    }
 }
