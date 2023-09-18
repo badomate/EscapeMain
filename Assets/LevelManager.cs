@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GestureDictionary;
 using System.Text.RegularExpressions;
+using UnityEngine.Events;
 
 public class LevelManager : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class LevelManager : MonoBehaviour
     List<Gesture> gestureList;
 
     int nrGesturesChosen = 0; //index used for picking a goal from the dictionary
+    public UnityEvent m_LevelFinishedEvent = new UnityEvent();
 
     void Start()
     {
@@ -174,6 +176,7 @@ public class LevelManager : MonoBehaviour
             currentPlayer = 1;
         }
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
+        m_LevelFinishedEvent.Invoke();
     }
 
 

@@ -16,7 +16,7 @@ public class EstimationToIK : MonoBehaviour
     public Socket_toHl2 TcpScript;
     public CameraStream CameraStreamScript;
     private LevelManager LevelManagerScript;
-    public InteractByPointing PointingScript;
+    public InteractByPointing pointingScript;
 
     public GameObject[] keypointBones; //for keypoints that are to be set specifically and not with 
     public GameObject leftHand; //used for aesthetic adjustments after IK
@@ -266,27 +266,38 @@ public class EstimationToIK : MonoBehaviour
 
     private void getDataFromPointing()
     {
-        if (PointingScript) //TODO: this block is very similar to getDataFromRecording. We could probably move the redundant part to a seperate function
+        if (pointingScript) //TODO: this block is very similar to getDataFromRecording. We could probably move the redundant part to a seperate function
         {
-            Vector3[,] builtDirectionMatrix = Gesture.GestureToMatrix(PointingScript.GestureBeingBuilt);
+            Vector3[,] builtDirectionMatrix = Gesture.GestureToMatrix(pointingScript.GestureBeingBuilt);
             //CustomDebug.LogAlex("BDM len =" + builtDirectionMatrix.GetLength(0) + builtDirectionMatrix.GetLength(1));
-            if(builtDirectionMatrix.GetLength(0) > 0)
+            //Debug.Log(pointingScript.GestureBeingBuilt._poseSequence.Count > 0);
+            if(pointingScript.GestureBeingBuilt._poseSequence.Count > 0)
             {
                 //Debug.Log(builtDirectionMatrix.GetLength(0));
                 int indexToDisplay = 0;
-                if(builtDirectionMatrix.GetLength(0) > PointingScript.currentPoseIndex)
+                if(builtDirectionMatrix.GetLength(0) > pointingScript.currentPoseIndex)
                 {
-                    indexToDisplay = PointingScript.currentPoseIndex;
+                    indexToDisplay = pointingScript.currentPoseIndex;
                 }
                 else
                 {
-                    indexToDisplay = PointingScript.currentPoseIndex -1;
+                    indexToDisplay = pointingScript.currentPoseIndex -1;
                 }
 
                 landmarks = new Vector3[builtDirectionMatrix.GetLength(1)];
                 for (int j = 0; j < builtDirectionMatrix.GetLength(1); j++)
                 {
                     landmarks[j] = builtDirectionMatrix[indexToDisplay, j]; //TODO: rotation issue. Character is moving his hand backwards if the pointing hit was in front of it.
+                }
+            }
+            else
+            {
+                if (landmarks != null)
+                {
+                    for (int i = 0; i < landmarks.Length; i++)
+                    {
+                        landmarks[i] = new Vector3(0, 0, 0);
+                    }
                 }
             }
         }

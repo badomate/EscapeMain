@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
 public class InteractByPointing : MonoBehaviour
 {
@@ -39,7 +40,7 @@ public class InteractByPointing : MonoBehaviour
 
     private Animator helperAnimator;
     private Socket_toHl2 TCPScript;
-    private LevelManager LevelManagerScript;
+    private LevelManager levelManagerScript;
     public FeedbackManager feedbackManager;
     public EstimationToIK estimationToIkScript;
 
@@ -48,7 +49,7 @@ public class InteractByPointing : MonoBehaviour
     {
         if (Helper != null)
         {
-            LevelManagerScript = Helper.GetComponent<LevelManager>();
+            levelManagerScript = Helper.GetComponent<LevelManager>();
             helperAnimator = Helper.GetComponent<Animator>();
             TCPScript = Helper.GetComponent<Socket_toHl2>();
         }
@@ -57,6 +58,7 @@ public class InteractByPointing : MonoBehaviour
             Debug.Log("I can't find the Helper.");
         }
         feedbackManager.m_FeedbackEvent.AddListener(handleFeedbackEvent); //wait for player to "lock in" his gesture
+        levelManagerScript.m_LevelFinishedEvent.AddListener(handleLevelFinished); //wait for player to "lock in" his gesture
     }
 
 
@@ -65,14 +67,15 @@ public class InteractByPointing : MonoBehaviour
         if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Positive)
         {
             unselectLimb();
-        }else if(feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Numerical)
+        }
+        else if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Numerical)
         {
             unselectLimb();
             currentPoseIndex = feedbackManager.lastDetectedNumeralFeedback;
         }
     }
 
-        
+
     //for visualization in Scene view
     private void OnDrawGizmos()
     {
@@ -82,7 +85,7 @@ public class InteractByPointing : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawRay(fingertipPosition, fingertipDirection);
 
-            if (hitPoint != new Vector3(0,0,0))
+            if (hitPoint != new Vector3(0, 0, 0))
             {
                 Gizmos.DrawSphere(hitPoint, 0.1f);
             }
@@ -119,7 +122,8 @@ public class InteractByPointing : MonoBehaviour
             && LandmarkIndicesDictionary.mediapipeIndicesToLimbs.Values.Any(list => list.Contains(closestPointIndex)))
         {
             Pose.Landmark currentLandmark = LandmarkIndicesDictionary.mediapipeIndicesToLimbs.FirstOrDefault(x => x.Value.Contains(closestPointIndex)).Key;  //TODO: we are going through the dictionary twice, we should fix that
-            if (currentLandmark != landmarkSelected) { //New major landmark is hovered
+            if (currentLandmark != landmarkSelected)
+            { //New major landmark is hovered
                 landmarkSelected = currentLandmark;
             }
             Debug.Log("Self-pointed at landmark: " + closestPointIndex);
@@ -212,8 +216,8 @@ public class InteractByPointing : MonoBehaviour
 
     void unselectLimb()
     {
-       hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
-       hoveringSomething = false;
+        hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
+        hoveringSomething = false;
 
         /*
         //TODO: we must tell the estimation script to play the animation ONCE
@@ -235,11 +239,11 @@ public class InteractByPointing : MonoBehaviour
         if (moveWithMouse && playerCamera)
         {
             fingertipPosition = playerCamera.transform.position;
-            fingertipDirection = playerCamera.transform.forward*10 ;
+            fingertipDirection = playerCamera.transform.forward * 10;
         }
         else
         {
-            if(estimationScript.landmarks.Length > 20)
+            if (estimationScript.landmarks.Length > 20)
             {
                 fingertipPosition = estimationScript.landmarks[16];
                 fingertipDirection = estimationScript.landmarks[20];
@@ -248,11 +252,8 @@ public class InteractByPointing : MonoBehaviour
 
         Ray ray = new Ray(fingertipPosition, fingertipDirection); //mock data for now
 
-        if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity) && LevelManagerScript.currentPlayer == 1) //Disabled unless it's player's turn to explain, not sure if it has a use otherwise
+        if (Physics.Raycast(ray, out hitInfo, Mathf.Infinity) && levelManagerScript.currentPlayer == 1) //Disabled unless it's player's turn to explain, not sure if it has a use otherwise
         {
-            
-            //Get the Animator component of the Helper
-            //Animator helperAnimator = Helper.GetComponent<Animator>();
 
             if (Time.time - startTime < 3.0f || !hoveringSomething)
             {
@@ -268,30 +269,40 @@ public class InteractByPointing : MonoBehaviour
                         hoveringSomething = true;
                     }
                 }
-                else{
+                else
+                {
                     hoveringSomething = true;
                 }
             }
-            else { 
+            else if (hoveringSomething)
+            {
                 //Once the limb is locked in, this block here runs every frame.
 
                 //Debug.Log("Limb locked in: " + hoveredLimb.name);
                 LandmarksForPose[landmarkSelected] = hitInfo.point;
 
                 PoseBeingBuilt = new Pose(LandmarksForPose);
-                if(GestureBeingBuilt._poseSequence.Count < currentPoseIndex + 1)
+                if (GestureBeingBuilt._poseSequence.Count < currentPoseIndex + 1)
                 {
                     GestureBeingBuilt.AddPose(PoseBeingBuilt);
                 }
-                else if(GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch != PoseBeingBuilt) //if it differs, set it to the one being built
+                else if (GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch != PoseBeingBuilt) //if it differs, set it to the one being built
                 {
                     GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch = PoseBeingBuilt;
                 }
 
             }
         }
-        
+    }
 
+    void handleLevelFinished()
+    {
+        unselectLimb();
+        startTime = Time.time;
+        GestureBeingBuilt = new Gesture();
+        PoseBeingBuilt = new Pose();
+        Dictionary<Pose.Landmark, Vector3> LandmarksForPose = new Dictionary<Pose.Landmark, Vector3>();
+        currentPoseIndex = 0;
 
     }
 }
