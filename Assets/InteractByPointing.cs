@@ -72,6 +72,11 @@ public class InteractByPointing : MonoBehaviour
         {
             unselectLimb();
             currentPoseIndex = feedbackManager.lastDetectedNumeralFeedback;
+            if (GestureBeingBuilt._poseSequence.Count > currentPoseIndex) //if we are going to an earlier pose
+            {
+                LandmarksForPose = GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch._landmarkArrangement;
+                PoseBeingBuilt = new Pose(LandmarksForPose);
+            }
         }
     }
 
@@ -301,7 +306,7 @@ public class InteractByPointing : MonoBehaviour
         startTime = Time.time;
         GestureBeingBuilt = new Gesture();
         PoseBeingBuilt = new Pose();
-        Dictionary<Pose.Landmark, Vector3> LandmarksForPose = new Dictionary<Pose.Landmark, Vector3>();
+        LandmarksForPose = new Dictionary<Pose.Landmark, Vector3>();
         currentPoseIndex = 0;
 
     }

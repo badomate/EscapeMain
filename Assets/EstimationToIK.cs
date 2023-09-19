@@ -275,14 +275,15 @@ public class EstimationToIK : MonoBehaviour
             {
                 //Debug.Log(builtDirectionMatrix.GetLength(0));
                 int indexToDisplay = 0;
-                if(builtDirectionMatrix.GetLength(0) > pointingScript.currentPoseIndex)
+                if(builtDirectionMatrix.GetLength(0) - 1> pointingScript.currentPoseIndex)
                 {
-                    indexToDisplay = pointingScript.currentPoseIndex;
+                    indexToDisplay = pointingScript.currentPoseIndex; //last index is higher than the one selected
                 }
                 else
                 {
-                    indexToDisplay = pointingScript.currentPoseIndex -1;
+                    indexToDisplay = builtDirectionMatrix.GetLength(0) - 1; //selecting too high, show latest
                 }
+                //Debug.Log(indexToDisplay);
 
                 landmarks = new Vector3[builtDirectionMatrix.GetLength(1)];
                 for (int j = 0; j < builtDirectionMatrix.GetLength(1); j++)
