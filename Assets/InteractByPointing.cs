@@ -80,12 +80,12 @@ public class InteractByPointing : MonoBehaviour
                 PoseBeingBuilt = new Pose(LandmarksForPose);
                 GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch = PoseBeingBuilt;
             }
-            /*else
+            else if(GestureBeingBuilt._poseSequence.Count > 0)
             {
-                LandmarksForPose = GestureBeingBuilt._poseSequence[GestureBeingBuilt._poseSequence.Count -1]._poseToMatch._landmarkArrangement;
-                PoseBeingBuilt = new Pose(LandmarksForPose);
-                GestureBeingBuilt._poseSequence[currentPoseIndex -1]._poseToMatch = PoseBeingBuilt;
-            }*/
+                LandmarksForPose = GestureBeingBuilt._poseSequence[GestureBeingBuilt._poseSequence.Count - 1]._poseToMatch._landmarkArrangement.ToDictionary(entry => entry.Key,
+                                               entry => entry.Value);
+                //LandmarksForPose = GestureBeingBuilt._poseSequence[GestureBeingBuilt._poseSequence.Count - 1]._poseToMatch._landmarkArrangement;
+            }
         }
     }
 
