@@ -54,6 +54,12 @@ public class FeedbackManager : MonoBehaviour
             lastDetectedFeedback = feedbackType.Positive;
             m_FeedbackEvent.Invoke();
         }
+        else if (Input.GetKey("1"))
+        {
+            lastDetectedFeedback = feedbackType.Numerical;
+            lastDetectedNumeralFeedback = 0;
+            m_FeedbackEvent.Invoke();
+        }
         else if (Input.GetKey("2"))
         {
             lastDetectedFeedback = feedbackType.Numerical;

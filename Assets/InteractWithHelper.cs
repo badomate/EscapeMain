@@ -29,13 +29,13 @@ public class InteractWithHelper : MonoBehaviour
     {
         if (LevelManagerScript)
         {
-            if (Input.GetKey("1") && !keyheld)
+            if (Input.GetKey("g") && !keyheld)
             {
                 //Debug.Log("pressed");
                 keyheld = true;
                 LevelManagerScript.Success();
             }
-            else if(!Input.GetKey("1")) {
+            else if(!Input.GetKey("g")) {
                 keyheld = false;
             }
         }
