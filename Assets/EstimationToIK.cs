@@ -109,25 +109,38 @@ public class EstimationToIK : MonoBehaviour
         }
         else
         {
-            //Debug.LogWarning("goalFromIndex is trying to index landmarks that were not received.");
+            Debug.LogWarning("goalFromIndex is trying to index landmarks that were not received.");
             return new Vector3(0, 0, 0);
         }
     }
 
     private void SetIKPosition(int index, AvatarIKGoal limb)
     {
-
-        Vector3 goal = goalFromIndex(index);
-        animator.SetIKPositionWeight(limb, 1);
-        //animator.SetIKRotationWeight(limb, 1);
-        animator.SetIKPosition(limb, goal);
+        if(index < landmarks.Length)
+        {
+            Vector3 goal = goalFromIndex(index);
+            animator.SetIKPositionWeight(limb, 1);
+            //animator.SetIKRotationWeight(limb, 1);
+            animator.SetIKPosition(limb, goal);
+        }
+        else
+        {
+            animator.SetIKPositionWeight(limb, 0);
+        }
     }
 
     private void SetIKPosition(int index, AvatarIKHint limb)
     {
-        Vector3 goal = goalFromIndex(index);
-        animator.SetIKHintPositionWeight(limb, 1);
-        animator.SetIKHintPosition(limb, goal);
+        if (index < landmarks.Length)
+        {
+            Vector3 goal = goalFromIndex(index);
+            animator.SetIKHintPositionWeight(limb, 1);
+            animator.SetIKHintPosition(limb, goal);
+        }
+        else
+        {
+            animator.SetIKHintPositionWeight(limb, 0);
+        }
     }
 
     /*

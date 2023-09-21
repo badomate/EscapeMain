@@ -1039,7 +1039,7 @@ MonoBehaviour:
   endFrame: 100
   smoothingFrames: 20
   selectedAnimName: index
-  moveCenter: 1
+  moveCenter: 0
   smoothing: 0
   currentEstimationSource: 0
 --- !u!114 &319678127

@@ -344,6 +344,6 @@ public class InteractByPointing : MonoBehaviour
         PoseBeingBuilt = new Pose();
         LandmarksForPose = new Dictionary<Pose.Landmark, Vector3>();
         currentPoseIndex = 0;
-
+        hidePointVisualizer();
     }
 }
