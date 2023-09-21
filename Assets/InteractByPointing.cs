@@ -37,12 +37,15 @@ public class InteractByPointing : MonoBehaviour
     public int currentPoseIndex = 0;
 
     private Vector3 hitPoint; //used to put a sphere Gizmo at the hit impact
+    public GameObject pointingVisualizationObject; //used to visaulize pointing hit in the game view
 
     private Animator helperAnimator;
     private Socket_toHl2 TCPScript;
     private LevelManager levelManagerScript;
     public FeedbackManager feedbackManager;
     public EstimationToIK estimationToIkScript;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -80,7 +83,7 @@ public class InteractByPointing : MonoBehaviour
                 PoseBeingBuilt = new Pose(LandmarksForPose);
                 GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch = PoseBeingBuilt;
             }
-            else if(GestureBeingBuilt._poseSequence.Count > 0)
+            else if (GestureBeingBuilt._poseSequence.Count > 0)
             {
                 LandmarksForPose = GestureBeingBuilt._poseSequence[GestureBeingBuilt._poseSequence.Count - 1]._poseToMatch._landmarkArrangement.ToDictionary(entry => entry.Key,
                                                entry => entry.Value);
@@ -106,7 +109,29 @@ public class InteractByPointing : MonoBehaviour
         }
     }
 
-    bool selfPointCheck(Ray ray)
+    void drawPointVisualizer()
+    {
+        if (Visualize)
+        {
+            pointingVisualizationObject.gameObject.SetActive(true);
+            if (!hoveringSomething && hitPoint != new Vector3(0, 0, 0))
+            {
+                pointingVisualizationObject.transform.position = hitPoint;
+            }
+            else if(hoveringSomething)
+            {
+                pointingVisualizationObject.transform.position = hitInfo.point;
+            }
+        }
+    }
+
+    void hidePointVisualizer()
+    {
+        pointingVisualizationObject.gameObject.SetActive(false);
+    }
+
+
+        bool selfPointCheck(Ray ray)
     {
         closestPointIndex = -1;
         float closestDistance = boneHitThreshold;
@@ -250,6 +275,7 @@ public class InteractByPointing : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        drawPointVisualizer();
         if (moveWithMouse && playerCamera)
         {
             fingertipPosition = playerCamera.transform.position;
@@ -277,6 +303,7 @@ public class InteractByPointing : MonoBehaviour
                     {
                         hoveredLimb = null;
                         hoveringSomething = false;
+                        hidePointVisualizer();
                     }
                     else
                     {

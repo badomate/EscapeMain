@@ -100,8 +100,12 @@ public class EstimationToIK : MonoBehaviour
             if (currentEstimationSource == estimationSource.MediaPipe)
             {
                 return transform.position + new Vector3(currentPos.z, -currentPos.y, -currentPos.x);
+            }else if (currentEstimationSource == estimationSource.PointedDircetions)
+            {
+                return new Vector3(currentPos.x, currentPos.y, currentPos.z);
+
             }
-            return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
+            return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z);
         }
         else
         {

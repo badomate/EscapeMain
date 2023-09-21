@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class FeedbackManager : MonoBehaviour
 {
-    public enum feedbackType { Positive, Negative, Dontunderstand, Numerical }; //later we could combine mediapipe and hololens
+    public enum feedbackType { Positive, Negative, Dontunderstand, Numerical, InitiateAgreement }; //later we could combine mediapipe and hololens
     public feedbackType lastDetectedFeedback;
     public int lastDetectedNumeralFeedback;
     public UnityEvent m_FeedbackEvent = new UnityEvent();
@@ -45,7 +45,7 @@ public class FeedbackManager : MonoBehaviour
 
 
         //keyboard shortcuts for testing purposes
-        if (Input.GetKey("n"))
+        if (Input.GetKey("n")) // we could add more shortcuts or perhaps add them in a cleaner manner
         {
             lastDetectedFeedback = feedbackType.Negative;
             m_FeedbackEvent.Invoke();
@@ -57,19 +57,24 @@ public class FeedbackManager : MonoBehaviour
         else if (Input.GetKey("1"))
         {
             lastDetectedFeedback = feedbackType.Numerical;
-            lastDetectedNumeralFeedback = 0;
+            lastDetectedNumeralFeedback = 0; // this will be used to select element 0 of the pose sequence during demonstration
             m_FeedbackEvent.Invoke();
         }
         else if (Input.GetKey("2"))
         {
             lastDetectedFeedback = feedbackType.Numerical;
-            lastDetectedNumeralFeedback = 1; // because it'll be used to set element index 1 of the sequence
+            lastDetectedNumeralFeedback = 1; 
             m_FeedbackEvent.Invoke();
         }
-        else if (Input.GetKey("3")) // we could add more shortcuts or add them in a cleaner way but it's only for testing
+        else if (Input.GetKey("3")) 
         {
             lastDetectedFeedback = feedbackType.Numerical;
             lastDetectedNumeralFeedback = 2;
+            m_FeedbackEvent.Invoke();
+        }
+        else if (Input.GetKey("i"))
+        {
+            lastDetectedFeedback = feedbackType.InitiateAgreement;
             m_FeedbackEvent.Invoke();
         }
     }
