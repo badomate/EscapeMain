@@ -13,6 +13,10 @@ public class AgreementManager : MonoBehaviour
     void Start()
     {
         feedbackManager.m_FeedbackEvent.AddListener(handleFeedbackEvent);
+        compareGesture.m_MimicEvent.AddListener(handleHelperNewWordEvent);
+        compareGesture.m_StillnessEvent.AddListener(handlePlayerNewWordEvent);
+
+        
     }
 
     // Update is called once per frame
@@ -26,13 +30,24 @@ public class AgreementManager : MonoBehaviour
 
     }
 
-    void handleMimicEvent()
+    void handlePlayerNewWordEvent()
     {
         if (agreementInProgress)
         {
+            //the player suggested a word. We should mimic it or reply positively to show that we agree.
             LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(compareGesture.characterGesture), "shortcut", false);
             //TODO: "shortcut" should be the unique identifier of the gesture built so far, as such:
             //LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(compareGesture.characterGesture), pointerScript.GestureBeingBuilt.id, false); //TODO: "shortcut" should be the unique identifier of LevelManager.goalGesture
+        }
+    }
+
+
+    void handleHelperNewWordEvent() //for when the player copies a word suggested by the A.I
+    {
+        if (agreementInProgress)
+        {
+            //LevelManager.dictionary.AddGesture(suggestedNewWord, levelManager.goalGesture.id, false);
+            //TODO: we lack gesture identifiers as well as a way for the Helper to suggest a word
         }
     }
 

@@ -19,6 +19,7 @@ public class CompareGesture : MonoBehaviour
     public float stillnessThreshold = 0.1f; //used to "lock in" a pose
 
     public UnityEvent m_StillnessEvent = new UnityEvent();
+    public UnityEvent m_MimicEvent = new UnityEvent(); 
 
     private LevelManager LevelManagerScript;
     // Start is called before the first frame update
