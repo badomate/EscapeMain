@@ -92,7 +92,7 @@ public class CompareGesture : MonoBehaviour
         Gesture gestureToCompare = Gesture.MatrixToGesture(gestureToCompareMatrix);
         Gesture goalGesture = LevelManagerScript.goalGesture;
         //Debug.Log("CURRENT GESTURE:\n" + gestureToCompare + "\n\nGOAL GESTURE:\n" + goalGesture);
-        return recording && recordingProgress == recordingLength && goalGesture.GestureMatches(gestureToCompare);//MeanSquaredError(gestureToCompare, goalGesture) < matchThreshold; TODO: fix
+        return recording && recordingProgress == recordingLength && goalGesture.GestureMatches(gestureToCompare);
     }
 
     private Socket_toHl2 TcpScript;
@@ -133,7 +133,7 @@ public class CompareGesture : MonoBehaviour
             }
         }
     }
-
+    /*
     public float MeanSquaredError(float[,] matrix1, float[,] matrix2)
     {
         int rows = matrix1.GetLength(0);
@@ -150,5 +150,5 @@ public class CompareGesture : MonoBehaviour
         }
 
         return sumOfSquaredDifferences / (rows * cols);
-    }
+    }*/
 }

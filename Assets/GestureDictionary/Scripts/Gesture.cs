@@ -197,4 +197,17 @@ public class Gesture
 
         return relatedLandmarkList.Distinct().ToList();
     }
+
+    /// <summary>
+    /// Rotates all poses contained 
+    /// in this gesture
+    /// modifying every vector of every landmark contained in them.
+    /// </summary>
+    public void RotateGesture(Quaternion rotation)
+    {
+        foreach (var poseInGesture in _poseSequence)
+        {
+            poseInGesture._poseToMatch.RotatePose(rotation);
+        }
+    }
 }

@@ -1026,6 +1026,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
   CameraStreamScript: {fileID: 319678139}
+  pointingScript: {fileID: 2729281214152228945}
   keypointBones:
   - {fileID: 319678118}
   leftHand: {fileID: 1697168632}
@@ -1038,12 +1039,9 @@ MonoBehaviour:
   endFrame: 100
   smoothingFrames: 20
   selectedAnimName: index
+  moveCenter: 0
   smoothing: 0
   currentEstimationSource: 0
-  constraints:
-  - {fileID: 0}
-  PointingScript: {fileID: 2729281214152228945}
-  moveCenter: 1
 --- !u!114 &319678127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1098,6 +1096,9 @@ MonoBehaviour:
   PlayerUI: {fileID: 206531942}
   InfoBox: {fileID: 998058053}
   LevelInfoBox: {fileID: 672437112}
+  m_LevelFinishedEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!65 &319678136
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1161,6 +1162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lastDetectedFeedback: 0
+  lastDetectedNumeralFeedback: 0
   m_FeedbackEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -3626,6 +3628,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
   CameraStreamScript: {fileID: 0}
+  pointingScript: {fileID: 0}
   keypointBones:
   - {fileID: 1204171164}
   leftHand: {fileID: 725765932}
@@ -3638,11 +3641,9 @@ MonoBehaviour:
   endFrame: 100
   smoothingFrames: 20
   selectedAnimName: coverFace
+  moveCenter: 0
   smoothing: 0
   currentEstimationSource: 0
-  constraints: []
-  PointingScript: {fileID: 0}
-  moveCenter: 0
 --- !u!4 &1220487859 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2141676431450117668, guid: cd17687759887a0438ee021e51abc9d9,
@@ -4498,6 +4499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TcpScript: {fileID: 319678127}
   CameraStreamScript: {fileID: 319678139}
+  pointingScript: {fileID: 0}
   keypointBones:
   - {fileID: 1528204668}
   leftHand: {fileID: 1528204667}
@@ -4511,11 +4513,9 @@ MonoBehaviour:
   endFrame: 100
   smoothingFrames: 20
   selectedAnimName: coverFace
+  moveCenter: 0
   smoothing: 0
   currentEstimationSource: 5
-  constraints: []
-  PointingScript: {fileID: 0}
-  moveCenter: 0
 --- !u!1 &1590240075 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b0d61dc70153b3647926c65ee14291df,
@@ -5057,6 +5057,103 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1966868816}
   m_CullTransparentMesh: 1
+--- !u!1 &2025825281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2025825285}
+  - component: {fileID: 2025825284}
+  - component: {fileID: 2025825283}
+  - component: {fileID: 2025825282}
+  m_Layer: 0
+  m_Name: PointTargetVisualizer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!135 &2025825282
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025825281}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &2025825283
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025825281}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 79c0d93b237b09b41aa23121f5b9599c, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &2025825284
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025825281}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &2025825285
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025825281}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 32
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2141238964
 GameObject:
   m_ObjectHideFlags: 0
@@ -5573,8 +5670,11 @@ MonoBehaviour:
   moveWithMouse: 1
   boneHitThreshold: 2
   selfHitThreshold: 2
-  feedbackManager: {fileID: 319678149}
   estimationScript: {fileID: 1528204669}
+  currentPoseIndex: 0
+  pointingVisualizationObject: {fileID: 2025825281}
+  feedbackManager: {fileID: 319678149}
+  estimationToIkScript: {fileID: 319678124}
 --- !u!114 &2729281214152228946
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GestureDictionary;
 using System.Text.RegularExpressions;
+using UnityEngine.Events;
 
 public class LevelManager : MonoBehaviour
 {
@@ -18,12 +19,18 @@ public class LevelManager : MonoBehaviour
     CompareGesture compareGestureScript;
     public LimbLocker limbLockerScript;
     public InteractByPointing pointerScript;
+
     public GameObject PlayerUI;
     public TextMesh InfoBox;
     public TextMesh LevelInfoBox;
     private bool connected = false; //used for events
+
     public static DictionaryManager dictionary;
     public static Regex _poseRegex;
+    List<Gesture> gestureList;
+
+    int nrGesturesChosen = 0; //index used for picking a goal from the dictionary
+    public UnityEvent m_LevelFinishedEvent = new UnityEvent();
 
     void Start()
     {
@@ -89,6 +96,7 @@ public class LevelManager : MonoBehaviour
             //mimic that gesture using the IK script
             estimationToIkScript.saveRecording(Gesture.GestureToMatrix(goalGesture));
             estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
+            estimationToIkScript.Looping = true;
         }
         else
         {
@@ -128,8 +136,9 @@ public class LevelManager : MonoBehaviour
                 {
                     if (pointerScript)
                     {
+                        Vector3[,] pointerBuiltGestureMatrix = Gesture.GestureToMatrix(pointerScript.GestureBeingBuilt);
                         if (pointerScript.GestureBeingBuilt._poseSequence.Count > 0 &&
-                            compareGestureScript.goalGestureCompleted(Gesture.GestureToMatrix(pointerScript.GestureBeingBuilt)))
+                            compareGestureScript.goalGestureCompleted(pointerBuiltGestureMatrix))
                         {
                             //Puzzle was completed using directions given via pointing
                             Success();
@@ -167,13 +176,15 @@ public class LevelManager : MonoBehaviour
             currentPlayer = 1;
         }
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
+        m_LevelFinishedEvent.Invoke();
     }
 
-    private Dictionary<Gesture, string> myDictionary;
-    List<Gesture> gestureList;
 
     public void PrepareGestureOptions()
     {
+
+
+        Dictionary<Gesture, string> myDictionary; 
         myDictionary = dictionary.GetGestureRegistry();
         if (myDictionary == null)
         {
@@ -187,7 +198,6 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    int nrGesturesChosen = 0;
     public Gesture pickFromDictionary()
     {
         int pickIndex = nrGesturesChosen % gestureList.Count;

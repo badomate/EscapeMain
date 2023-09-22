@@ -15,6 +15,8 @@ public class EstimationToIK : MonoBehaviour
 {
     public Socket_toHl2 TcpScript;
     public CameraStream CameraStreamScript;
+    private LevelManager LevelManagerScript;
+    public InteractByPointing pointingScript;
 
     public GameObject[] keypointBones; //for keypoints that are to be set specifically and not with 
     public GameObject leftHand; //used for aesthetic adjustments after IK
@@ -45,6 +47,7 @@ public class EstimationToIK : MonoBehaviour
 
 
     //used to indicate that we are resetting to a starting pose
+    public bool moveCenter = false;
     public bool smoothing = true;
     private bool fadingOut = false;
     private bool fadingIn = false;
@@ -97,33 +100,50 @@ public class EstimationToIK : MonoBehaviour
             if (currentEstimationSource == estimationSource.MediaPipe)
             {
                 return transform.position + new Vector3(currentPos.z, -currentPos.y, -currentPos.x);
+            }else if (currentEstimationSource == estimationSource.PointedDircetions)
+            {
+                return new Vector3(currentPos.x, currentPos.y, currentPos.z);
+
             }
-            return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z); //Y is inverted, but how about the others?
+            return origin + new Vector3(-currentPos.x, currentPos.y, currentPos.z);
         }
         else
         {
-            //Debug.LogWarning("goalFromIndex is trying to index landmarks that were not received.");
+            Debug.LogWarning("goalFromIndex is trying to index landmarks that were not received.");
             return new Vector3(0, 0, 0);
         }
     }
 
     private void SetIKPosition(int index, AvatarIKGoal limb)
     {
-
-        Vector3 goal = goalFromIndex(index);
-        animator.SetIKPositionWeight(limb, 1);
-        //animator.SetIKRotationWeight(limb, 1);
-        animator.SetIKPosition(limb, goal);
+        if(index < landmarks.Length)
+        {
+            Vector3 goal = goalFromIndex(index);
+            animator.SetIKPositionWeight(limb, 1);
+            //animator.SetIKRotationWeight(limb, 1);
+            animator.SetIKPosition(limb, goal);
+        }
+        else
+        {
+            animator.SetIKPositionWeight(limb, 0);
+        }
     }
 
     private void SetIKPosition(int index, AvatarIKHint limb)
     {
-        Vector3 goal = goalFromIndex(index);
-        animator.SetIKHintPositionWeight(limb, 1);
-        animator.SetIKHintPosition(limb, goal);
+        if (index < landmarks.Length)
+        {
+            Vector3 goal = goalFromIndex(index);
+            animator.SetIKHintPositionWeight(limb, 1);
+            animator.SetIKHintPosition(limb, goal);
+        }
+        else
+        {
+            animator.SetIKHintPositionWeight(limb, 0);
+        }
     }
 
-
+    /*
     public TwoBoneIKConstraint[] constraints; 
     GameObject[] ikPointerObjects = new GameObject[10];
     private void SetIKPosition(int index, string fingerName)
@@ -147,7 +167,7 @@ public class EstimationToIK : MonoBehaviour
                 rigbuilder.Build(); //only build if the object is new. Actually, better to just premake all these objects and move them around
             }
         }
-    }
+    }*/
 
     private void SetJointLandmarks()
     {
@@ -242,7 +262,6 @@ public class EstimationToIK : MonoBehaviour
         Array.Copy(recording, savedRecording, recording.GetLength(0) * recording.GetLength(1));
     }
 
-    private LevelManager LevelManagerScript;
     public void getDataFromRecording()
     {
         LevelManagerScript = GetComponent<LevelManager>();
@@ -262,19 +281,41 @@ public class EstimationToIK : MonoBehaviour
     }
 
 
-    public InteractByPointing PointingScript;
     private void getDataFromPointing()
     {
-        if (PointingScript) //TODO: this block is very similar to getDataFromRecording. We could probably move the redundant part to a seperate function
+        if (pointingScript) //TODO: this block is very similar to getDataFromRecording. We could probably move the redundant part to a seperate function
         {
-            Vector3[,] builtDirectionMatrix = Gesture.GestureToMatrix(PointingScript.GestureBeingBuilt);
-            CustomDebug.LogAlex("BDM len =" + builtDirectionMatrix.GetLength(0) + builtDirectionMatrix.GetLength(1));
-            if(builtDirectionMatrix.GetLength(0) > 0)
+            Vector3[,] builtDirectionMatrix = Gesture.GestureToMatrix(pointingScript.GestureBeingBuilt);
+            //CustomDebug.LogAlex("BDM len =" + builtDirectionMatrix.GetLength(0) + builtDirectionMatrix.GetLength(1));
+            //Debug.Log(pointingScript.GestureBeingBuilt._poseSequence.Count > 0);
+            if(pointingScript.GestureBeingBuilt._poseSequence.Count > 0)
             {
+                //Debug.Log(builtDirectionMatrix.GetLength(0));
+                int indexToDisplay = 0;
+                if(builtDirectionMatrix.GetLength(0) - 1> pointingScript.currentPoseIndex)
+                {
+                    indexToDisplay = pointingScript.currentPoseIndex; //last index is higher than the one selected
+                }
+                else
+                {
+                    indexToDisplay = builtDirectionMatrix.GetLength(0) - 1; //selecting too high, show latest
+                }
+                //Debug.Log(indexToDisplay);
+
                 landmarks = new Vector3[builtDirectionMatrix.GetLength(1)];
                 for (int j = 0; j < builtDirectionMatrix.GetLength(1); j++)
                 {
-                    landmarks[j] = builtDirectionMatrix[0, j]; //TODO: rotation issue. Character is moving his hand backwards if the pointing hit was in front of it.
+                    landmarks[j] = builtDirectionMatrix[indexToDisplay, j]; //TODO: rotation issue. Character is moving his hand backwards if the pointing hit was in front of it.
+                }
+            }
+            else
+            {
+                if (landmarks != null)
+                {
+                    for (int i = 0; i < landmarks.Length; i++)
+                    {
+                        landmarks[i] = new Vector3(0, 0, 0);
+                    }
                 }
             }
         }
@@ -298,7 +339,6 @@ public class EstimationToIK : MonoBehaviour
 
     }
 
-    public bool moveCenter = false;
     void OnAnimatorIK()
     {
         if (fadingIn && smoothing) //each step of fading in
@@ -503,12 +543,24 @@ public class EstimationToIK : MonoBehaviour
         float frameTime = 1f / frameRate; // Time per frame
         if (fadingOut || fadingIn)
         {
-           smoothingFrameCount = (Mathf.FloorToInt((Time.time - fadeStartTime) / frameTime) + 1) % smoothingFrames; // Add 1 to start from frame 1, % by all frames of animation
+            smoothingFrameCount = (Mathf.FloorToInt((Time.time - fadeStartTime) / frameTime) + 1) % smoothingFrames; // Add 1 to start from frame 1, % by all frames of animation
         }
-        else{ //TODO: dont have multiple frame counters
-            frameCount = (Mathf.FloorToInt((Time.time - animStartTime) / frameTime) + 1) % (endFrame - startFrame); // Add 1 to start from frame 1, % by all frames of animation
-        }
+        else
+        { //TODO: dont have multiple frame counters
+            if (Looping)
+            {
+                frameCount = (Mathf.FloorToInt((Time.time - animStartTime) / frameTime) + 1) % (endFrame - startFrame); // Add 1 to start from frame 1, % by all frames of animation}
 
+            }
+            else
+            {
+                frameCount = (Mathf.FloorToInt((Time.time - animStartTime) / frameTime) + 1); // will need testing
+                if (frameCount > endFrame)
+                {
+                    frameCount = endFrame;
+                }
+            }
+        }
     }
 
     // Start is called before the first frame update
