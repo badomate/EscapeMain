@@ -16,14 +16,13 @@ public class LevelManager : MonoBehaviour
     public Gesture goalGesture;
 
     EstimationToIK estimationToIkScript;
-    CompareGesture compareGestureScript;
+    public CompareGesture compareGestureScript;
     public LimbLocker limbLockerScript;
     public InteractByPointing pointerScript;
 
     public GameObject PlayerUI;
     public TextMesh InfoBox;
     public TextMesh LevelInfoBox;
-    private bool connected = false; //used for events
 
     public static DictionaryManager dictionary;
     public static Regex _poseRegex;
@@ -36,8 +35,9 @@ public class LevelManager : MonoBehaviour
     {
         dictionary = new DictionaryManager();
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
-        compareGestureScript = Helper.GetComponent<CompareGesture>();
+        //compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<EstimationToIK>();
+        compareGestureScript.m_StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
 
         PrepareGestureOptions();
         goalGesture = pickFromDictionary();
@@ -56,14 +56,6 @@ public class LevelManager : MonoBehaviour
         method();
     }
 
-    void Update()
-    {
-        if (!connected)
-        {
-            connected = true;
-            compareGestureScript.m_StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
-        }
-    }
 
     public void nextTurn()
     {

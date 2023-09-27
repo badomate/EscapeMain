@@ -1076,6 +1076,9 @@ MonoBehaviour:
   m_StillnessEvent:
     m_PersistentCalls:
       m_Calls: []
+  m_MimicEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &319678133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1091,6 +1094,7 @@ MonoBehaviour:
   Helper: {fileID: 319678117}
   GoalDisplayCharacter: {fileID: 1204171163}
   currentPlayer: 1
+  compareGestureScript: {fileID: 319678130}
   limbLockerScript: {fileID: 2729281214152228946}
   pointerScript: {fileID: 2729281214152228945}
   PlayerUI: {fileID: 206531942}
@@ -1179,6 +1183,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   feedbackManager: {fileID: 319678149}
+  compareGesture: {fileID: 319678130}
+  pointerScript: {fileID: 2729281214152228945}
 --- !u!1001 &409996927
 PrefabInstance:
   m_ObjectHideFlags: 0

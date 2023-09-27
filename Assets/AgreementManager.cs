@@ -15,8 +15,6 @@ public class AgreementManager : MonoBehaviour
         feedbackManager.m_FeedbackEvent.AddListener(handleFeedbackEvent);
         compareGesture.m_MimicEvent.AddListener(handleHelperNewWordEvent);
         compareGesture.m_StillnessEvent.AddListener(handlePlayerNewWordEvent);
-
-        
     }
 
     // Update is called once per frame
