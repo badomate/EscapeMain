@@ -51,12 +51,12 @@ public class AgreementManager : MonoBehaviour
 
         void handleFeedbackEvent()
     {
-        if (!agreementInProgress && feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.InitiateAgreement)
+        if (!agreementInProgress && feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.INITIATE_AGREEMENT)
         {
             agreementOffered = true;
             //TODO: Helper should always accept
         }
-        else if(!agreementInProgress && agreementOffered && feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Positive)
+        else if(!agreementInProgress && agreementOffered && feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.POSITIVE)
         {
             agreementInProgress = true;
         }

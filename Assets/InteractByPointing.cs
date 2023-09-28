@@ -67,11 +67,11 @@ public class InteractByPointing : MonoBehaviour
 
     private void handleFeedbackEvent()
     {
-        if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Positive)
+        if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.POSITIVE)
         {
             unselectLimb();
         }
-        else if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Numerical)
+        else if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.NUMERICAL)
         {
             unselectLimb();
             currentPoseIndex = feedbackManager.lastDetectedNumeralFeedback;

@@ -4,11 +4,13 @@ using UnityEngine;
 using GestureDictionary;
 using System.Text.RegularExpressions;
 using UnityEngine.Events;
+using static LevelManager;
 
 public class LevelManager : MonoBehaviour
 {
     public GameObject Helper;
     public GameObject GoalDisplayCharacter;
+    public bool twisterRules = true;
     public int currentPlayer = 1; //0-player, 1-A.I
     private int levelCounter = 0;
 
@@ -30,6 +32,15 @@ public class LevelManager : MonoBehaviour
 
     int nrGesturesChosen = 0; //index used for picking a goal from the dictionary
     public UnityEvent m_LevelFinishedEvent = new UnityEvent();
+
+    public enum TwisterColor { RED, YELLOW, GREEN, BLUE }; //later we could combine mediapipe and hololens
+    public enum TwisterLimb { RIGHT_LEG, LEFT_LEG, RIGHT_ARM, LEFT_ARM }; //later we could combine mediapipe and hololens
+    public TwisterColor goalTwisterColor;
+    public TwisterLimb goalTwisterLimb;
+
+    public GameObject goalColorDisplay;
+    public GameObject goalLimbDisplay;
+
 
     void Start()
     {
@@ -56,6 +67,13 @@ public class LevelManager : MonoBehaviour
         method();
     }
 
+    public void TwisterSpin()
+    {
+        goalTwisterColor = (TwisterColor)Random.Range(0, 3);
+        goalTwisterLimb = (TwisterLimb)Random.Range(0, 3);
+
+    }
+
 
     public void nextTurn()
     {
@@ -64,7 +82,14 @@ public class LevelManager : MonoBehaviour
         compareGestureScript.recording = true;
 
         lastGoalGesture = goalGesture;
-        goalGesture = pickFromDictionary();
+        if (twisterRules)
+        {
+            TwisterSpin();
+        }
+        else
+        {
+            goalGesture = pickFromDictionary();
+        }
 
 
         if (levelCounter > 2 && currentPlayer == 1) //pick a random limb to lock down
@@ -102,12 +127,17 @@ public class LevelManager : MonoBehaviour
 
     void displayGoal()
     {
-        PlayerUI.SetActive(true);
-        if(GoalDisplayCharacter != null)
+        if(GoalDisplayCharacter != null && !twisterRules)
         {
+            PlayerUI.SetActive(true);
             EstimationToIK goalCharEstimator = GoalDisplayCharacter.GetComponent<EstimationToIK>();
             goalCharEstimator.saveRecording(Gesture.GestureToMatrix(goalGesture));
             goalCharEstimator.currentEstimationSource = EstimationToIK.estimationSource.Recording;
+        }
+        else if (twisterRules)
+        {
+            goalColorDisplay.SetActive(true);
+            goalLimbDisplay.SetActive(true);
         }
     }
 
