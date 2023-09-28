@@ -41,6 +41,12 @@ public class LevelManager : MonoBehaviour
     public GameObject goalColorDisplay;
     public GameObject goalLimbDisplay;
 
+    public Material greenMaterial;
+    public Material redMaterial;
+    public Material yellowMaterial;
+    public Material blueMaterial;
+
+
 
     void Start()
     {
@@ -138,6 +144,24 @@ public class LevelManager : MonoBehaviour
         {
             goalColorDisplay.SetActive(true);
             goalLimbDisplay.SetActive(true);
+            Renderer renderer = goalColorDisplay.GetComponent<Renderer>();
+
+            switch (goalTwisterColor)
+            {
+                case TwisterColor.GREEN:
+                    renderer.material = greenMaterial;
+                    break;
+                case TwisterColor.RED:
+                    renderer.material = redMaterial;
+                    break;
+                case TwisterColor.YELLOW:
+                    renderer.material = yellowMaterial;
+                    break;
+                case TwisterColor.BLUE:
+                    renderer.material = blueMaterial;
+                    break;
+
+            }
         }
     }
 

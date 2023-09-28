@@ -1108,6 +1108,10 @@ MonoBehaviour:
   goalTwisterLimb: 0
   goalColorDisplay: {fileID: 866835595}
   goalLimbDisplay: {fileID: 441727958}
+  greenMaterial: {fileID: 2100000, guid: 807df0a3bd5fb484687907be1b8246c0, type: 2}
+  redMaterial: {fileID: 2100000, guid: 6487fdefd669d4dbc91709a177cd4b93, type: 2}
+  yellowMaterial: {fileID: 2100000, guid: e7c453d829e9a4662a456d2da16a7e42, type: 2}
+  blueMaterial: {fileID: 2100000, guid: de7902ac5f1ca46b9894eae94bfe5e58, type: 2}
 --- !u!65 &319678136
 BoxCollider:
   m_ObjectHideFlags: 0
