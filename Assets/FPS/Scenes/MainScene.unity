@@ -1098,20 +1098,13 @@ MonoBehaviour:
   compareGestureScript: {fileID: 319678130}
   limbLockerScript: {fileID: 2729281214152228946}
   pointerScript: {fileID: 2729281214152228945}
+  twisterGame: {fileID: 319678152}
   PlayerUI: {fileID: 206531942}
   InfoBox: {fileID: 998058053}
   LevelInfoBox: {fileID: 672437112}
   m_LevelFinishedEvent:
     m_PersistentCalls:
       m_Calls: []
-  goalTwisterColor: 0
-  goalTwisterLimb: 0
-  goalColorDisplay: {fileID: 866835595}
-  goalLimbDisplay: {fileID: 441727958}
-  greenMaterial: {fileID: 2100000, guid: 807df0a3bd5fb484687907be1b8246c0, type: 2}
-  redMaterial: {fileID: 2100000, guid: 6487fdefd669d4dbc91709a177cd4b93, type: 2}
-  yellowMaterial: {fileID: 2100000, guid: e7c453d829e9a4662a456d2da16a7e42, type: 2}
-  blueMaterial: {fileID: 2100000, guid: de7902ac5f1ca46b9894eae94bfe5e58, type: 2}
 --- !u!65 &319678136
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1194,6 +1187,26 @@ MonoBehaviour:
   feedbackManager: {fileID: 319678149}
   compareGesture: {fileID: 319678130}
   pointerScript: {fileID: 2729281214152228945}
+--- !u!114 &319678152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319678117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dd71caa731328445b800d8e36094e64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goalTwisterColor: 0
+  goalTwisterLimb: 0
+  goalColorDisplay: {fileID: 866835595}
+  goalLimbDisplay: {fileID: 441727958}
+  greenMaterial: {fileID: 2100000, guid: 807df0a3bd5fb484687907be1b8246c0, type: 2}
+  redMaterial: {fileID: 2100000, guid: 6487fdefd669d4dbc91709a177cd4b93, type: 2}
+  yellowMaterial: {fileID: 2100000, guid: 496d4eb29afae4308be4e6a2069959b3, type: 2}
+  blueMaterial: {fileID: 2100000, guid: de7902ac5f1ca46b9894eae94bfe5e58, type: 2}
 --- !u!1001 &409996927
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5881,7 +5894,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2729281214152228921}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1af1d7282eb64644a5665adbdf8fee0, type: 3}
   m_Name: 
