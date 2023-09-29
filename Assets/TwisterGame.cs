@@ -5,10 +5,10 @@ using UnityEngine;
 public class TwisterGame : MonoBehaviour
 {
 
-    public enum TwisterColor { RED, YELLOW, GREEN, BLUE }; //later we could combine mediapipe and hololens
-    public enum TwisterLimb { RIGHT_LEG, LEFT_LEG, RIGHT_ARM, LEFT_ARM }; //later we could combine mediapipe and hololens
+    public enum TwisterColor { RED, YELLOW, GREEN, BLUE }; //color that limb needs to be put on (if its already there, it moust be moved)
+    //public enum TwisterLimb { RIGHT_LEG, LEFT_LEG, RIGHT_ARM, LEFT_ARM };
     public TwisterColor goalTwisterColor;
-    public TwisterLimb goalTwisterLimb;
+    public Pose.Landmark goalTwisterLimb;
 
 
     public GameObject goalColorDisplay;
@@ -20,10 +20,16 @@ public class TwisterGame : MonoBehaviour
     public Material yellowMaterial;
     public Material blueMaterial;
 
-    public void TwisterSpin()
+
+    public Material rightLegMaterial;
+    public Material leftLegMaterial;
+    public Material rightArmMaterial;
+    public Material leftArmMaterial;
+
+    public void TwisterSpin() //TODO: Could we add an actual spinner?
     {
         goalTwisterColor = (TwisterColor)Random.Range(0, 3);
-        goalTwisterLimb = (TwisterLimb)Random.Range(0, 3);
+        goalTwisterLimb = (Pose.Landmark)Random.Range(0, 3);
 
     }
 
@@ -31,23 +37,39 @@ public class TwisterGame : MonoBehaviour
     {
         goalColorDisplay.SetActive(true);
         goalLimbDisplay.SetActive(true);
-        Renderer renderer = goalColorDisplay.GetComponent<Renderer>();
+        Renderer colorRenderer = goalColorDisplay.GetComponent<Renderer>();
+        Renderer limbRenderer = goalLimbDisplay.GetComponent<Renderer>();
 
         switch (goalTwisterColor)
         {
             case TwisterColor.GREEN:
-                renderer.material = greenMaterial;
+                colorRenderer.material = greenMaterial;
                 break;
             case TwisterColor.RED:
-                renderer.material = redMaterial;
+                colorRenderer.material = redMaterial;
                 break;
             case TwisterColor.YELLOW:
-                renderer.material = yellowMaterial;
+                colorRenderer.material = yellowMaterial;
                 break;
             case TwisterColor.BLUE:
-                renderer.material = blueMaterial;
+                colorRenderer.material = blueMaterial;
                 break;
+        }
 
+        switch (goalTwisterLimb)
+        {
+            case Pose.Landmark.LEFT_WRIST:
+                limbRenderer.material = leftArmMaterial;
+                break;
+            case Pose.Landmark.RIGHT_WRIST:
+                limbRenderer.material = rightArmMaterial;
+                break;
+            case Pose.Landmark.LEFT_FOOT:
+                limbRenderer.material = leftLegMaterial;
+                break;
+            case Pose.Landmark.RIGHT_FOOT:
+                limbRenderer.material = rightLegMaterial;
+                break;
         }
     }
 
