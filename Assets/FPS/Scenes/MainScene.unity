@@ -1211,6 +1211,10 @@ MonoBehaviour:
   leftLegMaterial: {fileID: 2100000, guid: 92e6ebac569ad7f4a9101228d5001398, type: 2}
   rightArmMaterial: {fileID: 2100000, guid: dbe89b31832204f4ca365fd7e31f25a8, type: 2}
   leftArmMaterial: {fileID: 2100000, guid: b6f1c2d4e88f82a479818f8b3c778657, type: 2}
+  bottomRightCorner: {x: -5.576, y: 0, z: -1.359}
+  topLeftCorner: {x: -2.582, y: 0, z: 1.627}
+  sphereSize: 0.5
+  sphereSpread: 1.5
 --- !u!1001 &409996927
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1969,6 +1973,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 72.444, z: 0}
+--- !u!1 &580899046
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 580899047}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &580899047
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580899046}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.582, y: 0, z: 1.627}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 35
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &581730210
 GameObject:
   m_ObjectHideFlags: 0

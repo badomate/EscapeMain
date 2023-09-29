@@ -10,21 +10,28 @@ public class TwisterGame : MonoBehaviour
     public TwisterColor goalTwisterColor;
     public Pose.Landmark goalTwisterLimb;
 
-
     public GameObject goalColorDisplay;
     public GameObject goalLimbDisplay;
-
 
     public Material greenMaterial;
     public Material redMaterial;
     public Material yellowMaterial;
     public Material blueMaterial;
 
-
     public Material rightLegMaterial;
     public Material leftLegMaterial;
     public Material rightArmMaterial;
     public Material leftArmMaterial;
+
+
+    //Where would the real-life board be in the virtual world?
+    public Vector3 bottomRightCorner; // Specify the center of the bottom right CIRCLE
+    public Vector3 topLeftCorner; // Specify the center of the top left CIRCLE
+
+    int columns = 4;
+    int rows = 6;
+    public float sphereSize = 1.0f; // Size of each sphere
+    public float sphereSpread = 1.5f; // Spacing between spheres
 
     public void TwisterSpin() //TODO: Could we add an actual spinner?
     {
@@ -73,11 +80,47 @@ public class TwisterGame : MonoBehaviour
         }
     }
 
+    
+    void CreateTwisterBoard()
+    {
+        Material[] colors = new Material[] { redMaterial, blueMaterial, yellowMaterial, greenMaterial };
+        Vector3 boardSize = topLeftCorner - bottomRightCorner;
+        float columnSpacing = boardSize.x / (columns - 1);
+        float rowSpacing = boardSize.z / (rows - 1);
+
+        for (int i = 0; i < columns; i++)
+        {
+            for (int j = 0; j < rows; j++)
+            {
+                Vector3 position = bottomRightCorner + new Vector3(j * rowSpacing, 0, i * columnSpacing); 
+                Quaternion rotation = Quaternion.identity;
+                CreateSphere(position, rotation, colors[i]);
+            }
+        }
+    }
+
+    //TODO: We need to be able to move the spheres at runtime to adjust their position to real life
+    //Generally, the spheres should be hidden, and shown only for feedback or to help align them with their real-world counterparts
+    //It may make more sense to use cylinders as they can be taller
+    void CreateSphere(Vector3 position, Quaternion rotation, Material material)
+    {
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.position = position;
+        sphere.transform.rotation = rotation;
+        sphere.transform.localScale = new Vector3(sphereSize, sphereSize, sphereSize);
+        sphere.GetComponent<Renderer>().material = material;
+
+        Collider sphereCollider = sphere.GetComponent<Collider>();
+        if (sphereCollider != null)
+        {
+            sphereCollider.enabled = false;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        CreateTwisterBoard();
     }
 
     // Update is called once per frame
