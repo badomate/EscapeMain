@@ -1199,6 +1199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dd71caa731328445b800d8e36094e64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerEstimationScript: {fileID: 1528204669}
   goalTwisterColor: 0
   goalTwisterLimb: 0
   goalColorDisplay: {fileID: 866835595}
@@ -1214,7 +1215,7 @@ MonoBehaviour:
   bottomRightCorner: {x: -5.576, y: 0, z: -1.359}
   topLeftCorner: {x: -2.582, y: 0, z: 1.627}
   sphereSize: 0.5
-  sphereSpread: 1.5
+  LockInCalibration: 0
 --- !u!1001 &409996927
 PrefabInstance:
   m_ObjectHideFlags: 0

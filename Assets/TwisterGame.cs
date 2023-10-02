@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TwisterGame : MonoBehaviour
 {
-    public EstimationToIK estimationScript;
+    public EstimationToIK playerEstimationScript;
     public enum TwisterColor { RED, YELLOW, GREEN, BLUE }; //color that limb needs to be put on (if its already there, it moust be moved)
     //public enum TwisterLimb { RIGHT_LEG, LEFT_LEG, RIGHT_ARM, LEFT_ARM };
     public TwisterColor goalTwisterColor;
@@ -155,6 +155,8 @@ public class TwisterGame : MonoBehaviour
             LockInCalibration = true;
         }
         //TODO: adding more keys for calibration could be useful if we plan to play out of editor
+
+        //checkHovers(Pose.Landmark.RIGHT_WRIST);
     }
 
     void checkHovers(Pose.Landmark landmarkToCheck)
@@ -164,20 +166,22 @@ public class TwisterGame : MonoBehaviour
         int closestCircleColumn = -1;
 
         int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[landmarkToCheck];
-
-        for(int x = 0; x < twisterCircles.GetLength(0); x++)
+        if(landmarkToCheckIndex < playerEstimationScript.landmarks.Length)
         {
-            for(int y = 0; y < twisterCircles.GetLength(1); y++)
+            for (int x = 0; x < twisterCircles.GetLength(0); x++)
             {
-                float distance = Vector3.Distance(estimationScript.landmarks[landmarkToCheckIndex], twisterCircles[x, y].transform.position);
-
-                if (distance < sphereSize && distance < closestDistance)
+                for (int y = 0; y < twisterCircles.GetLength(1); y++)
                 {
-                    closestDistance = distance;
-                    closestCircleRow = x;
-                    closestCircleColumn = y;
-                }
+                    float distance = Vector3.Distance(playerEstimationScript.landmarks[landmarkToCheckIndex], twisterCircles[x, y].transform.position);
 
+                    if (distance < sphereSize && distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestCircleRow = x;
+                        closestCircleColumn = y;
+                    }
+
+                }
             }
         }
     }
