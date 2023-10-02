@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TwisterGame : MonoBehaviour
 {
-
+    public EstimationToIK estimationScript;
     public enum TwisterColor { RED, YELLOW, GREEN, BLUE }; //color that limb needs to be put on (if its already there, it moust be moved)
     //public enum TwisterLimb { RIGHT_LEG, LEFT_LEG, RIGHT_ARM, LEFT_ARM };
     public TwisterColor goalTwisterColor;
@@ -33,7 +33,7 @@ public class TwisterGame : MonoBehaviour
     public float sphereSize = 1.0f; // Size of each sphere
     //public float sphereSpread = 1.5f; // Spacing between spheres
 
-    GameObject[,] visaulizers = new GameObject[ROWS,COLUMNS];
+    GameObject[,] twisterCircles = new GameObject[ROWS,COLUMNS];
 
     public bool LockInCalibration = false;
 
@@ -98,14 +98,14 @@ public class TwisterGame : MonoBehaviour
                 Vector3 position = bottomRightCorner + new Vector3(j * rowSpacing, 0, i * columnSpacing); 
                 Quaternion rotation = Quaternion.identity;
 
-                if (j < visaulizers.GetLength(0) && i < visaulizers.GetLength(1) && visaulizers[j, i] != null)
+                if (j < twisterCircles.GetLength(0) && i < twisterCircles.GetLength(1) && twisterCircles[j, i] != null)
                 {
-                    MoveSphere(visaulizers[j, i], position, rotation);
+                    MoveSphere(twisterCircles[j, i], position, rotation);
                 }
                 else
                 {
                     GameObject sphere = CreateSphere(position, rotation, colors[i]);
-                    visaulizers[j, i] = sphere;
+                    twisterCircles[j, i] = sphere;
                 }
             }
         }
@@ -155,5 +155,30 @@ public class TwisterGame : MonoBehaviour
             LockInCalibration = true;
         }
         //TODO: adding more keys for calibration could be useful if we plan to play out of editor
+    }
+
+    void checkHovers(Pose.Landmark landmarkToCheck)
+    {
+        float closestDistance = sphereSize;
+        int closestCircleRow = -1;
+        int closestCircleColumn = -1;
+
+        int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[landmarkToCheck];
+
+        for(int x = 0; x < twisterCircles.GetLength(0); x++)
+        {
+            for(int y = 0; y < twisterCircles.GetLength(1); y++)
+            {
+                float distance = Vector3.Distance(estimationScript.landmarks[landmarkToCheckIndex], twisterCircles[x, y].transform.position);
+
+                if (distance < sphereSize && distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestCircleRow = x;
+                    closestCircleColumn = y;
+                }
+
+            }
+        }
     }
 }
