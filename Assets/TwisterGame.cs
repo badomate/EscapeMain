@@ -43,22 +43,19 @@ public class TwisterGame : MonoBehaviour
     int lastSpinnedPlayer = -1;
     Material[] colors;
 
+
+    //variables related to recognizing if the player picked a circle.
+    float timer = 0f;
+    bool waitingForCirclePick = false;
+    GameObject currentClosestCircle;
+
+
     public void TwisterSpin(int player) //TODO: Could we add an actual spinner?
     {
         goalTwisterColor = (TwisterColor)Random.Range(0, 3);
         goalTwisterLimb = (Pose.Landmark)Random.Range(0, 3);
         lastSpinnedPlayer = player;
-        /*
-        if (player)
-        {
-            locksPlayer1
-            mediapipeIndicesToLimbs.Add(goalTwisterLimb, );
-        }*/
-    }
-
-    void lockFulfilledCheck(int player)
-    {
-
+        waitingForCirclePick = true;
     }
 
     public void displayGoal()
@@ -164,6 +161,52 @@ public class TwisterGame : MonoBehaviour
         CreateTwisterBoard();
     }
 
+   //TODO: If this was successful, the A.I could relay this with feedback, if it was unsuccessful, the A.I could relay that.
+   void circlePickCheck()
+    {
+        if (waitingForCirclePick)
+        {
+            GameObject newClosestCircle = findClosestCircle(goalTwisterLimb);
+
+            if (newClosestCircle != null && newClosestCircle != currentClosestCircle) //do we need to handle if it is null?
+            {
+                currentClosestCircle = newClosestCircle;
+                timer = 0f;
+            }
+            else if (newClosestCircle == currentClosestCircle)
+            {
+                ColorInfo colorInfo = currentClosestCircle.GetComponent<ColorInfo>();
+                if (colorInfo != null)
+                {
+                    timer += Time.deltaTime;
+                    if (timer >= 1f)
+                    {
+                        if(colorInfo.color == goalTwisterColor) //is it a CORRECT circle
+                        {
+                            //TODO: invoke positvie feedback by A.I
+
+                            //from now on, current player should keep their limb in this specific spot
+                            if (lastSpinnedPlayer == 0)
+                            {
+                                locksPlayer0.Add(goalTwisterLimb, newClosestCircle);
+                            }
+                            else
+                            {
+                                locksPlayer1.Add(goalTwisterLimb, newClosestCircle);
+                            }
+                            waitingForCirclePick = false;
+                        }
+                        else //a circle was selected by the correct limb, but the circle's color is wrong
+                        {
+                            timer = 0f;
+                            //TODO: invoke negative feedback from the A.I, since the player is on a wrong circle. (This means the human mistook the word for color. Can we do this somehow if he mistook the word for limb?)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -177,7 +220,7 @@ public class TwisterGame : MonoBehaviour
         }
         //TODO: adding more keys for calibration could be useful if we plan to play out of editor
 
-        //checkHovers(Pose.Landmark.RIGHT_WRIST);
+
     }
 
     GameObject findClosestCircle(Pose.Landmark landmarkToCheck)
