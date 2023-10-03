@@ -5,7 +5,7 @@ using UnityEngine;
 public class TwisterGame : MonoBehaviour
 {
     public EstimationToIK playerEstimationScript;
-    public enum TwisterColor { RED, YELLOW, GREEN, BLUE }; //color that limb needs to be put on (if its already there, it moust be moved)
+    public enum TwisterColor { RED, BLUE, YELLOW, GREEN }; //color that limb needs to be put on (if its already there, it moust be moved)
     //public enum TwisterLimb { RIGHT_LEG, LEFT_LEG, RIGHT_ARM, LEFT_ARM };
     public TwisterColor goalTwisterColor;
     public Pose.Landmark goalTwisterLimb;
@@ -37,12 +37,27 @@ public class TwisterGame : MonoBehaviour
 
     public bool LockInCalibration = false;
 
-    public Dictionary<Pose.Landmark, GameObject> locks = new Dictionary<Pose.Landmark, GameObject>();
+    public Dictionary<Pose.Landmark, GameObject> locksPlayer0 = new Dictionary<Pose.Landmark, GameObject>();
+    public Dictionary<Pose.Landmark, GameObject> locksPlayer1 = new Dictionary<Pose.Landmark, GameObject>();
 
-    public void TwisterSpin() //TODO: Could we add an actual spinner?
+    int lastSpinnedPlayer = -1;
+    Material[] colors;
+
+    public void TwisterSpin(int player) //TODO: Could we add an actual spinner?
     {
         goalTwisterColor = (TwisterColor)Random.Range(0, 3);
         goalTwisterLimb = (Pose.Landmark)Random.Range(0, 3);
+        lastSpinnedPlayer = player;
+        /*
+        if (player)
+        {
+            locksPlayer1
+            mediapipeIndicesToLimbs.Add(goalTwisterLimb, );
+        }*/
+    }
+
+    void lockFulfilledCheck(int player)
+    {
 
     }
 
@@ -88,7 +103,7 @@ public class TwisterGame : MonoBehaviour
 
     void CreateTwisterBoard()
     {
-        Material[] colors = new Material[] { redMaterial, blueMaterial, yellowMaterial, greenMaterial };
+        colors = new Material[] { redMaterial, blueMaterial, yellowMaterial, greenMaterial };
         Vector3 boardSize = topLeftCorner - bottomRightCorner;
         float columnSpacing = boardSize.x / (COLUMNS - 1);
         float rowSpacing = boardSize.z / (ROWS - 1);
@@ -106,7 +121,7 @@ public class TwisterGame : MonoBehaviour
                 }
                 else
                 {
-                    GameObject sphere = CreateSphere(position, rotation, colors[i]);
+                    GameObject sphere = CreateSphere(position, rotation, i);
                     twisterCircles[j, i] = sphere;
                 }
             }
@@ -123,19 +138,23 @@ public class TwisterGame : MonoBehaviour
     //TODO: We need to be able to move the spheres at runtime to adjust their position to real life
     //Generally, the spheres should be hidden, and shown only for feedback or to help align them with their real-world counterparts
     //It may make more sense to use cylinders as they can be taller
-    GameObject CreateSphere(Vector3 position, Quaternion rotation, Material material)
+    GameObject CreateSphere(Vector3 position, Quaternion rotation, int colorIndex)
     {
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere.transform.position = position;
         sphere.transform.rotation = rotation;
         sphere.transform.localScale = new Vector3(sphereSize, sphereSize, sphereSize);
-        sphere.GetComponent<Renderer>().material = material;
+        sphere.GetComponent<Renderer>().material = colors[colorIndex];
 
         Collider sphereCollider = sphere.GetComponent<Collider>();
         if (sphereCollider != null)
         {
             sphereCollider.enabled = false;
         }
+
+        ColorInfo colorInfo = sphere.AddComponent<ColorInfo>();
+        colorInfo.color = (TwisterColor)colorIndex;
+
         return sphere;
     }
 

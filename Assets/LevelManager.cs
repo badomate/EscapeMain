@@ -67,24 +67,19 @@ public class LevelManager : MonoBehaviour
         compareGestureScript.recording = true;
 
         lastGoalGesture = goalGesture;
-        if (twisterRules)
-        {
-            twisterGame.TwisterSpin();
-        }
-        else
-        {
-            goalGesture = pickFromDictionary();
-        }
 
+        twisterGame.TwisterSpin(currentPlayer);
 
-        if (levelCounter > 2 && currentPlayer == 1) //pick a random limb to lock down
+        //goalGesture = pickFromDictionary();
+        /*
+        if (currentPlayer == 1) //pick a random limb to lock down
         {
             limbLockerScript.lockLimb(goalGesture, lastGoalGesture);
         }
         else
         {
             limbLockerScript.releaseLockedLimb();
-        }
+        }*/
 
 
         //Player solves, A.I demonstrates
