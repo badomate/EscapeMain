@@ -43,7 +43,6 @@ public class TwisterGame : MonoBehaviour
     int lastSpinnedPlayer = -1;
     Material[] colors;
 
-
     //variables related to recognizing if the player picked a circle.
     float timer = 0f;
     bool waitingForCirclePick = false;
@@ -207,6 +206,19 @@ public class TwisterGame : MonoBehaviour
         }
     }
 
+    void illegalMoveCheck(Dictionary<Pose.Landmark, GameObject> DictionaryToCheck )
+    {
+        foreach (KeyValuePair<Pose.Landmark, GameObject> lockEntry in DictionaryToCheck)
+        {
+            int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[lockEntry.Key];
+            Vector3 landmark = playerEstimationScript.landmarks[landmarkToCheckIndex];
+            if(Vector3.Distance(landmark, lockEntry.Value.transform.position) > sphereSize)
+            {
+                //TODO: Illegal move detected! Invoke an event for negative feedback from the A.I (or the game itself?)
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -219,7 +231,8 @@ public class TwisterGame : MonoBehaviour
             LockInCalibration = true;
         }
         //TODO: adding more keys for calibration could be useful if we plan to play out of editor
-
+        illegalMoveCheck(locksPlayer0);
+        illegalMoveCheck(locksPlayer1);
 
     }
 
