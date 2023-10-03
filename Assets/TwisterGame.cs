@@ -37,6 +37,8 @@ public class TwisterGame : MonoBehaviour
 
     public bool LockInCalibration = false;
 
+    public Dictionary<Pose.Landmark, GameObject> locks = new Dictionary<Pose.Landmark, GameObject>();
+
     public void TwisterSpin() //TODO: Could we add an actual spinner?
     {
         goalTwisterColor = (TwisterColor)Random.Range(0, 3);
@@ -159,7 +161,7 @@ public class TwisterGame : MonoBehaviour
         //checkHovers(Pose.Landmark.RIGHT_WRIST);
     }
 
-    void checkHovers(Pose.Landmark landmarkToCheck)
+    GameObject findClosestCircle(Pose.Landmark landmarkToCheck)
     {
         float closestDistance = sphereSize;
         int closestCircleRow = -1;
@@ -183,6 +185,14 @@ public class TwisterGame : MonoBehaviour
 
                 }
             }
+        }
+        if(closestCircleRow != -1)
+        {
+            return twisterCircles[closestCircleRow, closestCircleColumn];
+        }
+        else
+        {
+            return null;
         }
     }
 }

@@ -5980,6 +5980,7 @@ MonoBehaviour:
   playerBasePosition: {x: -4, y: 0.801, z: 0}
   mirrorBasePosition: {x: 12.46, y: 5, z: -1.73}
   estimationScript: {fileID: 1528204669}
+  twisterGameScript: {fileID: 319678152}
 --- !u!1001 &2729281214287269654
 PrefabInstance:
   m_ObjectHideFlags: 0
