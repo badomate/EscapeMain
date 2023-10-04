@@ -9,6 +9,7 @@ public class TwisterGame : MonoBehaviour
     //public enum TwisterLimb { RIGHT_LEG, LEFT_LEG, RIGHT_ARM, LEFT_ARM };
     public TwisterColor goalTwisterColor;
     public Pose.Landmark goalTwisterLimb;
+    public int goalTwisterCircleId;
 
     public GameObject goalColorDisplay;
     public GameObject goalLimbDisplay;
@@ -49,10 +50,14 @@ public class TwisterGame : MonoBehaviour
     GameObject currentClosestCircle;
 
 
+    public enum CircleMode { COLORS, COLORLESS }; //color that limb needs to be put on (if its already there, it moust be moved)
+    public CircleMode currentCircleMode;
+
     public void TwisterSpin(int player) //TODO: Could we add an actual spinner?
     {
         goalTwisterColor = (TwisterColor)Random.Range(0, 3);
         goalTwisterLimb = (Pose.Landmark)Random.Range(0, 3);
+        goalTwisterCircleId = Random.Range(0, ROWS * COLUMNS -1);
         lastSpinnedPlayer = player;
         waitingForCirclePick = true;
     }
@@ -131,6 +136,7 @@ public class TwisterGame : MonoBehaviour
         sphere.transform.localScale = new Vector3(sphereSize, sphereSize, sphereSize);
     }
 
+    int circleIdCounter = 0;
     //TODO: We need to be able to move the spheres at runtime to adjust their position to real life
     //Generally, the spheres should be hidden, and shown only for feedback or to help align them with their real-world counterparts
     //It may make more sense to use cylinders as they can be taller
@@ -148,8 +154,11 @@ public class TwisterGame : MonoBehaviour
             sphereCollider.enabled = false;
         }
 
-        ColorInfo colorInfo = sphere.AddComponent<ColorInfo>();
-        colorInfo.color = (TwisterColor)colorIndex;
+        CircleInfo CircleInfo = sphere.AddComponent<CircleInfo>();
+        CircleInfo.color = (TwisterColor)colorIndex;
+        CircleInfo.circleId = circleIdCounter;
+
+        circleIdCounter++;
 
         return sphere;
     }
@@ -158,6 +167,7 @@ public class TwisterGame : MonoBehaviour
     void Start()
     {
         CreateTwisterBoard();
+
     }
 
    //TODO: If this was successful, the A.I could relay this with feedback, if it was unsuccessful, the A.I could relay that.
@@ -174,13 +184,13 @@ public class TwisterGame : MonoBehaviour
             }
             else if (newClosestCircle == currentClosestCircle)
             {
-                ColorInfo colorInfo = currentClosestCircle.GetComponent<ColorInfo>();
-                if (colorInfo != null)
+                CircleInfo circleInfo = currentClosestCircle.GetComponent<CircleInfo>();
+                if (circleInfo != null) //TODO: A.I should react if the result is null for too long! Repeat ourselves
                 {
                     timer += Time.deltaTime;
                     if (timer >= 1f)
                     {
-                        if(colorInfo.color == goalTwisterColor) //is it a CORRECT circle
+                        if((currentCircleMode == CircleMode.COLORS && circleInfo.color == goalTwisterColor) || (currentCircleMode == CircleMode.COLORLESS && circleInfo.circleId == goalTwisterCircleId)) //is it a CORRECT circle
                         {
                             //TODO: invoke positvie feedback by A.I
 
