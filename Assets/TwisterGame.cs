@@ -25,6 +25,7 @@ public class TwisterGame : MonoBehaviour
     public Material leftArmMaterial;
 
     public Material goalMaterial;
+    //public Material colorlessMaterial;
 
 
     //Where would the real-life board be in the virtual world?
@@ -113,6 +114,11 @@ public class TwisterGame : MonoBehaviour
                     if (circleInfo != null && circleInfo.circleId == goalTwisterCircleId)
                     {
                         twisterCircles[i, j].GetComponent<Renderer>().material = goalMaterial;
+                    }
+                    else
+                    {
+                        // twisterCircles[i, j].GetComponent<Renderer>().material = colorlessMaterial;
+                        twisterCircles[i, j].GetComponent<Renderer>().enabled = false;
                     }
                 }
             }
