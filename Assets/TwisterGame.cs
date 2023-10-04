@@ -24,6 +24,8 @@ public class TwisterGame : MonoBehaviour
     public Material rightArmMaterial;
     public Material leftArmMaterial;
 
+    public Material goalMaterial;
+
 
     //Where would the real-life board be in the virtual world?
     public Vector3 bottomRightCorner; // Specify the center of the bottom right CIRCLE
@@ -99,6 +101,21 @@ public class TwisterGame : MonoBehaviour
             case Pose.Landmark.RIGHT_FOOT:
                 limbRenderer.material = rightLegMaterial;
                 break;
+        }
+
+        if (currentCircleMode == CircleMode.COLORLESS)
+        {
+            for (int i = 0; i < ROWS; i++)
+            {
+                for (int j = 0; j < COLUMNS; j++)
+                {
+                    CircleInfo circleInfo = twisterCircles[i, j].GetComponent<CircleInfo>();
+                    if (circleInfo != null && circleInfo.circleId == goalTwisterCircleId)
+                    {
+                        twisterCircles[i, j].GetComponent<Renderer>().material = goalMaterial;
+                    }
+                }
+            }
         }
     }
 
