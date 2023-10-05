@@ -1102,7 +1102,7 @@ MonoBehaviour:
   PlayerUI: {fileID: 206531942}
   InfoBox: {fileID: 998058053}
   LevelInfoBox: {fileID: 672437112}
-  m_LevelFinishedEvent:
+  LevelFinishedEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!65 &319678136
@@ -1217,17 +1217,9 @@ MonoBehaviour:
   bottomRightCorner: {x: -5.576, y: 0, z: -1.359}
   topLeftCorner: {x: -2.582, y: 0, z: 1.627}
   sphereSize: 0.5
+  hittingFloorThreshold: 0.2
   LockInCalibration: 1
   currentCircleMode: 1
-  m_successEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_mistakeEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_illegalMoveEvent:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1001 &409996927
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4820,36 +4812,7 @@ MonoBehaviour:
   rightHand: {fileID: 1528204666}
   Looping: 1
   landmarks:
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
-  - {x: 1, y: 1, z: 1}
+  - {x: 0, y: 0, z: 0}
   scaleFactor: 1
   centerpointOffset: {x: 0, y: -0.81, z: 0}
   startFrame: 0

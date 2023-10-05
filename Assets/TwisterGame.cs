@@ -32,11 +32,11 @@ public class TwisterGame : MonoBehaviour
     public Vector3 bottomRightCorner; // Specify the center of the bottom right CIRCLE
     public Vector3 topLeftCorner; // Specify the center of the top left CIRCLE
     public float sphereSize = 1.0f; // Size of each sphere
+    public float hittingFloorThreshold = 0.2f;
 
     static int COLUMNS = 4;
     static int ROWS = 6;
     GameObject[,] twisterCircles = new GameObject[ROWS, COLUMNS];
-
 
     public bool LockInCalibration = false;
 
@@ -108,6 +108,7 @@ public class TwisterGame : MonoBehaviour
 
         if (currentCircleMode == CircleMode.COLORLESS)
         {
+            goalColorDisplay.SetActive(false);
             for (int i = 0; i < ROWS; i++)
             {
                 for (int j = 0; j < COLUMNS; j++)
@@ -258,6 +259,22 @@ public class TwisterGame : MonoBehaviour
         }
     }
 
+    void hittingFloorCheck()
+    {
+        Pose.Landmark[] forbiddenLandmarks= new Pose.Landmark[] { Pose.Landmark.RIGHT_KNEE };
+        for (int i = 0; i < forbiddenLandmarks.Length; i++)
+        {
+            int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[forbiddenLandmarks[i]];
+            if (playerEstimationScript.landmarks.Length > landmarkToCheckIndex)
+            {
+                if (Mathf.Abs(topLeftCorner.y - playerEstimationScript.landmarks[landmarkToCheckIndex].y) < hittingFloorThreshold)
+                {
+                    illegalMoveEvent.Invoke();
+                }
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -272,7 +289,7 @@ public class TwisterGame : MonoBehaviour
         //TODO: adding more keys for calibration could be useful if we plan to play out of editor
         illegalMoveCheck(locksPlayer0);
         illegalMoveCheck(locksPlayer1);
-
+        hittingFloorCheck(); //Should the A.I even be able to hit the floor? depends on how we animate them.
     }
 
     GameObject findClosestCircle(Pose.Landmark landmarkToCheck)
