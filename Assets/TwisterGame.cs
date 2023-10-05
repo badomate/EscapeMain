@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TwisterGame : MonoBehaviour
 {
     public EstimationToIK playerEstimationScript;
-    public enum TwisterColor { RED, BLUE, YELLOW, GREEN }; //color that limb needs to be put on (if its already there, it moust be moved)
-    //public enum TwisterLimb { RIGHT_LEG, LEFT_LEG, RIGHT_ARM, LEFT_ARM };
+    public enum TwisterColor { RED, BLUE, YELLOW, GREEN }; //color that limb needs to be put on (if its already there, it moust be moved). Theres a corresponding material array.
+
     public TwisterColor goalTwisterColor;
     public Pose.Landmark goalTwisterLimb;
     public int goalTwisterCircleId;
@@ -27,17 +28,15 @@ public class TwisterGame : MonoBehaviour
     public Material goalMaterial;
     //public Material colorlessMaterial;
 
-
     //Where would the real-life board be in the virtual world?
     public Vector3 bottomRightCorner; // Specify the center of the bottom right CIRCLE
     public Vector3 topLeftCorner; // Specify the center of the top left CIRCLE
+    public float sphereSize = 1.0f; // Size of each sphere
 
     static int COLUMNS = 4;
     static int ROWS = 6;
-    public float sphereSize = 1.0f; // Size of each sphere
-    //public float sphereSpread = 1.5f; // Spacing between spheres
+    GameObject[,] twisterCircles = new GameObject[ROWS, COLUMNS];
 
-    GameObject[,] twisterCircles = new GameObject[ROWS,COLUMNS];
 
     public bool LockInCalibration = false;
 
@@ -52,9 +51,12 @@ public class TwisterGame : MonoBehaviour
     bool waitingForCirclePick = false;
     GameObject currentClosestCircle;
 
-
     public enum CircleMode { COLORS, COLORLESS }; //color that limb needs to be put on (if its already there, it moust be moved)
     public CircleMode currentCircleMode;
+
+    public static UnityEvent successEvent = new UnityEvent(); //player is playing the game right, and already went for the correct goal
+    public static UnityEvent mistakeEvent = new UnityEvent(); //player is playing the game right, but not going for the correct goal
+    public static UnityEvent illegalMoveEvent = new UnityEvent(); //player is doing something you're not allowed to, like touching the mat with his elbows or lifting his locked limbs
 
     public void TwisterSpin(int player) //TODO: Could we add an actual spinner?
     {
@@ -221,16 +223,19 @@ public class TwisterGame : MonoBehaviour
                             if (lastSpinnedPlayer == 0)
                             {
                                 locksPlayer0.Add(goalTwisterLimb, newClosestCircle);
+                                successEvent.Invoke();
                             }
                             else
                             {
                                 locksPlayer1.Add(goalTwisterLimb, newClosestCircle);
+                                successEvent.Invoke();
                             }
                             waitingForCirclePick = false;
                         }
                         else //a circle was selected by the correct limb, but the circle's color is wrong
                         {
                             timer = 0f;
+                            mistakeEvent.Invoke();
                             //TODO: invoke negative feedback from the A.I, since the player is on a wrong circle. (This means the human mistook the word for color. Can we do this somehow if he mistook the word for limb?)
                         }
                     }
@@ -247,7 +252,8 @@ public class TwisterGame : MonoBehaviour
             Vector3 landmark = playerEstimationScript.landmarks[landmarkToCheckIndex];
             if(Vector3.Distance(landmark, lockEntry.Value.transform.position) > sphereSize)
             {
-                //TODO: Illegal move detected! Invoke an event for negative feedback from the A.I (or the game itself?)
+                illegalMoveEvent.Invoke();
+                //TODO: Illegal move detected! Listen to the event and send negative feedback from the A.I (or the game itself?)
             }
         }
     }

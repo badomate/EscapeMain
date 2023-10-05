@@ -12,9 +12,9 @@ public class AgreementManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        feedbackManager.m_FeedbackEvent.AddListener(handleFeedbackEvent);
-        compareGesture.m_MimicEvent.AddListener(handleHelperNewWordEvent);
-        compareGesture.m_StillnessEvent.AddListener(handlePlayerNewWordEvent);
+        feedbackManager.FeedbackEvent.AddListener(handleFeedbackEvent);
+        compareGesture.MimicEvent.AddListener(handleHelperNewWordEvent);
+        compareGesture.StillnessEvent.AddListener(handlePlayerNewWordEvent);
     }
 
     // Update is called once per frame

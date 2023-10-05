@@ -60,8 +60,8 @@ public class InteractByPointing : MonoBehaviour
         {
             Debug.Log("I can't find the Helper.");
         }
-        feedbackManager.m_FeedbackEvent.AddListener(handleFeedbackEvent); //wait for player to "lock in" his gesture
-        levelManagerScript.m_LevelFinishedEvent.AddListener(handleLevelFinished); //wait for player to "lock in" his gesture
+        feedbackManager.FeedbackEvent.AddListener(handleFeedbackEvent); //wait for player to "lock in" his gesture
+        levelManagerScript.LevelFinishedEvent.AddListener(handleLevelFinished); //wait for player to "lock in" his gesture
     }
 
 

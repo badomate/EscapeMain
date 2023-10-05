@@ -8,7 +8,7 @@ public class FeedbackManager : MonoBehaviour
     public enum feedbackType { POSITIVE, NEGATIVE, DONT_UNDERSTAND, NUMERICAL, INITIATE_AGREEMENT }; //later we could combine mediapipe and hololens
     public feedbackType lastDetectedFeedback;
     public int lastDetectedNumeralFeedback;
-    public UnityEvent m_FeedbackEvent = new UnityEvent();
+    public UnityEvent FeedbackEvent = new UnityEvent();
 
     CompareGesture compareGestureScript;
     // Start is called before the first frame update
@@ -39,7 +39,7 @@ public class FeedbackManager : MonoBehaviour
             }
             if(meaning == "NEGATIVE" || meaning == "POSITIVE")
             {
-                m_FeedbackEvent.Invoke();
+                FeedbackEvent.Invoke();
             }
         }
 
@@ -48,34 +48,34 @@ public class FeedbackManager : MonoBehaviour
         if (Input.GetKey("n")) // we could add more shortcuts or perhaps add them in a cleaner manner
         {
             lastDetectedFeedback = feedbackType.NEGATIVE;
-            m_FeedbackEvent.Invoke();
+            FeedbackEvent.Invoke();
         }else if (Input.GetKey("p"))
         {
             lastDetectedFeedback = feedbackType.POSITIVE;
-            m_FeedbackEvent.Invoke();
+            FeedbackEvent.Invoke();
         }
         else if (Input.GetKey("1"))
         {
             lastDetectedFeedback = feedbackType.NUMERICAL;
             lastDetectedNumeralFeedback = 0; // this will be used to select element 0 of the pose sequence during demonstration
-            m_FeedbackEvent.Invoke();
+            FeedbackEvent.Invoke();
         }
         else if (Input.GetKey("2"))
         {
             lastDetectedFeedback = feedbackType.NUMERICAL;
             lastDetectedNumeralFeedback = 1; 
-            m_FeedbackEvent.Invoke();
+            FeedbackEvent.Invoke();
         }
         else if (Input.GetKey("3")) 
         {
             lastDetectedFeedback = feedbackType.NUMERICAL;
             lastDetectedNumeralFeedback = 2;
-            m_FeedbackEvent.Invoke();
+            FeedbackEvent.Invoke();
         }
         else if (Input.GetKey("i"))
         {
             lastDetectedFeedback = feedbackType.INITIATE_AGREEMENT;
-            m_FeedbackEvent.Invoke();
+            FeedbackEvent.Invoke();
         }
     }
 }

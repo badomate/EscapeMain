@@ -18,8 +18,8 @@ public class CompareGesture : MonoBehaviour
     public float matchThreshold = 0.01f; //0 would mean an absolute perfect match across all samples
     public float stillnessThreshold = 0.1f; //used to "lock in" a pose
 
-    public UnityEvent m_StillnessEvent = new UnityEvent();
-    public UnityEvent m_MimicEvent = new UnityEvent(); 
+    public UnityEvent StillnessEvent = new UnityEvent();
+    public UnityEvent MimicEvent = new UnityEvent(); 
 
     private LevelManager LevelManagerScript;
     // Start is called before the first frame update
@@ -74,14 +74,14 @@ public class CompareGesture : MonoBehaviour
                 }
             }
         }
-        if (m_StillnessEvent != null)
+        if (StillnessEvent != null)
         {
-            m_StillnessEvent.Invoke();
+            StillnessEvent.Invoke();
         }
         else
         {
-            m_StillnessEvent = new UnityEvent();
-            m_StillnessEvent.Invoke();
+            StillnessEvent = new UnityEvent();
+            StillnessEvent.Invoke();
         }
 
     }

@@ -32,7 +32,7 @@ public class LevelManager : MonoBehaviour
     List<Gesture> gestureList;
 
     int nrGesturesChosen = 0; //index used for picking a goal from the dictionary
-    public UnityEvent m_LevelFinishedEvent = new UnityEvent();
+    public UnityEvent LevelFinishedEvent = new UnityEvent();
 
     void Start()
     {
@@ -40,7 +40,7 @@ public class LevelManager : MonoBehaviour
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         //compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<EstimationToIK>();
-        compareGestureScript.m_StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
+        //compareGestureScript.StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
 
         PrepareGestureOptions();
         goalGesture = pickFromDictionary();
@@ -81,7 +81,6 @@ public class LevelManager : MonoBehaviour
             limbLockerScript.releaseLockedLimb();
         }*/
 
-
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
         {
@@ -90,10 +89,11 @@ public class LevelManager : MonoBehaviour
             //hide the goaldisplay
             PlayerUI.SetActive(false);
 
+            /*
             //mimic that gesture using the IK script
             estimationToIkScript.saveRecording(Gesture.GestureToMatrix(goalGesture));
             estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
-            estimationToIkScript.Looping = true;
+            estimationToIkScript.Looping = true;*/
         }
         else
         {
@@ -177,7 +177,7 @@ public class LevelManager : MonoBehaviour
             currentPlayer = 1;
         }
         StartCoroutine(DelayBeforeMethod(2.0f, nextTurn));
-        m_LevelFinishedEvent.Invoke();
+        LevelFinishedEvent.Invoke();
     }
 
 
