@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class TwisterGame : MonoBehaviour
 {
-    public EstimationToIK playerEstimationScript;
+    public EstimationToIK playerEstimationScript; //TODO: it's important to note that landmarks usually have their origin in relation to the player, which does not work for Twister. We will need to start getting their world-position instead.
     public enum TwisterColor { RED, BLUE, YELLOW, GREEN }; //color that limb needs to be put on (if its already there, it moust be moved). Theres a corresponding material array.
 
     public TwisterColor goalTwisterColor;

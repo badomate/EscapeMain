@@ -41,6 +41,7 @@ public class LevelManager : MonoBehaviour
         //compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<EstimationToIK>();
         //compareGestureScript.StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
+        TwisterGame.successEvent.AddListener(Success);
 
         PrepareGestureOptions();
         goalGesture = pickFromDictionary();
@@ -84,10 +85,10 @@ public class LevelManager : MonoBehaviour
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
         {
-            UpdateText("Next to demonstrate: A.I", "LEVEL "+levelCounter);
+            UpdateText("Next to demonstrate: A.I", "TURN "+levelCounter);
 
             //hide the goaldisplay
-            PlayerUI.SetActive(false);
+            //PlayerUI.SetActive(false);
 
             /*
             //mimic that gesture using the IK script
@@ -97,7 +98,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            UpdateText("Next to demonstrate: Player", "LEVEL " + levelCounter);
+            UpdateText("Next to demonstrate: Player", "TURN " + levelCounter);
             estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.None;
 
             //show the goaldisplay, so the player knows what to demonstrate
@@ -166,7 +167,7 @@ public class LevelManager : MonoBehaviour
 
     public void Success()
     {
-        UpdateText("Puzzle Solved!", "");
+        //UpdateText("Puzzle Solved!", ""); //we are trying to keep third-party feedback to a minimum, so have the A.I relay this
 
         if (currentPlayer == 1)
         {
@@ -183,8 +184,6 @@ public class LevelManager : MonoBehaviour
 
     public void PrepareGestureOptions()
     {
-
-
         Dictionary<Gesture, string> myDictionary; 
         myDictionary = dictionary.GetGestureRegistry();
         if (myDictionary == null)
@@ -215,7 +214,7 @@ public class LevelManager : MonoBehaviour
         //theres 2 seperate objects for showing level/puzzle related information
         if (InfoBox != null)
         {
-                InfoBox.text = newText;
+            InfoBox.text = newText;
         }
         else
         {
