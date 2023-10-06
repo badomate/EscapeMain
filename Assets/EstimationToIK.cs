@@ -280,6 +280,10 @@ public class EstimationToIK : MonoBehaviour
         }
     }
 
+    void TwisterMove()
+    {
+        //will need animation rigging package to achieve
+    }
 
     private void getDataFromPointing()
     {
