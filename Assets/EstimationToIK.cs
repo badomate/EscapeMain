@@ -19,8 +19,6 @@ public class EstimationToIK : MonoBehaviour
     public InteractByPointing pointingScript;
 
     public GameObject[] keypointBones; //for keypoints that are to be set specifically and not with 
-    public GameObject leftHand; //used for aesthetic adjustments after IK
-    public GameObject rightHand;
     protected Animator animator;
     public bool Looping = true; //TODO: fix the False setting, perhaps by introducing a new bool to check for the animation finishing.
 
@@ -84,11 +82,15 @@ public class EstimationToIK : MonoBehaviour
     }
     private void adjustHands()
     {
-        if(rightHand != null && leftHand != null)
-        {
-            rightHand.transform.rotation = rightHand.transform.parent.rotation;
-            leftHand.transform.rotation = leftHand.transform.parent.rotation;
-        }
+        Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+        Transform leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
+        Transform rightFoot = animator.GetBoneTransform(HumanBodyBones.RightFoot);
+        Transform leftFoot = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+
+        rightHand.transform.rotation = rightHand.transform.parent.rotation;
+        leftHand.transform.rotation = leftHand.transform.parent.rotation;
+        rightFoot.transform.rotation = rightFoot.transform.parent.rotation;
+        leftFoot.transform.rotation = leftFoot.transform.parent.rotation;
     }
 
     private Vector3 goalFromIndex(int index)
