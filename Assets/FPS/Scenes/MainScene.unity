@@ -1542,6 +1542,7 @@ MonoBehaviour:
   GoalDisplayCharacter: {fileID: 1204171163}
   twisterRules: 1
   currentPlayer: 1
+  riggingIKScript: {fileID: 319678158}
   compareGestureScript: {fileID: 319678130}
   limbLockerScript: {fileID: 2729281214152228946}
   pointerScript: {fileID: 2729281214152228945}
@@ -1609,7 +1610,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 319678117}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef807976aec1f914fa51c52f06959dec, type: 3}
   m_Name: 
@@ -7640,7 +7641,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2729281214152228921}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1af1d7282eb64644a5665adbdf8fee0, type: 3}
   m_Name: 

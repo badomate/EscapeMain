@@ -16,7 +16,8 @@ public class RiggingIK : MonoBehaviour
     public GameObject RightFootTarget;
     public GameObject LeftFootTarget;
 
-    private void SetIKPosition(Pose playingPose)
+    //Changes every IK target to match up with the given pose
+    public void SetIKPositions(Pose playingPose)
     {
         foreach (var kvp in playingPose._landmarkArrangement)
         {
@@ -41,6 +42,12 @@ public class RiggingIK : MonoBehaviour
         landmarkToTarget.Add(Pose.Landmark.RIGHT_WRIST, RightHandTarget);
         landmarkToTarget.Add(Pose.Landmark.LEFT_FOOT, LeftFootTarget);
         landmarkToTarget.Add(Pose.Landmark.RIGHT_FOOT, RightFootTarget);
+
+    }
+
+    // Have the A.I correctly take a Twister turn. In normal gameplay, this might be cheating.
+    void SolveTwister()
+    {
 
     }
 

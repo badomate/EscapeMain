@@ -18,6 +18,7 @@ public class LevelManager : MonoBehaviour
     public Gesture goalGesture;
 
     EstimationToIK estimationToIkScript;
+    public RiggingIK riggingIKScript;
     public CompareGesture compareGestureScript;
     public LimbLocker limbLockerScript;
     public InteractByPointing pointerScript;
@@ -40,7 +41,7 @@ public class LevelManager : MonoBehaviour
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         //compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<EstimationToIK>();
-        //compareGestureScript.StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
+        compareGestureScript.StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
         TwisterGame.successEvent.AddListener(Success);
 
         PrepareGestureOptions();
@@ -100,7 +101,7 @@ public class LevelManager : MonoBehaviour
         {
             UpdateText("Next to demonstrate: Player", "TURN " + levelCounter);
             estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.None;
-
+            
             //show the goaldisplay, so the player knows what to demonstrate
             displayGoal(); 
         }
@@ -121,6 +122,16 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    // The player has been staying still for a while, he might be trying to tell the A.I something
+    void handlePlayerConfirmedGesture()
+    {
+        if(pointerScript != null && pointerScript.GestureBeingBuilt != null && pointerScript.GestureBeingBuilt._poseSequence.Count > 0)
+        {
+            riggingIKScript.SetIKPositions(pointerScript.GestureBeingBuilt._poseSequence[0]._poseToMatch);
+        }
+    }
+
+    /* //Old version of this function that does not work with Twister rules
     void handlePlayerConfirmedGesture() //TODO: instead of checking the various ways the puzzle can be solved, perhaps we could just get whatever the Helper is doing and compare that directly
     {
         if (currentPlayer == 1 && goalGesture != null) //player demonstrates
@@ -163,7 +174,7 @@ public class LevelManager : MonoBehaviour
                 //or interpret as a METAGESTURE and act accordingly. But perhaps metagestures should trigger events instead
             }
         }
-    }
+    }*/
 
     public void Success()
     {
