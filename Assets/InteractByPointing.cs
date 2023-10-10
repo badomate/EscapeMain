@@ -40,10 +40,8 @@ public class InteractByPointing : MonoBehaviour
     public GameObject pointingVisualizationObject; //used to visaulize pointing hit in the game view
 
     private Animator helperAnimator;
-    private Socket_toHl2 TCPScript;
     private LevelManager levelManagerScript;
     public FeedbackManager feedbackManager;
-    public EstimationToIK estimationToIkScript;
 
 
 
@@ -54,7 +52,6 @@ public class InteractByPointing : MonoBehaviour
         {
             levelManagerScript = Helper.GetComponent<LevelManager>();
             helperAnimator = Helper.GetComponent<Animator>();
-            TCPScript = Helper.GetComponent<Socket_toHl2>();
         }
         else
         {
@@ -70,7 +67,7 @@ public class InteractByPointing : MonoBehaviour
         if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.POSITIVE)
         {
             unselectLimb();
-        }
+        }/* //Numerical feedback unused for twister rules
         else if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.NUMERICAL)
         {
             unselectLimb();
@@ -89,7 +86,7 @@ public class InteractByPointing : MonoBehaviour
                                                entry => entry.Value);
                 //LandmarksForPose = GestureBeingBuilt._poseSequence[GestureBeingBuilt._poseSequence.Count - 1]._poseToMatch._landmarkArrangement;
             }
-        }
+        }*/
     }
 
 
@@ -131,7 +128,7 @@ public class InteractByPointing : MonoBehaviour
     }
 
 
-        bool selfPointCheck(Ray ray)
+    bool selfPointCheck(Ray ray)
     {
         closestPointIndex = -1;
         float closestDistance = boneHitThreshold;
@@ -251,8 +248,6 @@ public class InteractByPointing : MonoBehaviour
     }
 
 
-
-
     void unselectLimb()
     {
         hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
@@ -275,6 +270,7 @@ public class InteractByPointing : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(landmarkSelected);
         drawPointVisualizer();
         if (moveWithMouse && playerCamera)
         {
@@ -323,6 +319,17 @@ public class InteractByPointing : MonoBehaviour
                 LandmarksForPose[landmarkSelected] = hitInfo.point;
 
                 PoseBeingBuilt = new Pose(LandmarksForPose);
+
+                if (GestureBeingBuilt._poseSequence.Count == 0) //if it differs, set it to the one being built
+                {
+                    GestureBeingBuilt.AddPose(PoseBeingBuilt);
+                }
+                else if (GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch != PoseBeingBuilt)
+                {
+                    GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch = PoseBeingBuilt;
+                }
+
+                /* Was simplified for twister
                 if (GestureBeingBuilt._poseSequence.Count < currentPoseIndex + 1)
                 {
                     GestureBeingBuilt.AddPose(PoseBeingBuilt);
@@ -330,7 +337,7 @@ public class InteractByPointing : MonoBehaviour
                 else if (GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch != PoseBeingBuilt) //if it differs, set it to the one being built
                 {
                     GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch = PoseBeingBuilt;
-                }
+                }*/
 
             }
         }
