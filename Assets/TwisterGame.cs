@@ -36,7 +36,7 @@ public class TwisterGame : MonoBehaviour
 
     static int COLUMNS = 4;
     static int ROWS = 6;
-    GameObject[,] twisterCircles = new GameObject[ROWS, COLUMNS];
+    public GameObject[,] twisterCircles = new GameObject[ROWS, COLUMNS];
 
     public bool LockInCalibration = false;
 
@@ -65,6 +65,35 @@ public class TwisterGame : MonoBehaviour
         goalTwisterCircleId = Random.Range(0, ROWS * COLUMNS -1);
         lastSpinnedPlayer = player;
         waitingForCirclePick = true;
+    }
+
+    public GameObject getGoalSphere()
+    {
+        for (int i = 0; i < ROWS; i++)
+        {
+            for (int j = 0; j < COLUMNS; j++)
+            {
+                CircleInfo circleInfo = twisterCircles[i, j].GetComponent<CircleInfo>();
+                if (circleInfo != null && circleInfo.circleId == goalTwisterCircleId)
+                {
+                    return twisterCircles[i, j];
+                }
+            }
+        }
+        return null;
+    }
+
+    public void hideGoal()
+    {
+        //goalLimbDisplay.SetActive(false);
+        goalColorDisplay.SetActive(false);
+        for (int i = 0; i < ROWS; i++)
+        {
+            for (int j = 0; j < COLUMNS; j++)
+            {
+                twisterCircles[i, j].GetComponent<Renderer>().enabled = false;
+            }
+        }
     }
 
     public void displayGoal()

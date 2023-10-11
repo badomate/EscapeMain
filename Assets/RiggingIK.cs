@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 /// <summary>
 ///This class should serve some of the same functions as EstimationToIk 
@@ -15,6 +16,8 @@ public class RiggingIK : MonoBehaviour
     public GameObject LeftHandTarget;
     public GameObject RightFootTarget;
     public GameObject LeftFootTarget;
+
+    public ChainIKConstraint pointingConstraint;
 
     //Changes every IK target to match up with the given pose
     public void SetIKPositions(Pose playingPose)
@@ -32,6 +35,23 @@ public class RiggingIK : MonoBehaviour
                 //Move the target gameobject to the position our Pose specified
                 landmarkTarget.transform.position = position;
             }
+        }
+    }
+
+    public void SetPointPosition(Vector3 pointAt)
+    {
+        if (pointingConstraint != null)
+        {
+            pointingConstraint.weight = 1.0f;
+            LeftHandTarget.transform.position = pointAt;
+        }
+    }
+
+    public void StopPointing()
+    {
+        if (pointingConstraint != null)
+        {
+            pointingConstraint.weight = 0.0f;
         }
     }
 

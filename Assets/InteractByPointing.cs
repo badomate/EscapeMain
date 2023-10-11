@@ -185,11 +185,13 @@ public class InteractByPointing : MonoBehaviour
             if (helperAnimator != null)
             {
                 //Get the bones of the Helper's skeleton
-                Transform leftArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftUpperArm); //HumanBodyBones is a built-in enum
-                Transform rightArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+                //Transform leftArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftHand); 
+                Transform rightArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightHand); //HumanBodyBones is a built-in enum
+                Transform leftLegBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                Transform rightLegBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightFoot);
 
                 //Check if the hit point is close to any of the interesting bones
-                Transform[] bonesToCheck = new Transform[] { leftArmBone, rightArmBone };
+                Transform[] bonesToCheck = new Transform[] { rightArmBone, rightLegBone, leftLegBone }; //TODO: add leftArmBone once it is included in the rig
                 Transform[] boneHits = new Transform[bonesToCheck.Length];
                 int boneHitCount = 0;
 
@@ -270,7 +272,7 @@ public class InteractByPointing : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(landmarkSelected);
+        //Debug.Log(landmarkSelected);
         drawPointVisualizer();
         if (moveWithMouse && playerCamera)
         {

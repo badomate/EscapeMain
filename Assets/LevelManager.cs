@@ -41,6 +41,7 @@ public class LevelManager : MonoBehaviour
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
         //compareGestureScript = Helper.GetComponent<CompareGesture>();
         estimationToIkScript = Helper.GetComponent<EstimationToIK>();
+        estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.None;
         compareGestureScript.StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
         TwisterGame.successEvent.AddListener(Success);
 
@@ -68,7 +69,7 @@ public class LevelManager : MonoBehaviour
         //pick a gesture from the dictionary
         compareGestureScript.recording = true;
 
-        lastGoalGesture = goalGesture;
+        //lastGoalGesture = goalGesture;
 
         twisterGame.TwisterSpin(currentPlayer);
 
@@ -87,7 +88,7 @@ public class LevelManager : MonoBehaviour
         if (currentPlayer == 0)
         {
             UpdateText("Next to demonstrate: A.I", "TURN "+levelCounter);
-
+            riggingIKScript.SetPointPosition(twisterGame.getGoalSphere().transform.position);
             //hide the goaldisplay
             //PlayerUI.SetActive(false);
 
@@ -96,17 +97,18 @@ public class LevelManager : MonoBehaviour
             estimationToIkScript.saveRecording(Gesture.GestureToMatrix(goalGesture));
             estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
             estimationToIkScript.Looping = true;*/
+            twisterGame.hideGoal();
         }
         else
         {
             UpdateText("Next to demonstrate: Player", "TURN " + levelCounter);
-            estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.None;
-            
+            riggingIKScript.StopPointing();
             //show the goaldisplay, so the player knows what to demonstrate
-            displayGoal(); 
+            twisterGame.displayGoal(); 
         }
     }
-
+    
+    /* Unused since we switched to Twister ruleset
     void displayGoal()
     {
         if(GoalDisplayCharacter != null && !twisterRules)
@@ -116,11 +118,7 @@ public class LevelManager : MonoBehaviour
             goalCharEstimator.saveRecording(Gesture.GestureToMatrix(goalGesture));
             goalCharEstimator.currentEstimationSource = EstimationToIK.estimationSource.Recording;
         }
-        else if (twisterRules)
-        {
-            twisterGame.displayGoal();
-        }
-    }
+    }*/
 
     // The player has been staying still for a while, he might be trying to tell the A.I something
     void handlePlayerConfirmedGesture()
