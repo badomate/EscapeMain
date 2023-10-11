@@ -6,6 +6,8 @@ using UnityEngine.Events;
 public class TwisterGame : MonoBehaviour
 {
     public EstimationToIK playerEstimationScript; //TODO: it's important to note that landmarks usually have their origin in relation to the player, which does not work for Twister. We will need to start getting their world-position instead.
+    //public RiggingIK riggingIKScript; 
+
     public enum TwisterColor { RED, BLUE, YELLOW, GREEN }; //color that limb needs to be put on (if its already there, it moust be moved). Theres a corresponding material array.
 
     public TwisterColor goalTwisterColor;
@@ -14,6 +16,7 @@ public class TwisterGame : MonoBehaviour
 
     public GameObject goalColorDisplay;
     public GameObject goalLimbDisplay;
+    public GameObject helperGoalVisualizer;
 
     public Material greenMaterial;
     public Material redMaterial;
@@ -58,10 +61,12 @@ public class TwisterGame : MonoBehaviour
     public static UnityEvent mistakeEvent = new UnityEvent(); //player is playing the game right, but not going for the correct goal
     public static UnityEvent illegalMoveEvent = new UnityEvent(); //player is doing something you're not allowed to, like touching the mat with his elbows or lifting his locked limbs
 
+    public Vector3 HelperMatCenter = new Vector3(0,0,0);
+
     public void TwisterSpin(int player) //TODO: Could we add an actual spinner?
     {
         goalTwisterColor = (TwisterColor)Random.Range(0, 3);
-        goalTwisterLimb = (Pose.Landmark)Random.Range(0, 3);
+        goalTwisterLimb = (Pose.Landmark)Random.Range(1, 3); //TODO: This should be between 0-3, but the left hand is missing from the rig. For now, it's used exclusively for pointing instead.
         goalTwisterCircleId = Random.Range(0, ROWS * COLUMNS -1);
         lastSpinnedPlayer = player;
         waitingForCirclePick = true;
@@ -87,6 +92,7 @@ public class TwisterGame : MonoBehaviour
     {
         //goalLimbDisplay.SetActive(false);
         goalColorDisplay.SetActive(false);
+        helperGoalVisualizer.SetActive(false);
         for (int i = 0; i < ROWS; i++)
         {
             for (int j = 0; j < COLUMNS; j++)
@@ -96,6 +102,7 @@ public class TwisterGame : MonoBehaviour
         }
     }
 
+    //this assumes the player is demonstrating
     public void displayGoal()
     {
         goalColorDisplay.SetActive(true);
@@ -145,7 +152,10 @@ public class TwisterGame : MonoBehaviour
                     CircleInfo circleInfo = twisterCircles[i, j].GetComponent<CircleInfo>();
                     if (circleInfo != null && circleInfo.circleId == goalTwisterCircleId)
                     {
-                        twisterCircles[i, j].GetComponent<Renderer>().material = goalMaterial;
+                        //TODO: we could highlight already locked limb positions and such here, to make sure the player knows where to keep his limbs
+                        //twisterCircles[i, j].GetComponent<Renderer>().material = goalMaterial;
+                        helperGoalVisualizer.transform.position = twisterCircles[i, j].transform.position + HelperMatCenter; //TODO: Should we mirror the vector or no? If they were theoretically playing on the same MAT, there would be no mirroring.
+                        twisterCircles[i, j].GetComponent<Renderer>().enabled = false;
                     }
                     else
                     {
@@ -169,25 +179,23 @@ public class TwisterGame : MonoBehaviour
             for (int j = 0; j < ROWS; j++)
             {
                 Vector3 position = bottomRightCorner + new Vector3(j * rowSpacing, 0, i * columnSpacing); 
-                Quaternion rotation = Quaternion.identity;
 
                 if (j < twisterCircles.GetLength(0) && i < twisterCircles.GetLength(1) && twisterCircles[j, i] != null)
                 {
-                    MoveSphere(twisterCircles[j, i], position, rotation);
+                    MoveSphere(twisterCircles[j, i], position);
                 }
                 else
                 {
-                    GameObject sphere = CreateSphere(position, rotation, i);
+                    GameObject sphere = CreateSphere(position, i);
                     twisterCircles[j, i] = sphere;
                 }
             }
         }
     }
 
-    void MoveSphere(GameObject sphere, Vector3 position, Quaternion rotation)
+    void MoveSphere(GameObject sphere, Vector3 position)
     {
         sphere.transform.position = position;
-        sphere.transform.rotation = rotation;
         sphere.transform.localScale = new Vector3(sphereSize, sphereSize, sphereSize);
     }
 
@@ -195,11 +203,10 @@ public class TwisterGame : MonoBehaviour
     //TODO: We need to be able to move the spheres at runtime to adjust their position to real life
     //Generally, the spheres should be hidden, and shown only for feedback or to help align them with their real-world counterparts
     //It may make more sense to use cylinders as they can be taller
-    GameObject CreateSphere(Vector3 position, Quaternion rotation, int colorIndex)
+    GameObject CreateSphere(Vector3 position, int colorIndex)
     {
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere.transform.position = position;
-        sphere.transform.rotation = rotation;
         sphere.transform.localScale = new Vector3(sphereSize, sphereSize, sphereSize);
         sphere.GetComponent<Renderer>().material = colors[colorIndex];
 
@@ -228,16 +235,22 @@ public class TwisterGame : MonoBehaviour
    //TODO: If this was successful, the A.I could relay this with feedback, if it was unsuccessful, the A.I could relay that.
    void circlePickCheck()
     {
+        Vector3 offset = new Vector3(0,0,0);
+        if (lastSpinnedPlayer == 1)//A.I is the one trying to put their limb on the correct spot
+        {
+            offset = HelperMatCenter;
+        }
+
         if (waitingForCirclePick)
         {
-            GameObject newClosestCircle = findClosestCircle(goalTwisterLimb);
+            GameObject newClosestCircle = findClosestCircle(goalTwisterLimb, offset);
 
             if (newClosestCircle != null && newClosestCircle != currentClosestCircle) //do we need to handle if it is null?
             {
                 currentClosestCircle = newClosestCircle;
                 timer = 0f;
             }
-            else if (newClosestCircle == currentClosestCircle)
+            else if (newClosestCircle == currentClosestCircle && currentClosestCircle != null)
             {
                 CircleInfo circleInfo = currentClosestCircle.GetComponent<CircleInfo>();
                 if (circleInfo != null) //TODO: A.I should react if the result is null for too long! Repeat ourselves
@@ -319,33 +332,45 @@ public class TwisterGame : MonoBehaviour
         illegalMoveCheck(locksPlayer0);
         illegalMoveCheck(locksPlayer1);
         hittingFloorCheck(); //Should the A.I even be able to hit the floor? depends on how we animate them.
+        circlePickCheck();
     }
 
-    GameObject findClosestCircle(Pose.Landmark landmarkToCheck)
+    GameObject findClosestCircle(Pose.Landmark landmarkToCheck, Vector3 offset)
     {
         float closestDistance = sphereSize;
         int closestCircleRow = -1;
         int closestCircleColumn = -1;
+        Vector3 limbPosition = new Vector3(0, 0, 0);
 
-        int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[landmarkToCheck];
-        if(landmarkToCheckIndex < playerEstimationScript.landmarks.Length)
+        if (lastSpinnedPlayer == 0) //get coordinates for player's limb
         {
-            for (int x = 0; x < twisterCircles.GetLength(0); x++)
+            int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[landmarkToCheck];
+            if (landmarkToCheckIndex < playerEstimationScript.landmarks.Length)
             {
-                for (int y = 0; y < twisterCircles.GetLength(1); y++)
-                {
-                    float distance = Vector3.Distance(playerEstimationScript.landmarks[landmarkToCheckIndex], twisterCircles[x, y].transform.position);
-
-                    if (distance < sphereSize && distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestCircleRow = x;
-                        closestCircleColumn = y;
-                    }
-
-                }
+                limbPosition = playerEstimationScript.landmarks[landmarkToCheckIndex];
             }
         }
+        else //get coordinates for A.I's limb
+        {
+            limbPosition = RiggingIK.landmarkToTarget[landmarkToCheck].transform.position;
+        }
+
+        for (int x = 0; x < twisterCircles.GetLength(0); x++)
+        {
+            for (int y = 0; y < twisterCircles.GetLength(1); y++)
+            {
+                float distance = Vector3.Distance(limbPosition, twisterCircles[x, y].transform.position + offset);
+
+                if (distance < sphereSize && distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestCircleRow = x;
+                    closestCircleColumn = y;
+                }
+
+            }
+        }
+
         if(closestCircleRow != -1)
         {
             return twisterCircles[closestCircleRow, closestCircleColumn];
