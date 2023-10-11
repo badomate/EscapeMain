@@ -1970,8 +1970,8 @@ MonoBehaviour:
   blueMaterial: {fileID: 2100000, guid: de7902ac5f1ca46b9894eae94bfe5e58, type: 2}
   rightLegMaterial: {fileID: 2100000, guid: bec3cb4e9b5876f47b6abaf959b3395a, type: 2}
   leftLegMaterial: {fileID: 2100000, guid: 92e6ebac569ad7f4a9101228d5001398, type: 2}
-  rightArmMaterial: {fileID: 2100000, guid: dbe89b31832204f4ca365fd7e31f25a8, type: 2}
-  leftArmMaterial: {fileID: 2100000, guid: b6f1c2d4e88f82a479818f8b3c778657, type: 2}
+  rightArmMaterial: {fileID: 2100000, guid: b6f1c2d4e88f82a479818f8b3c778657, type: 2}
+  leftArmMaterial: {fileID: 2100000, guid: dbe89b31832204f4ca365fd7e31f25a8, type: 2}
   goalMaterial: {fileID: 2100000, guid: 0030b1f081f074ea79e4c8398f97fc08, type: 2}
   bottomRightCorner: {x: -5.576, y: 0, z: -1.359}
   topLeftCorner: {x: -2.582, y: 0, z: 1.627}

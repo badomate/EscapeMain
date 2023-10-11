@@ -225,11 +225,17 @@ public class InteractByPointing : MonoBehaviour
                     hoveredLimb = closestHitLimb;
                     switch (hoveredLimb.name)
                     {
-                        case "mixamorig:LeftArm": //if we had saved the HumanBody enum from earlier, we could be switching on that 
+                        case "mixamorig:LeftHand": //if we had saved the HumanBody enum from earlier, we could be switching on that 
                             landmarkSelected = Pose.Landmark.LEFT_WRIST;
                             break;
-                        case "mixamorig:RightArm":
+                        case "mixamorig:RightHand":
                             landmarkSelected = Pose.Landmark.RIGHT_WRIST;
+                            break;
+                        case "mixamorig:LeftFoot":
+                            landmarkSelected = Pose.Landmark.LEFT_FOOT;
+                            break;
+                        case "mixamorig:RightFoot":
+                            landmarkSelected = Pose.Landmark.RIGHT_FOOT;
                             break;
                         default:
                             landmarkSelected = Pose.Landmark.LEFT_WRIST;

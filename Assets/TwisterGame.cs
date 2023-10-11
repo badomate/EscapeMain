@@ -292,11 +292,14 @@ public class TwisterGame : MonoBehaviour
         foreach (KeyValuePair<Pose.Landmark, GameObject> lockEntry in DictionaryToCheck)
         {
             int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[lockEntry.Key];
-            Vector3 landmark = playerEstimationScript.landmarks[landmarkToCheckIndex];
-            if(Vector3.Distance(landmark, lockEntry.Value.transform.position) > sphereSize)
+            if (landmarkToCheckIndex < playerEstimationScript.landmarks.Length)
             {
-                illegalMoveEvent.Invoke();
-                //TODO: Illegal move detected! Listen to the event and send negative feedback from the A.I (or the game itself?)
+                Vector3 landmark = playerEstimationScript.landmarks[landmarkToCheckIndex];
+                if (Vector3.Distance(landmark, lockEntry.Value.transform.position) > sphereSize)
+                {
+                    illegalMoveEvent.Invoke();
+                    //TODO: Illegal move detected! Listen to the event and send negative feedback from the A.I (or the game itself?)
+                }
             }
         }
     }
@@ -329,9 +332,10 @@ public class TwisterGame : MonoBehaviour
             LockInCalibration = true;
         }
         //TODO: adding more keys for calibration could be useful if we plan to play out of editor
+
         illegalMoveCheck(locksPlayer0);
-        illegalMoveCheck(locksPlayer1);
-        hittingFloorCheck(); //Should the A.I even be able to hit the floor? depends on how we animate them.
+        //illegalMoveCheck(locksPlayer1); //TODO: Currenlty not implemented for A.I. Should he even be able to make illegal moves??
+        hittingFloorCheck(); //Once again, should the A.I even be able to hit the floor / make illegal moves?
         circlePickCheck();
     }
 
