@@ -19,6 +19,8 @@ public class RiggingIK : MonoBehaviour
 
     public ChainIKConstraint pointingConstraint;
 
+    public bool mirroring = false;
+
     //Changes every IK target to match up with the given pose
     public void SetIKPositions(Pose playingPose)
     {
