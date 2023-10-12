@@ -70,6 +70,12 @@ public class CameraStream : MonoBehaviour
                 case "Left elbow":
                     identifiedPose = Pose.Landmark.LEFT_ELBOW;
                     break;
+                case "Left shoulder":
+                    identifiedPose = Pose.Landmark.LEFT_SHOULDER;
+                    break;
+                case "Right shoulder":
+                    identifiedPose = Pose.Landmark.RIGHT_SHOULDER;
+                    break;
                 default:
                     included = false; //if it didn't match anything we need, don't modify the Pose
                     break;

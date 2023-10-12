@@ -21,9 +21,13 @@ public class RiggingIK : MonoBehaviour
     public GameObject RightElbowHintTarget;
     public GameObject LeftElbowHintTarget;
 
+    public GameObject ShoulderTarget;
+
     public ChainIKConstraint pointingConstraint;
 
     public bool mirroring = false;
+    public float shoulderOffsetScale = 0.1f;
+    public float coordinateScale = 1.0f;
 
     //Changes every IK target to match up with the given pose
     public void SetIKPositions(Pose playingPose, bool relative = false)
@@ -33,7 +37,7 @@ public class RiggingIK : MonoBehaviour
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
         {
             Vector3 originalPosition = landmarksCopy[landmark];
-            Vector3 rotatedPosition = gameObject.transform.rotation * originalPosition;
+            Vector3 rotatedPosition = gameObject.transform.rotation * originalPosition * coordinateScale;
             landmarksCopy[landmark] = rotatedPosition;
         }
 
@@ -44,7 +48,7 @@ public class RiggingIK : MonoBehaviour
             Vector3 position = kvp.Value;
 
             //Check if we have a target to adjust for this landmark
-            if (landmarkToTarget.ContainsKey(landmark))
+            if (landmarkToTarget.ContainsKey(landmark) && landmarkToTarget[landmark] != null)
             {
                 GameObject landmarkTarget = landmarkToTarget[landmark];
 
@@ -58,6 +62,28 @@ public class RiggingIK : MonoBehaviour
                     landmarkTarget.transform.position = position;
                 }
             }
+        }
+        shoulderSetMirror(landmarksCopy);
+    }
+
+    //on the mirror, shoulder is not set automatically, instead it can be calculated
+    public void shoulderSetMirror(Dictionary<Pose.Landmark, Vector3> landmarks)
+    {
+        if (landmarks.ContainsKey(Pose.Landmark.RIGHT_SHOULDER) && landmarks.ContainsKey(Pose.Landmark.LEFT_SHOULDER) && ShoulderTarget != null)
+        {
+            Vector3 leftShoulder = landmarks[Pose.Landmark.LEFT_SHOULDER] * coordinateScale;
+            Vector3 rightShoulder = landmarks[Pose.Landmark.RIGHT_SHOULDER] * coordinateScale;
+            //Calculate the center position
+            Vector3 centerPosition = (leftShoulder + rightShoulder) / 2;
+            centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with Mixamo rig
+
+            //Calculate what the rotation between the two shoulders might be
+            Vector3 directionVector = rightShoulder - leftShoulder;
+            Quaternion rotation = Quaternion.LookRotation(directionVector);
+
+            //Move the target
+            ShoulderTarget.transform.position = centerPosition + gameObject.transform.position; //change if not relative
+            ShoulderTarget.transform.rotation = gameObject.transform.rotation * rotation;
         }
     }
 
@@ -107,5 +133,25 @@ public class RiggingIK : MonoBehaviour
         {
             SetIKPositions(CameraStream.playerPose, true);
         }
+    }
+
+    void LateUpdate()
+    {
+        adjustHands();
+    }
+
+    private void adjustHands()
+    {
+        Animator animator = GetComponent<Animator>();
+        Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+        Transform leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
+        rightHand.transform.rotation = rightHand.transform.parent.rotation;
+        leftHand.transform.rotation = leftHand.transform.parent.rotation;
+
+        /*
+        Transform rightFoot = animator.GetBoneTransform(HumanBodyBones.RightFoot);
+        Transform leftFoot = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+        rightFoot.transform.rotation = rightFoot.transform.parent.rotation;
+        leftFoot.transform.rotation = leftFoot.transform.parent.rotation;*/
     }
 }
