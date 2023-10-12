@@ -6100,7 +6100,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-83858
+  m_Name: pb_Mesh35758
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -6658,13 +6658,13 @@ MonoBehaviour:
   m_Weight: 1
   m_Data:
     m_Root: {fileID: 1528204671}
-    m_Tip: {fileID: 2074473108}
+    m_Tip: {fileID: 1701493493}
     m_Target: {fileID: 1254077444}
     m_ChainRotationWeight: 1
     m_TipRotationWeight: 1
     m_MaxIterations: 15
     m_Tolerance: 0.0001
-    m_MaintainTargetPositionOffset: 0
+    m_MaintainTargetPositionOffset: 1
     m_MaintainTargetRotationOffset: 0
 --- !u!4 &1057953900 stripped
 Transform:
@@ -7685,7 +7685,7 @@ PrefabInstance:
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.3507
+      value: 4.2792
       objectReference: {fileID: 0}
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
