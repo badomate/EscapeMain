@@ -650,12 +650,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!4 &75883203 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8333627713332763490, guid: b0d61dc70153b3647926c65ee14291df,
-    type: 3}
-  m_PrefabInstance: {fileID: 1528204664}
-  m_PrefabAsset: {fileID: 0}
 --- !u!43 &76143886
 Mesh:
   m_ObjectHideFlags: 0
@@ -4589,7 +4583,7 @@ PrefabInstance:
     - target: {fileID: 2081878954449721519, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
       propertyPath: m_Name
-      value: Left Pointer IK target
+      value: Left Hand IK target
       objectReference: {fileID: 0}
     - target: {fileID: 3228200190902214466, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
@@ -8005,7 +7999,7 @@ GameObject:
   - component: {fileID: 1539658862}
   - component: {fileID: 1539658863}
   m_Layer: 0
-  m_Name: Left Pointer IK
+  m_Name: Left Hand IK
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8042,7 +8036,7 @@ MonoBehaviour:
   m_Weight: 1
   m_Data:
     m_Root: {fileID: 1799306102}
-    m_Tip: {fileID: 75883203}
+    m_Tip: {fileID: 1855294219}
     m_Target: {fileID: 756889279}
     m_ChainRotationWeight: 1
     m_TipRotationWeight: 1
@@ -8349,6 +8343,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2320371260222401683, guid: 1357d534d67e44349a4b7c67840165c7,
     type: 3}
   m_PrefabInstance: {fileID: 2729281213873661534}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1855294219 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6502182839619065283, guid: b0d61dc70153b3647926c65ee14291df,
+    type: 3}
+  m_PrefabInstance: {fileID: 1528204664}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1860319564
 GameObject:

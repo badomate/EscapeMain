@@ -74,7 +74,7 @@ public class RiggingIK : MonoBehaviour
 
     }
 
-    // Have the A.I correctly take a Twister turn. In normal gameplay, this might be cheating.
+    // Have the A.I correctly take a Twister turn. In normal gameplay, this would be cheating.
     void SolveTwister()
     {
 
@@ -85,7 +85,7 @@ public class RiggingIK : MonoBehaviour
     {
         if (mirroring && CameraStream.vector3List.Count > 0)
         {
-            SetIKPositions(Pose.GetPoseFromArray(CameraStream.vector3List.ToArray()));
+            SetIKPositions(Pose.GetPoseFromArray(CameraStream.vector3List.ToArray()), true);
         }
     }
 }
