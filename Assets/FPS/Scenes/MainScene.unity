@@ -2300,6 +2300,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerEstimationScript: {fileID: 1528204669}
+  riggingIKScript: {fileID: 319678158}
   goalTwisterColor: 0
   goalTwisterLimb: 0
   goalTwisterCircleId: 0
@@ -2438,6 +2439,7 @@ MonoBehaviour:
   RightFootTarget: {fileID: 1948803735}
   LeftFootTarget: {fileID: 173696031}
   pointingConstraint: {fileID: 223776741}
+  mirroring: 0
 --- !u!4 &387648353 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8725540660313892278, guid: b0d61dc70153b3647926c65ee14291df,
@@ -7936,6 +7938,7 @@ MonoBehaviour:
   RightFootTarget: {fileID: 775988648}
   LeftFootTarget: {fileID: 255024932}
   pointingConstraint: {fileID: 1539658863}
+  mirroring: 1
 --- !u!1 &1534615860
 GameObject:
   m_ObjectHideFlags: 0

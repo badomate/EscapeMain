@@ -11,7 +11,7 @@ using UnityEngine.Animations.Rigging;
 public class RiggingIK : MonoBehaviour
 {
     Pose currentPose; 
-    public static Dictionary<Pose.Landmark, GameObject> landmarkToTarget = new Dictionary<Pose.Landmark, GameObject>();
+    public Dictionary<Pose.Landmark, GameObject> landmarkToTarget = new Dictionary<Pose.Landmark, GameObject>();
     public GameObject RightHandTarget;
     public GameObject LeftHandTarget;
     public GameObject RightFootTarget;
