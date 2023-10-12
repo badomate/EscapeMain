@@ -76,9 +76,6 @@ public class CameraStream : MonoBehaviour
                 case "Right shoulder":
                     identifiedPose = Pose.Landmark.RIGHT_SHOULDER;
                     break;
-                case "Nose":
-                    identifiedPose = Pose.Landmark.NOSE;
-                    break;
                 default:
                     included = false; //if it didn't match anything we need, don't modify the Pose
                     break;
