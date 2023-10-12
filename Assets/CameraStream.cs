@@ -64,6 +64,12 @@ public class CameraStream : MonoBehaviour
                 case "Right heel":
                     identifiedPose = Pose.Landmark.RIGHT_FOOT;
                     break;
+                case "Right elbow":
+                    identifiedPose = Pose.Landmark.RIGHT_ELBOW;
+                    break;
+                case "Left elbow":
+                    identifiedPose = Pose.Landmark.LEFT_ELBOW;
+                    break;
                 default:
                     included = false; //if it didn't match anything we need, don't modify the Pose
                     break;

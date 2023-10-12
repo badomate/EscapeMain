@@ -89,8 +89,8 @@ public class EstimationToIK : MonoBehaviour
 
         rightHand.transform.rotation = rightHand.transform.parent.rotation;
         leftHand.transform.rotation = leftHand.transform.parent.rotation;
-        rightFoot.transform.rotation = rightFoot.transform.parent.rotation;
-        leftFoot.transform.rotation = leftFoot.transform.parent.rotation;
+        //rightFoot.transform.rotation = rightFoot.transform.parent.rotation;
+        //leftFoot.transform.rotation = leftFoot.transform.parent.rotation;
     }
 
     private Vector3 goalFromIndex(int index)

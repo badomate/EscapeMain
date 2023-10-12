@@ -18,6 +18,9 @@ public class RiggingIK : MonoBehaviour
     public GameObject RightFootTarget;
     public GameObject LeftFootTarget;
 
+    public GameObject RightElbowHintTarget;
+    public GameObject LeftElbowHintTarget;
+
     public ChainIKConstraint pointingConstraint;
 
     public bool mirroring = false;
@@ -85,6 +88,8 @@ public class RiggingIK : MonoBehaviour
         if (mirroring)
         {
             landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget); //only add it to the mirror for now
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_ELBOW, RightElbowHintTarget); //only add it to the mirror for now
+            landmarkToTarget.Add(Pose.Landmark.LEFT_ELBOW, LeftElbowHintTarget); //only add it to the mirror for now
         }
 
     }
