@@ -26,6 +26,7 @@ public class CameraStream : MonoBehaviour
     }
 
     public static List<Vector3> vector3List = new List<Vector3>(); //coordinates are based on position relative to the center
+    public static Pose playerPose = new Pose();
     public Vector3 centerLandmarkOffset = new Vector3(); //coordinates of that center
     public long animationFPS = 0;
 
@@ -46,6 +47,38 @@ public class CameraStream : MonoBehaviour
         {
             Vector3 vector3 = new Vector3(body.data[0], body.data[1], body.data[2]); //body.data[2]
             vector3List.Add(vector3);
+
+            Pose.Landmark identifiedPose = Pose.Landmark.LEFT_WRIST;
+            bool included = true; //whether we are going to use it, whether it appears in the switch case somewhere
+            switch (body.landmarkName)
+            {
+                case "Left wrist":
+                    identifiedPose = Pose.Landmark.LEFT_WRIST;
+                    break;
+                case "Right wrist":
+                    identifiedPose = Pose.Landmark.RIGHT_WRIST;
+                    break;
+                case "Left heel":
+                    identifiedPose = Pose.Landmark.LEFT_FOOT;
+                    break;
+                case "Right heel":
+                    identifiedPose = Pose.Landmark.RIGHT_FOOT;
+                    break;
+                default:
+                    included = false; //if it didn't match anything we need, don't modify the Pose
+                    break;
+            }
+            Vector3 adjustedVector3 = Vector3.Scale(new Vector3(body.data[0], body.data[1], body.data[2]), new Vector3(-1, -1, -1));
+
+            if (included && !playerPose._landmarkArrangement.ContainsKey(identifiedPose))
+            {
+                playerPose._landmarkArrangement.Add(identifiedPose, adjustedVector3);
+            }
+            else if(included)
+            {
+                playerPose._landmarkArrangement[identifiedPose] = adjustedVector3;
+            }
+
             if (body.landmarkName == "Right hip")
             {
                 Right = new Vector3(body.data[3], body.data[4], body.data[5]); //body.data[5]

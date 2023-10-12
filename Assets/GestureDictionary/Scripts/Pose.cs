@@ -21,7 +21,10 @@ public class Pose
         RIGHT_ELBOW,
         LEFT_ELBOW,
         RIGHT_KNEE,
-        LEFT_KNEE
+        LEFT_KNEE,
+        LEFT_SHOULDER,
+        RIGHT_SHOULDER
+
     }
 
     private const float DEFAULT_VARIANCE = 3;
