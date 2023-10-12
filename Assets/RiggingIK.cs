@@ -22,7 +22,7 @@ public class RiggingIK : MonoBehaviour
     public bool mirroring = false;
 
     //Changes every IK target to match up with the given pose
-    public void SetIKPositions(Pose playingPose)
+    public void SetIKPositions(Pose playingPose, bool relative = false)
     {
         foreach (var kvp in playingPose._landmarkArrangement)
         {
@@ -35,7 +35,14 @@ public class RiggingIK : MonoBehaviour
                 GameObject landmarkTarget = landmarkToTarget[landmark];
 
                 //Move the target gameobject to the position our Pose specified
-                landmarkTarget.transform.position = position;
+                if (relative)
+                {
+                    landmarkTarget.transform.position = position + gameObject.transform.position;
+                }
+                else
+                {
+                    landmarkTarget.transform.position = position;
+                }
             }
         }
     }
@@ -76,6 +83,9 @@ public class RiggingIK : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (mirroring && CameraStream.vector3List.Count > 0)
+        {
+            SetIKPositions(Pose.GetPoseFromArray(CameraStream.vector3List.ToArray()));
+        }
     }
 }

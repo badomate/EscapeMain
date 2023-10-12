@@ -25,7 +25,7 @@ public class CameraStream : MonoBehaviour
         public string landmarkName;
     }
 
-    public List<Vector3> vector3List = new List<Vector3>(); //coordinates are based on position relative to the center
+    public static List<Vector3> vector3List = new List<Vector3>(); //coordinates are based on position relative to the center
     public Vector3 centerLandmarkOffset = new Vector3(); //coordinates of that center
     public long animationFPS = 0;
 

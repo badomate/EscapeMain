@@ -336,10 +336,10 @@ public class EstimationToIK : MonoBehaviour
         if (CameraStreamScript)
         {
 
-            if (CameraStreamScript.vector3List.Count > 0)
+            if (CameraStream.vector3List.Count > 0)
             {
-                landmarks = new Vector3[CameraStreamScript.vector3List.Count];
-                landmarks = CameraStreamScript.vector3List.ToArray();
+                landmarks = new Vector3[CameraStream.vector3List.Count];
+                landmarks = CameraStream.vector3List.ToArray();
             }
         }
 
