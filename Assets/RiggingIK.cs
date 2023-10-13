@@ -37,7 +37,14 @@ public class RiggingIK : MonoBehaviour
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
         {
             Vector3 originalPosition = landmarksCopy[landmark];
-            Vector3 rotatedPosition = gameObject.transform.rotation * originalPosition * coordinateScale;
+
+            Vector3 rotatedPosition;
+            if (relative)
+            {
+                rotatedPosition = gameObject.transform.rotation * originalPosition * coordinateScale;
+            }
+            rotatedPosition = originalPosition * coordinateScale;
+
             landmarksCopy[landmark] = rotatedPosition;
         }
 
