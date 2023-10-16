@@ -14,17 +14,15 @@ public class LevelManager : MonoBehaviour
     public int currentPlayer = 1; //0-player, 1-A.I
     private int levelCounter = 0;
 
-    private Gesture lastGoalGesture;//saved for the limb lock mechanic
+    //private Gesture lastGoalGesture;//saved for the limb lock mechanic
     public Gesture goalGesture;
 
     EstimationToIK estimationToIkScript;
     public RiggingIK riggingIKScript;
     public CompareGesture compareGestureScript;
-    public LimbLocker limbLockerScript;
     public InteractByPointing pointerScript;
     public TwisterGame twisterGame;
 
-    public GameObject PlayerUI;
     public TextMesh InfoBox;
     public TextMesh LevelInfoBox;
 
@@ -39,10 +37,10 @@ public class LevelManager : MonoBehaviour
     {
         dictionary = new DictionaryManager();
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
-        //compareGestureScript = Helper.GetComponent<CompareGesture>();
+
         estimationToIkScript = Helper.GetComponent<EstimationToIK>();
         estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.None;
-        compareGestureScript.StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to "lock in" his gesture
+        compareGestureScript.StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to stay still for a bit before processing his gesture
         TwisterGame.successEvent.AddListener(Success);
 
         PrepareGestureOptions();
@@ -69,56 +67,25 @@ public class LevelManager : MonoBehaviour
         //pick a gesture from the dictionary
         compareGestureScript.recording = true;
 
-        //lastGoalGesture = goalGesture;
-
         twisterGame.TwisterSpin(currentPlayer);
-
-        //goalGesture = pickFromDictionary();
-        /*
-        if (currentPlayer == 1) //pick a random limb to lock down
-        {
-            limbLockerScript.lockLimb(goalGesture, lastGoalGesture);
-        }
-        else
-        {
-            limbLockerScript.releaseLockedLimb();
-        }*/
 
         //Player solves, A.I demonstrates
         if (currentPlayer == 0)
         {
             UpdateText("Next to demonstrate: A.I", "TURN "+levelCounter);
             riggingIKScript.SetPointPosition(twisterGame.getGoalSphere().transform.position);
-            //hide the goaldisplay
-            //PlayerUI.SetActive(false);
 
-            /*
-            //mimic that gesture using the IK script
-            estimationToIkScript.saveRecording(Gesture.GestureToMatrix(goalGesture));
-            estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
-            estimationToIkScript.Looping = true;*/
             twisterGame.hideGoal();
         }
         else
         {
             UpdateText("Next to demonstrate: Player", "TURN " + levelCounter);
             riggingIKScript.StopPointing();
+
             //show the goaldisplay, so the player knows what to demonstrate
             twisterGame.displayGoal(); 
         }
     }
-    
-    /* Unused since we switched to Twister ruleset
-    void displayGoal()
-    {
-        if(GoalDisplayCharacter != null && !twisterRules)
-        {
-            PlayerUI.SetActive(true);
-            EstimationToIK goalCharEstimator = GoalDisplayCharacter.GetComponent<EstimationToIK>();
-            goalCharEstimator.saveRecording(Gesture.GestureToMatrix(goalGesture));
-            goalCharEstimator.currentEstimationSource = EstimationToIK.estimationSource.Recording;
-        }
-    }*/
 
     // The player has been staying still for a while, he might be trying to tell the A.I something
     void handlePlayerConfirmedGesture()
@@ -128,51 +95,6 @@ public class LevelManager : MonoBehaviour
             riggingIKScript.SetIKPositions(pointerScript.GestureBeingBuilt._poseSequence[0]._poseToMatch);
         }
     }
-
-    /* //Old version of this function that does not work with Twister rules
-    void handlePlayerConfirmedGesture() //TODO: instead of checking the various ways the puzzle can be solved, perhaps we could just get whatever the Helper is doing and compare that directly
-    {
-        if (currentPlayer == 1 && goalGesture != null) //player demonstrates
-        {
-            //Debug.Log("Player locked in his demonstration");
-            if (compareGestureScript.goalGestureCompleted(compareGestureScript.characterGesture)){
-                estimationToIkScript.saveRecording(compareGestureScript.characterGesture); //give the temp memory to the estimation
-                estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
-
-                Success(); //for now, succeed automatically if we can directly mimic. But realistically, how does A.I know he is to mimic, and not interpret?
-            }
-            else //interpret the gesture
-            {
-                if (estimationToIkScript.currentEstimationSource == EstimationToIK.estimationSource.PointedDircetions) //are we following the directions the player is giving us via pointing?
-                {
-                    if (pointerScript)
-                    {
-                        Vector3[,] pointerBuiltGestureMatrix = Gesture.GestureToMatrix(pointerScript.GestureBeingBuilt);
-                        if (pointerScript.GestureBeingBuilt._poseSequence.Count > 0 &&
-                            compareGestureScript.goalGestureCompleted(pointerBuiltGestureMatrix))
-                        {
-                            //Puzzle was completed using directions given via pointing
-                            Success();
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning("No Pointer script found. Please check script paramters.");
-                    }
-                }
-                else
-                {
-                    //INTERPRET the gesture as a shortcut for another, or a sequence, or a part of a sequence
-                    Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
-                    string meaning = dictionary.GetMeaningFromGesture(characterGesture);
-                    estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.PointedDircetions; //could also be set from the pointing script?
-                    //Debug.Log("Gesture was interpreted to mean: " + meaning);
-                }
-
-                //or interpret as a METAGESTURE and act accordingly. But perhaps metagestures should trigger events instead
-            }
-        }
-    }*/
 
     public void Success()
     {
@@ -220,7 +142,7 @@ public class LevelManager : MonoBehaviour
 
     public void UpdateText(string newText, string newText2)
     {
-        //theres 2 seperate objects for showing level/puzzle related information
+        //there are 2 seperate text objects for showing various level/puzzle related information
         if (InfoBox != null)
         {
             InfoBox.text = newText;

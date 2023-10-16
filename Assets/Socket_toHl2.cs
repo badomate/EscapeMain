@@ -18,6 +18,8 @@ public class Socket_toHl2 : MonoBehaviour
     private volatile bool running = true;
     private volatile bool clientAccepted = false;
 
+    public Vector3[] position;
+    public static Pose hololensPlayerPose;
 
     // Start is called before the first frame update
     void Start()
@@ -101,8 +103,9 @@ public class Socket_toHl2 : MonoBehaviour
         if (dataReceived != null && dataReceived != "")
         {
             // Convert the received string of data to the format we are using
-            position = ParseData(dataReceived);
-            CustomDebug.LogAlex("NEW PARSED POSITION = " + string.Join(", ", position));
+            //position = ParseData(dataReceived);
+            //CustomDebug.LogAlex("NEW PARSED POSITION = " + string.Join(", ", position));
+            hololensPlayerPose = Pose.GetPoseFromString(dataReceived, LevelManager._poseRegex);
             nwStream.Write(buffer, 0, bytesRead);
         }
         else
@@ -119,8 +122,6 @@ public class Socket_toHl2 : MonoBehaviour
         return parsedData;
     }
 
-    // Position is the data being received in this example
-    public Vector3[] position;
 
     void Update()
     {
