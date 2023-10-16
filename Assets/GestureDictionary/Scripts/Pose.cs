@@ -123,7 +123,7 @@ public class Pose
 
         MatchCollection landmarkPositions = poseRegex.Matches(poseString);
         int nrLandmarksRegistered = 0;
-        Debug.Log("Pose str received:" + poseString);
+        CustomDebug.LogAlex("Pose str received:" + poseString);
 
         foreach (Match landmarkPosition in landmarkPositions.Cast<Match>())
         {
@@ -136,7 +136,7 @@ public class Pose
                     float.Parse(landmarkCoordinate["z"].Value))
                 ;
 
-            Debug.Log("Pose[" + currentLandmarkId + "]: " + pose._landmarkArrangement[currentLandmarkId]);
+            CustomDebug.LogAlex("Pose[" + currentLandmarkId + "]: " + pose._landmarkArrangement[currentLandmarkId]);
             nrLandmarksRegistered++;
         }
 

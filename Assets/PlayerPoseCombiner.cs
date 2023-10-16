@@ -7,10 +7,9 @@ public class PlayerPoseCombiner : MonoBehaviour
 {
     public Pose combinedPlayerPose;
 
-    //Customize the following lists in the inspector view to set which landmarks should come from which sources
-    //For example, legs will come from the mediapipe camera but we might want finger landmarks from HL2
+    //Customize the following lists in the inspector view to set which landmarks should come from HL2. If a listed landmark appears in both sources, HL2 will be used instead.
+    //For example, legs will come from the mediapipe camera but we might want finger landmarks (when possible) from HL2
     public List<Pose.Landmark> landmarksFromHL2;
-    public List<Pose.Landmark> landmarksFromCamera;
 
 
     // Method to combine dictionaries based on landmark lists
@@ -23,7 +22,7 @@ public class PlayerPoseCombiner : MonoBehaviour
             var combinedLandmarksHL2 = Socket_toHl2.hololensPlayerPose._landmarkArrangement.Where(kv => landmarksFromHL2.Contains(kv.Key))
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
 
-            var combinedLandmarksCamera = CameraStream.playerPose._landmarkArrangement.Where(kv => landmarksFromCamera.Contains(kv.Key))
+            var combinedLandmarksCamera = CameraStream.playerPose._landmarkArrangement.Where(kv => !combinedLandmarksHL2.ContainsKey(kv.Key))
                 .ToDictionary(kv => kv.Key, kv => kv.Value);
 
             var combinedDictionaries = combinedLandmarksHL2.Concat(combinedLandmarksCamera)
