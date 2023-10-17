@@ -40,10 +40,8 @@ public class InteractByPointing : MonoBehaviour
     public GameObject pointingVisualizationObject; //used to visaulize pointing hit in the game view
 
     private Animator helperAnimator;
-    private Socket_toHl2 TCPScript;
     private LevelManager levelManagerScript;
     public FeedbackManager feedbackManager;
-    public EstimationToIK estimationToIkScript;
 
 
 
@@ -54,24 +52,23 @@ public class InteractByPointing : MonoBehaviour
         {
             levelManagerScript = Helper.GetComponent<LevelManager>();
             helperAnimator = Helper.GetComponent<Animator>();
-            TCPScript = Helper.GetComponent<Socket_toHl2>();
         }
         else
         {
             Debug.Log("I can't find the Helper.");
         }
-        feedbackManager.m_FeedbackEvent.AddListener(handleFeedbackEvent); //wait for player to "lock in" his gesture
-        levelManagerScript.m_LevelFinishedEvent.AddListener(handleLevelFinished); //wait for player to "lock in" his gesture
+        feedbackManager.FeedbackEvent.AddListener(handleFeedbackEvent); //wait for player to "lock in" his gesture
+        levelManagerScript.LevelFinishedEvent.AddListener(handleLevelFinished); //wait for player to "lock in" his gesture
     }
 
 
     private void handleFeedbackEvent()
     {
-        if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Positive)
+        if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.POSITIVE)
         {
             unselectLimb();
-        }
-        else if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.Numerical)
+        }/* //Numerical feedback unused for twister rules
+        else if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.NUMERICAL)
         {
             unselectLimb();
             currentPoseIndex = feedbackManager.lastDetectedNumeralFeedback;
@@ -89,7 +86,7 @@ public class InteractByPointing : MonoBehaviour
                                                entry => entry.Value);
                 //LandmarksForPose = GestureBeingBuilt._poseSequence[GestureBeingBuilt._poseSequence.Count - 1]._poseToMatch._landmarkArrangement;
             }
-        }
+        }*/
     }
 
 
@@ -131,7 +128,7 @@ public class InteractByPointing : MonoBehaviour
     }
 
 
-        bool selfPointCheck(Ray ray)
+    bool selfPointCheck(Ray ray)
     {
         closestPointIndex = -1;
         float closestDistance = boneHitThreshold;
@@ -188,11 +185,13 @@ public class InteractByPointing : MonoBehaviour
             if (helperAnimator != null)
             {
                 //Get the bones of the Helper's skeleton
-                Transform leftArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftUpperArm); //HumanBodyBones is a built-in enum
-                Transform rightArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+                //Transform leftArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftHand); 
+                Transform rightArmBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightHand); //HumanBodyBones is a built-in enum
+                Transform leftLegBone = helperAnimator.GetBoneTransform(HumanBodyBones.LeftFoot);
+                Transform rightLegBone = helperAnimator.GetBoneTransform(HumanBodyBones.RightFoot);
 
                 //Check if the hit point is close to any of the interesting bones
-                Transform[] bonesToCheck = new Transform[] { leftArmBone, rightArmBone };
+                Transform[] bonesToCheck = new Transform[] { rightArmBone, rightLegBone, leftLegBone }; //TODO: add leftArmBone once it is included in the rig
                 Transform[] boneHits = new Transform[bonesToCheck.Length];
                 int boneHitCount = 0;
 
@@ -226,11 +225,17 @@ public class InteractByPointing : MonoBehaviour
                     hoveredLimb = closestHitLimb;
                     switch (hoveredLimb.name)
                     {
-                        case "mixamorig:LeftArm": //if we had saved the HumanBody enum from earlier, we could be switching on that 
+                        case "mixamorig:LeftHand": //if we had saved the HumanBody enum from earlier, we could be switching on that 
                             landmarkSelected = Pose.Landmark.LEFT_WRIST;
                             break;
-                        case "mixamorig:RightArm":
+                        case "mixamorig:RightHand":
                             landmarkSelected = Pose.Landmark.RIGHT_WRIST;
+                            break;
+                        case "mixamorig:LeftFoot":
+                            landmarkSelected = Pose.Landmark.LEFT_FOOT;
+                            break;
+                        case "mixamorig:RightFoot":
+                            landmarkSelected = Pose.Landmark.RIGHT_FOOT;
                             break;
                         default:
                             landmarkSelected = Pose.Landmark.LEFT_WRIST;
@@ -249,8 +254,6 @@ public class InteractByPointing : MonoBehaviour
         }
         return true;
     }
-
-
 
 
     void unselectLimb()
@@ -275,6 +278,7 @@ public class InteractByPointing : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(landmarkSelected);
         drawPointVisualizer();
         if (moveWithMouse && playerCamera)
         {
@@ -323,6 +327,17 @@ public class InteractByPointing : MonoBehaviour
                 LandmarksForPose[landmarkSelected] = hitInfo.point;
 
                 PoseBeingBuilt = new Pose(LandmarksForPose);
+
+                if (GestureBeingBuilt._poseSequence.Count == 0) //if it differs, set it to the one being built
+                {
+                    GestureBeingBuilt.AddPose(PoseBeingBuilt);
+                }
+                else if (GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch != PoseBeingBuilt)
+                {
+                    GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch = PoseBeingBuilt;
+                }
+
+                /* Was simplified for twister
                 if (GestureBeingBuilt._poseSequence.Count < currentPoseIndex + 1)
                 {
                     GestureBeingBuilt.AddPose(PoseBeingBuilt);
@@ -330,7 +345,7 @@ public class InteractByPointing : MonoBehaviour
                 else if (GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch != PoseBeingBuilt) //if it differs, set it to the one being built
                 {
                     GestureBeingBuilt._poseSequence[currentPoseIndex]._poseToMatch = PoseBeingBuilt;
-                }
+                }*/
 
             }
         }

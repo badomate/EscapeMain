@@ -17,7 +17,14 @@ public class Pose
         LEFT_WRIST,
         RIGHT_WRIST,
         LEFT_FOOT,
-        RIGHT_FOOT
+        RIGHT_FOOT,
+        RIGHT_ELBOW,
+        LEFT_ELBOW,
+        RIGHT_KNEE,
+        LEFT_KNEE,
+        LEFT_SHOULDER,
+        RIGHT_SHOULDER
+
     }
 
     private const float DEFAULT_VARIANCE = 3;
@@ -116,7 +123,7 @@ public class Pose
 
         MatchCollection landmarkPositions = poseRegex.Matches(poseString);
         int nrLandmarksRegistered = 0;
-        Debug.Log("Pose str received:" + poseString);
+        CustomDebug.LogAlex("Pose str received:" + poseString);
 
         foreach (Match landmarkPosition in landmarkPositions.Cast<Match>())
         {
@@ -129,7 +136,7 @@ public class Pose
                     float.Parse(landmarkCoordinate["z"].Value))
                 ;
 
-            Debug.Log("Pose[" + currentLandmarkId + "]: " + pose._landmarkArrangement[currentLandmarkId]);
+            CustomDebug.LogAlex("Pose[" + currentLandmarkId + "]: " + pose._landmarkArrangement[currentLandmarkId]);
             nrLandmarksRegistered++;
         }
 

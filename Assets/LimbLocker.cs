@@ -18,6 +18,7 @@ public class LimbLocker : MonoBehaviour
     public Vector3 playerBasePosition = new Vector3(-4, 0.801f, 0);
     public Vector3 mirrorBasePosition = new Vector3(12.46f, 5, -1.73f);
     public EstimationToIK estimationScript;
+    public TwisterGame twisterGameScript;
 
     private bool locked = false;
     private float warningTimer = 0f;
