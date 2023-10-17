@@ -146,7 +146,6 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY, RightIndexTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE, RightIndexTarget);
 
-
             landmarkToTarget.Add(Pose.Landmark.LEFT_INDEX, LeftIndexTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB, LeftIndexTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_RING, LeftIndexTarget);
@@ -173,7 +172,10 @@ public class RiggingIK : MonoBehaviour
 
     void LateUpdate()
     {
-        adjustHands();
+        if (!mirroring) //mirror has hand landmarks so he doesnt need adjustment
+        {
+            adjustHands();
+        }
     }
 
     private void adjustHands()
