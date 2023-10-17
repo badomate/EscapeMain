@@ -13,13 +13,28 @@ public class RiggingIK : MonoBehaviour
 {
     Pose currentPose; 
     public Dictionary<Pose.Landmark, GameObject> landmarkToTarget = new Dictionary<Pose.Landmark, GameObject>();
+    
+    //main landmarks
     public GameObject RightHandTarget;
     public GameObject LeftHandTarget;
     public GameObject RightFootTarget;
     public GameObject LeftFootTarget;
 
+    //hint landmarks
     public GameObject RightElbowHintTarget;
     public GameObject LeftElbowHintTarget;
+
+    //hand landmarks
+    public GameObject RightIndexTarget;
+    public GameObject RightMiddleTarget;
+    public GameObject RightRingTarget;
+    public GameObject RightPinkyTarget;
+    public GameObject RightThumbTarget;
+    public GameObject LeftIndexTarget;
+    public GameObject LeftMiddleTarget;
+    public GameObject LeftRingTarget;
+    public GameObject LeftPinkyTarget;
+    public GameObject LeftThumbTarget;
 
     public GameObject ShoulderTarget;
 
@@ -118,11 +133,25 @@ public class RiggingIK : MonoBehaviour
         landmarkToTarget.Add(Pose.Landmark.RIGHT_WRIST, RightHandTarget);
         landmarkToTarget.Add(Pose.Landmark.LEFT_FOOT, LeftFootTarget);
         landmarkToTarget.Add(Pose.Landmark.RIGHT_FOOT, RightFootTarget);
-        if (mirroring)
+        if (mirroring) //some landmarks are only used by the mirror character for now. Later the A.I might need more to copy gestures.
         {
-            landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget); //only add it to the mirror for now
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_ELBOW, RightElbowHintTarget); //only add it to the mirror for now
-            landmarkToTarget.Add(Pose.Landmark.LEFT_ELBOW, LeftElbowHintTarget); //only add it to the mirror for now
+            landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget); 
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_ELBOW, RightElbowHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_ELBOW, LeftElbowHintTarget);
+
+
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_INDEX, RightIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_THUMB, RightIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_RING, RightIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY, RightIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE, RightIndexTarget);
+
+
+            landmarkToTarget.Add(Pose.Landmark.LEFT_INDEX, LeftIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB, LeftIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_RING, LeftIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY, LeftIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE, LeftIndexTarget);
         }
 
     }
@@ -155,10 +184,5 @@ public class RiggingIK : MonoBehaviour
         rightHand.transform.rotation = rightHand.transform.parent.rotation;
         leftHand.transform.rotation = leftHand.transform.parent.rotation;
 
-        /*
-        Transform rightFoot = animator.GetBoneTransform(HumanBodyBones.RightFoot);
-        Transform leftFoot = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
-        rightFoot.transform.rotation = rightFoot.transform.parent.rotation;
-        leftFoot.transform.rotation = leftFoot.transform.parent.rotation;*/
     }
 }
