@@ -15,6 +15,12 @@ public static class LandmarkIndicesDictionary
         mediapipeIndices.Add(Pose.Landmark.LEFT_FOOT, 27);
         mediapipeIndices.Add(Pose.Landmark.RIGHT_FOOT, 28);
 
+
+        mediapipeIndices.Add(Pose.Landmark.LEFT_KNEE, 25);
+        mediapipeIndices.Add(Pose.Landmark.RIGHT_KNEE, 26);
+        mediapipeIndices.Add(Pose.Landmark.LEFT_ELBOW, 13);
+        mediapipeIndices.Add(Pose.Landmark.RIGHT_ELBOW, 14);
+
         //mediapipeIndices.Add(Pose.Landmark.RIGHT_INDEX, 20);
 
         mediapipeIndicesToLimbs.Add(Pose.Landmark.LEFT_WRIST, new List<int>{ 11,13,15,17,19,21});

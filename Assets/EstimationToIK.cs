@@ -19,8 +19,6 @@ public class EstimationToIK : MonoBehaviour
     public InteractByPointing pointingScript;
 
     public GameObject[] keypointBones; //for keypoints that are to be set specifically and not with 
-    public GameObject leftHand; //used for aesthetic adjustments after IK
-    public GameObject rightHand;
     protected Animator animator;
     public bool Looping = true; //TODO: fix the False setting, perhaps by introducing a new bool to check for the animation finishing.
 
@@ -84,11 +82,15 @@ public class EstimationToIK : MonoBehaviour
     }
     private void adjustHands()
     {
-        if(rightHand != null && leftHand != null)
-        {
-            rightHand.transform.rotation = rightHand.transform.parent.rotation;
-            leftHand.transform.rotation = leftHand.transform.parent.rotation;
-        }
+        Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+        Transform leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
+        Transform rightFoot = animator.GetBoneTransform(HumanBodyBones.RightFoot);
+        Transform leftFoot = animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+
+        rightHand.transform.rotation = rightHand.transform.parent.rotation;
+        leftHand.transform.rotation = leftHand.transform.parent.rotation;
+        //rightFoot.transform.rotation = rightFoot.transform.parent.rotation;
+        //leftFoot.transform.rotation = leftFoot.transform.parent.rotation;
     }
 
     private Vector3 goalFromIndex(int index)
@@ -280,6 +282,10 @@ public class EstimationToIK : MonoBehaviour
         }
     }
 
+    void TwisterMove()
+    {
+        //will need animation rigging package to achieve
+    }
 
     private void getDataFromPointing()
     {
@@ -330,10 +336,10 @@ public class EstimationToIK : MonoBehaviour
         if (CameraStreamScript)
         {
 
-            if (CameraStreamScript.vector3List.Count > 0)
+            if (CameraStream.vector3List.Count > 0)
             {
-                landmarks = new Vector3[CameraStreamScript.vector3List.Count];
-                landmarks = CameraStreamScript.vector3List.ToArray();
+                landmarks = new Vector3[CameraStream.vector3List.Count];
+                landmarks = CameraStream.vector3List.ToArray();
             }
         }
 
