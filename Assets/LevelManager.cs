@@ -4,7 +4,6 @@ using UnityEngine;
 using GestureDictionary;
 using System.Text.RegularExpressions;
 using UnityEngine.Events;
-using static LevelManager;
 
 public class LevelManager : MonoBehaviour
 {

@@ -48,33 +48,33 @@ public class CameraStream : MonoBehaviour
             Vector3 vector3 = new Vector3(body.data[0], body.data[1], body.data[2]); //body.data[2]
             vector3List.Add(vector3);
 
-            Pose.Landmark identifiedPose = Pose.Landmark.LEFT_WRIST;
+            Pose.Landmark identifiedLandmark = Pose.Landmark.LEFT_WRIST;
             bool included = true; //whether we are going to use it, whether it appears in the switch case somewhere
             switch (body.landmarkName)
             {
                 case "Left wrist":
-                    identifiedPose = Pose.Landmark.LEFT_WRIST;
+                    identifiedLandmark = Pose.Landmark.LEFT_WRIST;
                     break;
                 case "Right wrist":
-                    identifiedPose = Pose.Landmark.RIGHT_WRIST;
+                    identifiedLandmark = Pose.Landmark.RIGHT_WRIST;
                     break;
                 case "Left heel":
-                    identifiedPose = Pose.Landmark.LEFT_FOOT;
+                    identifiedLandmark = Pose.Landmark.LEFT_FOOT;
                     break;
                 case "Right heel":
-                    identifiedPose = Pose.Landmark.RIGHT_FOOT;
+                    identifiedLandmark = Pose.Landmark.RIGHT_FOOT;
                     break;
                 case "Right elbow":
-                    identifiedPose = Pose.Landmark.RIGHT_ELBOW;
+                    identifiedLandmark = Pose.Landmark.RIGHT_ELBOW;
                     break;
                 case "Left elbow":
-                    identifiedPose = Pose.Landmark.LEFT_ELBOW;
+                    identifiedLandmark = Pose.Landmark.LEFT_ELBOW;
                     break;
                 case "Left shoulder":
-                    identifiedPose = Pose.Landmark.LEFT_SHOULDER;
+                    identifiedLandmark = Pose.Landmark.LEFT_SHOULDER;
                     break;
                 case "Right shoulder":
-                    identifiedPose = Pose.Landmark.RIGHT_SHOULDER;
+                    identifiedLandmark = Pose.Landmark.RIGHT_SHOULDER;
                     break;
                 default:
                     included = false; //if it didn't match anything we need, don't modify the Pose
@@ -82,13 +82,13 @@ public class CameraStream : MonoBehaviour
             }
             Vector3 adjustedVector3 = Vector3.Scale(new Vector3(body.data[0], body.data[1], body.data[2]), new Vector3(-1, -1, -1));
 
-            if (included && !playerPose._landmarkArrangement.ContainsKey(identifiedPose))
+            if (included && !playerPose._landmarkArrangement.ContainsKey(identifiedLandmark))
             {
-                playerPose._landmarkArrangement.Add(identifiedPose, adjustedVector3);
+                playerPose._landmarkArrangement.Add(identifiedLandmark, adjustedVector3);
             }
             else if(included)
             {
-                playerPose._landmarkArrangement[identifiedPose] = adjustedVector3;
+                playerPose._landmarkArrangement[identifiedLandmark] = adjustedVector3;
             }
 
             if (body.landmarkName == "Right hip")
