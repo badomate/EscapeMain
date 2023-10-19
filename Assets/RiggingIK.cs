@@ -178,6 +178,15 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
+    public IEnumerator playGesture(Gesture gestureToPlay)
+    {
+        for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
+        {
+            SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
+            yield return new WaitForSeconds(0.0166f);
+        }
+    }
+
     private void adjustHands()
     {
         Animator animator = GetComponent<Animator>();
