@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using GestureDictionary;
 
 /// <summary>
 ///This class should serve some of the same functions as EstimationToIk 
@@ -153,6 +154,9 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE, LeftIndexTarget);
         }
 
+        //for testing the "play gesture" function
+        Gesture exampleGesture = new GestureDictionary.ContentGenerators.StarterGestures.GestureHandRises(LevelManager.dictionary.GetKnownPoses()); //TODO: Perhaps we could make creating a pre-made gesture simpler than this?
+        StartCoroutine(playGesture(exampleGesture));
     }
 
     // Have the A.I correctly take a Twister turn. In normal gameplay, this would be cheating.
