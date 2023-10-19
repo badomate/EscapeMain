@@ -183,7 +183,10 @@ public class RiggingIK : MonoBehaviour
         for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
         {
             SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
-            yield return new WaitForSeconds(0.0166f);
+            if(i < gestureToPlay._poseSequence.Count - 1)
+            {
+                yield return new WaitForSeconds(gestureToPlay._poseSequence[i + 1]._frameInterval);
+            }
         }
     }
 
