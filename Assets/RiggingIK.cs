@@ -42,13 +42,20 @@ public class RiggingIK : MonoBehaviour
     public ChainIKConstraint pointingConstraint;
 
     public bool mirroring = false;
+    public bool gesturePlaySmoothing = true;
     public float shoulderOffsetScale = 0.1f;
     public float coordinateScale = 1.0f;
 
-    //Changes every IK target to match up with the given pose
-    public void SetIKPositions(Pose playingPose, bool relative = false)
+    //this is just to simplify
+    public void SetIKPositions(Pose poseToPlay, bool relative = false)
     {
-        Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(playingPose._landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
+        SetIKPositions(poseToPlay._landmarkArrangement, relative);
+    }
+
+    //Changes every IK target to match up with the given pose
+    public void SetIKPositions(Dictionary<Pose.Landmark, Vector3> landmarkArrangement, bool relative = false)
+    {
+        Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
         {
@@ -182,15 +189,34 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
+    void makeIntermediateArrangement(Pose posePrev, Pose poseNext)
+    {
+
+    }
+
+    /*
+    public IEnumerator playGesture(Gesture gestureToPlay)
+    {
+        for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
+        {
+            if (i > 0)
+            {
+                for (int j = 0; j < gestureToPlay._poseSequence.Count; j++)//j is just for how far along we are into the interp
+                {
+                    makeIntermediateArrangement(gestureToPlay._poseSequence[i - 1], gestureToPlay._poseSequence[i])
+                    yield return new WaitForSeconds(gestureToPlay._poseSequence[i]._frameInterval);
+                }
+            }
+            SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
+        }
+    }*/
+
     public IEnumerator playGesture(Gesture gestureToPlay)
     {
         for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
         {
             SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
-            if(i < gestureToPlay._poseSequence.Count - 1)
-            {
-                yield return new WaitForSeconds(gestureToPlay._poseSequence[i + 1]._frameInterval);
-            }
+            yield return new WaitForSeconds(gestureToPlay._poseSequence[i]._frameInterval);
         }
     }
 
