@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using GestureDictionary;
+using GestureDictionary.ContentGenerators.StarterGestures;
 
 /// <summary>
 ///This class should serve some of the same functions as EstimationToIk 
@@ -155,7 +155,7 @@ public class RiggingIK : MonoBehaviour
         }
 
         //for testing the "play gesture" function
-        Gesture exampleGesture = new GestureDictionary.ContentGenerators.StarterGestures.GestureHandRises(LevelManager.dictionary.GetKnownPoses()); //TODO: Perhaps we could make creating a pre-made gesture simpler than this?
+        Gesture exampleGesture = new GestureHandRises(LevelManager.dictionary.GetKnownPoses());
         StartCoroutine(playGesture(exampleGesture));
     }
 
