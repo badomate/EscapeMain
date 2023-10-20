@@ -189,9 +189,53 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
-    void makeIntermediateArrangement(Pose posePrev, Pose poseNext)
+    Pose makeIntermediateArrangement(Pose posePrev, Pose poseNext, float interpParam)
     {
+        Dictionary<Pose.Landmark, Vector3> dictPrev = posePrev._landmarkArrangement;
+        Dictionary<Pose.Landmark, Vector3> dictNext = poseNext._landmarkArrangement;
+        Dictionary<Pose.Landmark, Vector3> dictIntermediate = new Dictionary<Pose.Landmark, Vector3>();
 
+        foreach (var kvp in dictPrev)
+        {
+            Pose.Landmark landmark = kvp.Key;
+            Vector3 position = kvp.Value;
+
+            //Check if we have a target to adjust for this landmark
+            if (dictNext.ContainsKey(landmark) && dictNext[landmark] != null)
+            {
+                dictIntermediate.Add(landmark, Vector3.Lerp(dictPrev[landmark], dictNext[landmark], interpParam));
+            }
+        }
+
+        Pose intermediatePose = new Pose(dictIntermediate);
+        return intermediatePose;
+    }
+
+    
+    public IEnumerator playGesture(Gesture gestureToPlay)
+    {
+        for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
+        {
+            SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
+            if (gesturePlaySmoothing)
+            {
+                if (i < gestureToPlay._poseSequence.Count - 1)
+                {
+                    float interpLength = gestureToPlay._poseSequence[i]._frameInterval * 60;
+                    for (int j = 0; j < interpLength; j++)//for how far along we are between poses
+                    {
+                        Pose intermediatePose = makeIntermediateArrangement(gestureToPlay._poseSequence[i]._poseToMatch, gestureToPlay._poseSequence[i + 1]._poseToMatch, (float)j / interpLength);
+                        SetIKPositions(intermediatePose, true);
+
+                        yield return new WaitForSeconds((float)1 / 60);
+                    }
+                }
+            }
+            else
+            {
+                yield return new WaitForSeconds(gestureToPlay._poseSequence[i]._frameInterval);
+            }
+        }
     }
 
     /*
@@ -199,26 +243,10 @@ public class RiggingIK : MonoBehaviour
     {
         for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
         {
-            if (i > 0)
-            {
-                for (int j = 0; j < gestureToPlay._poseSequence.Count; j++)//j is just for how far along we are into the interp
-                {
-                    makeIntermediateArrangement(gestureToPlay._poseSequence[i - 1], gestureToPlay._poseSequence[i])
-                    yield return new WaitForSeconds(gestureToPlay._poseSequence[i]._frameInterval);
-                }
-            }
-            SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
-        }
-    }*/
-
-    public IEnumerator playGesture(Gesture gestureToPlay)
-    {
-        for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
-        {
             SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
             yield return new WaitForSeconds(gestureToPlay._poseSequence[i]._frameInterval);
         }
-    }
+    }*/
 
     private void adjustHands()
     {

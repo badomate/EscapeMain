@@ -2607,6 +2607,7 @@ MonoBehaviour:
   ShoulderTarget: {fileID: 0}
   pointingConstraint: {fileID: 223776741}
   mirroring: 0
+  gesturePlaySmoothing: 1
   shoulderOffsetScale: 0.1
   coordinateScale: 1
 --- !u!1001 &321748711
@@ -2934,7 +2935,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28662
+  m_Name: pb_Mesh28664
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4512,7 +4513,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28616
+  m_Name: pb_Mesh28618
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -11633,7 +11634,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1528204665}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac00fde5dcd08d7409dc898ab7108905, type: 3}
   m_Name: 
@@ -11657,6 +11658,7 @@ MonoBehaviour:
   ShoulderTarget: {fileID: 1254077445}
   pointingConstraint: {fileID: 0}
   mirroring: 0
+  gesturePlaySmoothing: 1
   shoulderOffsetScale: 0.1
   coordinateScale: 1
 --- !u!114 &1528204675
@@ -13126,7 +13128,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-2376
+  m_Name: pb_Mesh-2378
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -13879,7 +13881,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1722
+  m_Name: pb_Mesh-1724
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
