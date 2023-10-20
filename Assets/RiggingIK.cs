@@ -183,10 +183,11 @@ public class RiggingIK : MonoBehaviour
 
     void LateUpdate()
     {
+        /*
         if (!mirroring) //mirror has hand landmarks so he doesnt need adjustment
         {
             adjustHands();
-        }
+        }*/
     }
 
     Pose makeIntermediateArrangement(Pose posePrev, Pose poseNext, float interpParam)
