@@ -29,6 +29,9 @@ public class Pose
         RIGHT_SHOULDER,
 
         //hand landmarks
+        LEFT_WRIST_ROOT,
+        RIGHT_WRIST_ROOT,
+
         RIGHT_INDEX,
         RIGHT_THUMB,
         RIGHT_RING,

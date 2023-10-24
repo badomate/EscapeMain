@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using GestureDictionary.ContentGenerators.StarterGestures;
@@ -57,7 +58,18 @@ public class RiggingIK : MonoBehaviour
     public void SetIKPositions(Dictionary<Pose.Landmark, Vector3> landmarkArrangement, bool relative = false)
     {
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
-        
+
+
+        foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
+        {
+            if ((int)landmark >= Enum.GetValues(typeof(Pose.Landmark)).Length - 6)
+            {
+                landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.LEFT_WRIST_ROOT];
+                landmarksCopy[landmark] *= 0.75f;
+                landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.LEFT_WRIST];
+            }
+        }
+
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
         {
             Vector3 originalPosition = landmarksCopy[landmark];
@@ -68,13 +80,13 @@ public class RiggingIK : MonoBehaviour
             {
                 rotatedPosition = gameObject.transform.rotation * originalPosition * coordinateScale;
             }
-            //rotatedPosition = originalPosition * coordinateScale;
 
             landmarksCopy[landmark] = rotatedPosition;
         }
 
 
-        foreach (var kvp in landmarksCopy)
+
+            foreach (var kvp in landmarksCopy)
         {
             Pose.Landmark landmark = kvp.Key;
             Vector3 position = kvp.Value;

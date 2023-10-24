@@ -89,7 +89,6 @@ public class CameraStream : MonoBehaviour
                     break;
                 case "Index-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.LEFT_INDEX;
-                    UnityEngine.Debug.Log("Found index finger");
                     break;
                 case "Thumb-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.LEFT_THUMB;
@@ -97,8 +96,14 @@ public class CameraStream : MonoBehaviour
                 case "Middle-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.LEFT_MIDDLE;
                     break;
+                case "Ring-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.LEFT_RING;
+                    break;
                 case "Pinky-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.LEFT_PINKY;
+                    break;
+                case "Wrist":
+                    identifiedLandmark = Pose.Landmark.LEFT_WRIST_ROOT;
                     break;
                 default:
                     included = false; //if it didn't match anything we need, don't modify the Pose
