@@ -14,14 +14,14 @@ public class CameraStream : MonoBehaviour
     [Serializable]
     private class BodyContainer
     {
-        public List<BodyData> bodies;
+        public BodyData[] body;
     }
 
     [Serializable]
     private class BodyData
     {
         public int id;
-        public List<float> data;
+        public float[] data;
         public string landmarkName;
     }
 
@@ -36,14 +36,14 @@ public class CameraStream : MonoBehaviour
         jsonData = jsonData.Substring(5);
         vector3List.Clear(); // Clear the list before deserialization
 
-        //Debug.Log(jsonData);
+        //UnityEngine.Debug.Log(jsonData);
 
         // Deserialize the JSON string into an array of Vector3Data objects
         BodyContainer dataContainer = JsonUtility.FromJson<BodyContainer>(jsonData);
         Vector3 Left = new Vector3(0, 0, 0);
         Vector3 Right = new Vector3(0, 0, 0);
 
-        foreach (BodyData body in dataContainer.bodies) //the amount of landmarks seems to always be 33 no matter how obscured the person is
+        foreach (BodyData body in dataContainer.body) //the amount of landmarks seems to always be 33 no matter how obscured the person is
         {
             Vector3 vector3 = new Vector3(body.data[0], body.data[1], body.data[2]); //body.data[2]
             vector3List.Add(vector3);
@@ -101,7 +101,6 @@ public class CameraStream : MonoBehaviour
             }
         }
         centerLandmarkOffset = (Right + Left) / 2;
-        //UnityEngine.Debug.Log(centerLandmarkOffset.z);
 
     }
 
@@ -183,11 +182,21 @@ public class CameraStream : MonoBehaviour
                              modelComplexity: 0,
                              minDetectionConfidence: 0.5,
                              minTrackingConfidence: 0.5));
-        
+
+      /*string jsonString = "{\"body\": [{\"id\": 0, \"landmarkName\": \"Nose\", \"data\": [0.0683145523071289, -0.5272032618522644, -0.2814151346683502, 0.534261167049408, 0.5520623326301575, -0.8420344591140747]}, {\"id\": 1, \"landmarkName\": \"Left eye inner\", \"data\": [0.06900090724229813, -0.5620826482772827, -0.2750793397426605, 0.542637050151825, 0.48907387256622314, -0.7762095928192139]}]}";
+
+      BodyContainer body = JsonUtility.FromJson<BodyContainer>(jsonString);
+        foreach (var landmark in body.body)
+        {
+            UnityEngine.Debug.Log("Landmark ID: " + landmark.id);
+            UnityEngine.Debug.Log("Landmark Name: " + landmark.landmarkName);
+            UnityEngine.Debug.Log("Landmark Data: " + string.Join(", ", landmark.data));
+        }
+      */
     }
 
-    // Update is called once per frame
-    void Update()
+// Update is called once per frame
+void Update()
     {
 
     }

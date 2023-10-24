@@ -11657,8 +11657,8 @@ MonoBehaviour:
   LeftThumbTarget: {fileID: 321748713}
   ShoulderTarget: {fileID: 1254077445}
   pointingConstraint: {fileID: 0}
-  mirroring: 0
-  gesturePlaySmoothing: 1
+  mirroring: 1
+  gesturePlaySmoothing: 0
   shoulderOffsetScale: 0.1
   coordinateScale: 1
 --- !u!114 &1528204675
@@ -13128,7 +13128,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-2378
+  m_Name: pb_Mesh-2376
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -13881,7 +13881,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1724
+  m_Name: pb_Mesh-1722
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

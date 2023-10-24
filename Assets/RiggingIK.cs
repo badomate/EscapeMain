@@ -162,8 +162,8 @@ public class RiggingIK : MonoBehaviour
         }
 
         //for testing the "play gesture" function
-        Gesture exampleGesture = new GestureHandRises(LevelManager.dictionary.GetKnownPoses());
-        StartCoroutine(playGesture(exampleGesture));
+        //Gesture exampleGesture = new GestureHandRises(LevelManager.dictionary.GetKnownPoses());
+        //StartCoroutine(playGesture(exampleGesture));
     }
 
     // Have the A.I correctly take a Twister turn. In normal gameplay, this would be cheating.
@@ -239,15 +239,6 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
-    /*
-    public IEnumerator playGesture(Gesture gestureToPlay)
-    {
-        for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
-        {
-            SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
-            yield return new WaitForSeconds(gestureToPlay._poseSequence[i]._frameInterval);
-        }
-    }*/
 
     private void adjustHands()
     {
