@@ -56,17 +56,18 @@ public class RiggingIK : MonoBehaviour
     public void SetIKPositions(Dictionary<Pose.Landmark, Vector3> landmarkArrangement, bool relative = false)
     {
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
-
+        
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
         {
             Vector3 originalPosition = landmarksCopy[landmark];
 
-            Vector3 rotatedPosition;
+            Vector3 rotatedPosition; 
+            rotatedPosition = originalPosition * coordinateScale;
             if (relative)
             {
                 rotatedPosition = gameObject.transform.rotation * originalPosition * coordinateScale;
             }
-            rotatedPosition = originalPosition * coordinateScale;
+            //rotatedPosition = originalPosition * coordinateScale;
 
             landmarksCopy[landmark] = rotatedPosition;
         }
