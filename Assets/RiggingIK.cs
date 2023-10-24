@@ -31,6 +31,7 @@ public class RiggingIK : MonoBehaviour
     public GameObject RightRingTarget;
     public GameObject RightPinkyTarget;
     public GameObject RightThumbTarget;
+
     public GameObject LeftIndexTarget;
     public GameObject LeftMiddleTarget;
     public GameObject LeftRingTarget;
@@ -150,16 +151,16 @@ public class RiggingIK : MonoBehaviour
 
 
             landmarkToTarget.Add(Pose.Landmark.RIGHT_INDEX, RightIndexTarget);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_THUMB, RightIndexTarget);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_RING, RightIndexTarget);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY, RightIndexTarget);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE, RightIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_THUMB, RightThumbTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_RING, RightRingTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY, RightPinkyTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE, RightMiddleTarget);
 
             landmarkToTarget.Add(Pose.Landmark.LEFT_INDEX, LeftIndexTarget);
-            landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB, LeftIndexTarget);
-            landmarkToTarget.Add(Pose.Landmark.LEFT_RING, LeftIndexTarget);
-            landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY, LeftIndexTarget);
-            landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE, LeftIndexTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB, LeftThumbTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_RING, LeftRingTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY, LeftPinkyTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE, LeftMiddleTarget);
         }
 
         //for testing the "play gesture" function

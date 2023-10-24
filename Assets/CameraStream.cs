@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using System.Linq;
 
 public class CameraStream : MonoBehaviour
 {
@@ -14,14 +15,22 @@ public class CameraStream : MonoBehaviour
     [Serializable]
     private class BodyContainer
     {
-        public BodyData[] body;
+        public List<BodyData> body;
+        public HandContainer hands;
+    }
+
+    [Serializable]
+    private class HandContainer
+    {
+        public List<BodyData> left;
+        public List<BodyData> right;
     }
 
     [Serializable]
     private class BodyData
     {
         public int id;
-        public float[] data;
+        public List<float> data;
         public string landmarkName;
     }
 
@@ -43,7 +52,9 @@ public class CameraStream : MonoBehaviour
         Vector3 Left = new Vector3(0, 0, 0);
         Vector3 Right = new Vector3(0, 0, 0);
 
-        foreach (BodyData body in dataContainer.body) //the amount of landmarks seems to always be 33 no matter how obscured the person is
+        var combinedData = dataContainer.body.Concat(dataContainer.hands.left);
+
+        foreach (BodyData body in combinedData) //the amount of landmarks seems to always be 33 no matter how obscured the person is
         {
             Vector3 vector3 = new Vector3(body.data[0], body.data[1], body.data[2]); //body.data[2]
             vector3List.Add(vector3);
@@ -75,6 +86,19 @@ public class CameraStream : MonoBehaviour
                     break;
                 case "Right shoulder":
                     identifiedLandmark = Pose.Landmark.RIGHT_SHOULDER;
+                    break;
+                case "Index-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.LEFT_INDEX;
+                    UnityEngine.Debug.Log("Found index finger");
+                    break;
+                case "Thumb-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.LEFT_THUMB;
+                    break;
+                case "Middle-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.LEFT_MIDDLE;
+                    break;
+                case "Pinky-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.LEFT_PINKY;
                     break;
                 default:
                     included = false; //if it didn't match anything we need, don't modify the Pose
