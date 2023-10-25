@@ -46,7 +46,7 @@ public class RiggingIK : MonoBehaviour
     public bool mirroring = false;
     public bool gesturePlaySmoothing = true;
     public float shoulderOffsetScale = 0.1f;
-    public float coordinateScale = 1.0f;
+    public Vector3 coordinateScale = new Vector3(1,1,1); //every landmark vector is multiplied by this
 
     //this is just to simplify
     public void SetIKPositions(Pose poseToPlay, bool relative = false)
@@ -72,7 +72,7 @@ public class RiggingIK : MonoBehaviour
 
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
         {
-            Vector3 originalPosition = landmarksCopy[landmark] * coordinateScale; //always scale first otherwise the positional relativity would break
+            Vector3 originalPosition = Vector3.Scale(landmarksCopy[landmark], coordinateScale); //always scale first otherwise the positional relativity would break
 
             Vector3 rotatedPosition; 
             rotatedPosition = originalPosition;
@@ -115,8 +115,8 @@ public class RiggingIK : MonoBehaviour
     {
         if (landmarks.ContainsKey(Pose.Landmark.RIGHT_SHOULDER) && landmarks.ContainsKey(Pose.Landmark.LEFT_SHOULDER) && ShoulderTarget != null)
         {
-            Vector3 leftShoulder = landmarks[Pose.Landmark.LEFT_SHOULDER] * coordinateScale;
-            Vector3 rightShoulder = landmarks[Pose.Landmark.RIGHT_SHOULDER] * coordinateScale;
+            Vector3 leftShoulder = Vector3.Scale(landmarks[Pose.Landmark.LEFT_SHOULDER], coordinateScale);
+            Vector3 rightShoulder = Vector3.Scale(landmarks[Pose.Landmark.RIGHT_SHOULDER], coordinateScale);
             //Calculate the center position
             Vector3 centerPosition = (leftShoulder + rightShoulder) / 2;
             centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with Mixamo rig

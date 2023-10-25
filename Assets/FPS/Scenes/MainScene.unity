@@ -504,7 +504,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh35368
+  m_Name: pb_Mesh28478
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2609,7 +2609,7 @@ MonoBehaviour:
   mirroring: 0
   gesturePlaySmoothing: 1
   shoulderOffsetScale: 0.1
-  coordinateScale: 1
+  coordinateScale: {x: 1, y: 1, z: 1}
 --- !u!1001 &321748711
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4114,7 +4114,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh35434
+  m_Name: pb_Mesh28550
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4349,7 +4349,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh35244
+  m_Name: pb_Mesh28348
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4971,7 +4971,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh35912
+  m_Name: pb_Mesh29122
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5281,7 +5281,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh35662
+  m_Name: pb_Mesh28804
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5776,17 +5776,17 @@ PrefabInstance:
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.31299996
+      value: -0.3201
       objectReference: {fileID: 0}
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.17199945
+      value: -0.1896
       objectReference: {fileID: 0}
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.27509624
+      value: 0.0292
       objectReference: {fileID: 0}
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
@@ -6601,7 +6601,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh35452
+  m_Name: pb_Mesh28574
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -9967,7 +9967,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh35784
+  m_Name: pb_Mesh28954
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -11660,7 +11660,7 @@ MonoBehaviour:
   mirroring: 1
   gesturePlaySmoothing: 0
   shoulderOffsetScale: 0.1
-  coordinateScale: 1
+  coordinateScale: {x: 1, y: 1, z: 1}
 --- !u!114 &1528204675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11838,7 +11838,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1539658861}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.622, y: -0.314, z: 0.336}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14114,17 +14114,17 @@ PrefabInstance:
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.3499999
+      value: -0.2675
       objectReference: {fileID: 0}
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.43799973
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.25449687
+      value: 0.0383
       objectReference: {fileID: 0}
     - target: {fileID: 8681807311835176270, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
