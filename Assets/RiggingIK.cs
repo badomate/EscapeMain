@@ -189,7 +189,7 @@ public class RiggingIK : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (mirroring && CameraStream.vector3List.Count > 0)
+        if (mirroring && CameraStream.playerPose._landmarkArrangement.Count > 0)
         {
             SetIKPositions(CameraStream.playerPose, true);
         }

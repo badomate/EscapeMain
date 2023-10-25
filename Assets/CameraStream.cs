@@ -34,7 +34,6 @@ public class CameraStream : MonoBehaviour
         public string landmarkName;
     }
 
-    public static List<Vector3> vector3List = new List<Vector3>(); //coordinates are based on position relative to the center
     public static Pose playerPose = new Pose();
     public Vector3 centerLandmarkOffset = new Vector3(); //coordinates of that center
     public long animationFPS = 0;
@@ -43,7 +42,6 @@ public class CameraStream : MonoBehaviour
     void ProcessLandmarksData(string jsonData)
     {
         jsonData = jsonData.Substring(5);
-        vector3List.Clear(); // Clear the list before deserialization
 
         //UnityEngine.Debug.Log(jsonData);
 
@@ -56,9 +54,6 @@ public class CameraStream : MonoBehaviour
 
         foreach (BodyData body in combinedData) //the amount of landmarks seems to always be 33 no matter how obscured the person is
         {
-            Vector3 vector3 = new Vector3(body.data[0], body.data[1], body.data[2]); //body.data[2]
-            vector3List.Add(vector3);
-
             Pose.Landmark identifiedLandmark = Pose.Landmark.LEFT_WRIST;
             bool included = true; //whether we are going to use it, whether it appears in the switch case somewhere
             switch (body.landmarkName)
