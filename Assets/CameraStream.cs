@@ -44,17 +44,12 @@ public class CameraStream : MonoBehaviour
         jsonData = jsonData.Substring(5);
 
         //UnityEngine.Debug.Log(jsonData);
-
         // Deserialize the JSON string into an array of Vector3Data objects
         BodyContainer dataContainer = JsonUtility.FromJson<BodyContainer>(jsonData);
-        Vector3 Left = new Vector3(0, 0, 0);
-        Vector3 Right = new Vector3(0, 0, 0);
 
-        var combinedData = dataContainer.body.Concat(dataContainer.hands.left);
-
-        foreach (BodyData body in combinedData) //the amount of landmarks seems to always be 33 no matter how obscured the person is
+        Pose.Landmark identifiedLandmark = Pose.Landmark.LEFT_WRIST;
+        foreach (BodyData body in dataContainer.body) //the amount of landmarks seems to always be 33 no matter how obscured the person is
         {
-            Pose.Landmark identifiedLandmark = Pose.Landmark.LEFT_WRIST;
             bool included = true; //whether we are going to use it, whether it appears in the switch case somewhere
             switch (body.landmarkName)
             {
@@ -82,6 +77,22 @@ public class CameraStream : MonoBehaviour
                 case "Right shoulder":
                     identifiedLandmark = Pose.Landmark.RIGHT_SHOULDER;
                     break;
+                default:
+                    included = false; //if it didn't match anything we need, don't modify the Pose
+                    break;
+            }
+            if (included)
+            {
+                processLandmark(identifiedLandmark, new Vector3(body.data[0], body.data[1], body.data[2]));
+            }
+        }
+
+        //TODO: there's probably a way to collapse this to a function instead of repeating lines
+        foreach (BodyData body in dataContainer.hands?.left)
+        {
+            bool included = true;
+            switch (body.landmarkName)
+            {
                 case "Index-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.LEFT_INDEX;
                     break;
@@ -101,31 +112,64 @@ public class CameraStream : MonoBehaviour
                     identifiedLandmark = Pose.Landmark.LEFT_WRIST_ROOT;
                     break;
                 default:
-                    included = false; //if it didn't match anything we need, don't modify the Pose
+                    included = false;
                     break;
             }
-            Vector3 adjustedVector3 = Vector3.Scale(new Vector3(body.data[0], body.data[1], body.data[2]), new Vector3(-1, -1, -1));
-
-            if (included && !playerPose._landmarkArrangement.ContainsKey(identifiedLandmark))
+            if (included)
             {
-                playerPose._landmarkArrangement.Add(identifiedLandmark, adjustedVector3);
-            }
-            else if(included)
-            {
-                playerPose._landmarkArrangement[identifiedLandmark] = adjustedVector3;
-            }
-
-            if (body.landmarkName == "Right hip")
-            {
-                Right = new Vector3(body.data[3], body.data[4], body.data[5]); //body.data[5]
-            }
-            else if (body.landmarkName == "Left hip")
-            {
-                Left = new Vector3(body.data[3], body.data[4], body.data[5]);
+                processLandmark(identifiedLandmark, new Vector3(body.data[0], body.data[1], body.data[2]));
             }
         }
-        centerLandmarkOffset = (Right + Left) / 2;
 
+
+        foreach (BodyData body in dataContainer.hands?.right)
+        {
+            bool included = true;
+            switch (body.landmarkName)
+            {
+                case "Index-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_INDEX;
+                    break;
+                case "Thumb-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_THUMB;
+                    break;
+                case "Middle-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_MIDDLE;
+                    break;
+                case "Ring-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_RING;
+                    break;
+                case "Pinky-4(fingertip)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_PINKY;
+                    break;
+                case "Wrist":
+                    identifiedLandmark = Pose.Landmark.RIGHT_WRIST_ROOT;
+                    break;
+                default:
+                    included = false;
+                    break;
+            }
+            if (included)
+            {
+                processLandmark(identifiedLandmark, new Vector3(body.data[0], body.data[1], body.data[2]));
+            }
+
+        }
+    }
+
+    void processLandmark(Pose.Landmark identifiedLandmark, Vector3 data)
+    {
+
+        Vector3 adjustedVector3 = Vector3.Scale(data, new Vector3(-1, -1, -1));
+
+        if (!playerPose._landmarkArrangement.ContainsKey(identifiedLandmark))
+        {
+            playerPose._landmarkArrangement.Add(identifiedLandmark, adjustedVector3);
+        }
+        else
+        {
+            playerPose._landmarkArrangement[identifiedLandmark] = adjustedVector3;
+        }
     }
 
     // Asynchronously stream pose landmarks data from the Flask API
@@ -200,12 +244,12 @@ public class CameraStream : MonoBehaviour
         //Debug.Log(dataContainer.bodies[0].data.Count);
 
         // Call the asynchronous method to stream pose landmarks data
-        myGet = Task.Run(() => StreamLandmarksAsync(cancellationTokenSource.Token,
+         StreamLandmarksAsync(cancellationTokenSource.Token,
                              videoPath: null,
                              staticImageMode: false,
                              modelComplexity: 0,
                              minDetectionConfidence: 0.5,
-                             minTrackingConfidence: 0.5));
+                             minTrackingConfidence: 0.5);
 
       /*string jsonString = "{\"body\": [{\"id\": 0, \"landmarkName\": \"Nose\", \"data\": [0.0683145523071289, -0.5272032618522644, -0.2814151346683502, 0.534261167049408, 0.5520623326301575, -0.8420344591140747]}, {\"id\": 1, \"landmarkName\": \"Left eye inner\", \"data\": [0.06900090724229813, -0.5620826482772827, -0.2750793397426605, 0.542637050151825, 0.48907387256622314, -0.7762095928192139]}]}";
 
