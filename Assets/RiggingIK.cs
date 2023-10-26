@@ -76,8 +76,6 @@ public class RiggingIK : MonoBehaviour
 
         foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
         {
-            Debug.Log(landmarksCopy[Pose.Landmark.LEFT_INDEX]);
-            Debug.Log(landmarksCopy[Pose.Landmark.RIGHT_INDEX]);
             if (leftFingers.Contains(landmark))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.LEFT_WRIST_ROOT];
