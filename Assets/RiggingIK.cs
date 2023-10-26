@@ -79,14 +79,14 @@ public class RiggingIK : MonoBehaviour
             if (leftFingers.Contains(landmark))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.LEFT_WRIST_ROOT];
-                landmarksCopy[landmark] *= 0.75f;
+                //landmarksCopy[landmark] *= 0.75f;
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.LEFT_WRIST];
             }
 
             if (rightFingers.Contains(landmark))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.RIGHT_WRIST_ROOT];
-                landmarksCopy[landmark] *= 0.75f;
+                //landmarksCopy[landmark] *= 0.75f;
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.RIGHT_WRIST];
             }
 
