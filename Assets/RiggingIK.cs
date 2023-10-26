@@ -13,9 +13,9 @@ using GestureDictionary.ContentGenerators.StarterGestures;
 /// </summary>
 public class RiggingIK : MonoBehaviour
 {
-    Pose currentPose; 
+    Pose currentPose;
     public Dictionary<Pose.Landmark, GameObject> landmarkToTarget = new Dictionary<Pose.Landmark, GameObject>();
-    
+
     //main landmarks
     public GameObject RightHandTarget;
     public GameObject LeftHandTarget;
@@ -46,7 +46,21 @@ public class RiggingIK : MonoBehaviour
     public bool mirroring = false;
     public bool gesturePlaySmoothing = true;
     public float shoulderOffsetScale = 0.1f;
-    public Vector3 coordinateScale = new Vector3(1,1,1); //every landmark vector is multiplied by this
+    public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
+
+    List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
+        Pose.Landmark.RIGHT_INDEX,
+        Pose.Landmark.RIGHT_THUMB,
+        Pose.Landmark.RIGHT_RING,
+        Pose.Landmark.RIGHT_PINKY,
+        Pose.Landmark.RIGHT_MIDDLE};
+
+    List<Pose.Landmark> leftFingers = new List<Pose.Landmark> {
+        Pose.Landmark.LEFT_INDEX,
+        Pose.Landmark.LEFT_THUMB,
+        Pose.Landmark.LEFT_RING,
+        Pose.Landmark.LEFT_PINKY,
+        Pose.Landmark.LEFT_MIDDLE };
 
     //this is just to simplify
     public void SetIKPositions(Pose poseToPlay, bool relative = false)
@@ -62,12 +76,22 @@ public class RiggingIK : MonoBehaviour
 
         foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
         {
-            if ((int)landmark >= Enum.GetValues(typeof(Pose.Landmark)).Length - 6)
+            Debug.Log(landmarksCopy[Pose.Landmark.LEFT_INDEX]);
+            Debug.Log(landmarksCopy[Pose.Landmark.RIGHT_INDEX]);
+            if (leftFingers.Contains(landmark))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.LEFT_WRIST_ROOT];
                 landmarksCopy[landmark] *= 0.75f;
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.LEFT_WRIST];
             }
+
+            if (rightFingers.Contains(landmark))
+            {
+                landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.RIGHT_WRIST_ROOT];
+                landmarksCopy[landmark] *= 0.75f;
+                landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.RIGHT_WRIST];
+            }
+
         }
 
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over

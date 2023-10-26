@@ -178,7 +178,11 @@ public class CameraStream : MonoBehaviour
                                            bool staticImageMode = false,
                                            int modelComplexity = 1,
                                            double minDetectionConfidence = 0.5,
-                                           double minTrackingConfidence = 0.5)
+                                           double minTrackingConfidence = 0.5,
+                                           int displayFrames = 0,
+                                           int useHandPose = 1,
+                                           int drawBodyPose = 1,
+                                           int drawHandPose = 1)
     {
         var baseUrl = "http://localhost:5000";
         var apiUrl = "/landmarks";
@@ -190,7 +194,11 @@ public class CameraStream : MonoBehaviour
                               $"&static_image_mode={staticImageMode}" +
                               $"&model_complexity={modelComplexity}" +
                               $"&min_detection_confidence={minDetectionConfidence}" +
-                              $"&min_tracking_confidence={minTrackingConfidence}";
+                              $"&min_tracking_confidence={minTrackingConfidence}" +
+                              $"&display_frames={displayFrames}"+
+                              $"&use_hand_pose={useHandPose}"+
+                              $"&draw_body_pose={drawBodyPose}"+
+                              $"&draw_hand_pose={drawHandPose}";
 
             // Send the GET request to the API
             var responseStream = await client.GetStreamAsync(baseUrl + apiUrl + queryParams);
@@ -249,7 +257,12 @@ public class CameraStream : MonoBehaviour
                              staticImageMode: false,
                              modelComplexity: 0,
                              minDetectionConfidence: 0.5,
-                             minTrackingConfidence: 0.5));
+                             minTrackingConfidence: 0.5,
+                             displayFrames: 1,
+                             useHandPose: 1,
+                             drawBodyPose: 1,
+                             drawHandPose: 1
+                             ));
 
         /*string jsonString = "{\"body\": [{\"id\": 0, \"landmarkName\": \"Nose\", \"data\": [0.0683145523071289, -0.5272032618522644, -0.2814151346683502, 0.534261167049408, 0.5520623326301575, -0.8420344591140747]}, {\"id\": 1, \"landmarkName\": \"Left eye inner\", \"data\": [0.06900090724229813, -0.5620826482772827, -0.2750793397426605, 0.542637050151825, 0.48907387256622314, -0.7762095928192139]}]}";
 
