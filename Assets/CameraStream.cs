@@ -244,23 +244,23 @@ public class CameraStream : MonoBehaviour
         //Debug.Log(dataContainer.bodies[0].data.Count);
 
         // Call the asynchronous method to stream pose landmarks data
-         StreamLandmarksAsync(cancellationTokenSource.Token,
+        myGet = Task.Run(() => StreamLandmarksAsync(cancellationTokenSource.Token,
                              videoPath: null,
                              staticImageMode: false,
                              modelComplexity: 0,
                              minDetectionConfidence: 0.5,
-                             minTrackingConfidence: 0.5);
+                             minTrackingConfidence: 0.5));
 
-      /*string jsonString = "{\"body\": [{\"id\": 0, \"landmarkName\": \"Nose\", \"data\": [0.0683145523071289, -0.5272032618522644, -0.2814151346683502, 0.534261167049408, 0.5520623326301575, -0.8420344591140747]}, {\"id\": 1, \"landmarkName\": \"Left eye inner\", \"data\": [0.06900090724229813, -0.5620826482772827, -0.2750793397426605, 0.542637050151825, 0.48907387256622314, -0.7762095928192139]}]}";
+        /*string jsonString = "{\"body\": [{\"id\": 0, \"landmarkName\": \"Nose\", \"data\": [0.0683145523071289, -0.5272032618522644, -0.2814151346683502, 0.534261167049408, 0.5520623326301575, -0.8420344591140747]}, {\"id\": 1, \"landmarkName\": \"Left eye inner\", \"data\": [0.06900090724229813, -0.5620826482772827, -0.2750793397426605, 0.542637050151825, 0.48907387256622314, -0.7762095928192139]}]}";
 
-      BodyContainer body = JsonUtility.FromJson<BodyContainer>(jsonString);
-        foreach (var landmark in body.body)
-        {
-            UnityEngine.Debug.Log("Landmark ID: " + landmark.id);
-            UnityEngine.Debug.Log("Landmark Name: " + landmark.landmarkName);
-            UnityEngine.Debug.Log("Landmark Data: " + string.Join(", ", landmark.data));
-        }
-      */
+        BodyContainer body = JsonUtility.FromJson<BodyContainer>(jsonString);
+          foreach (var landmark in body.body)
+          {
+              UnityEngine.Debug.Log("Landmark ID: " + landmark.id);
+              UnityEngine.Debug.Log("Landmark Name: " + landmark.landmarkName);
+              UnityEngine.Debug.Log("Landmark Data: " + string.Join(", ", landmark.data));
+          }
+        */
     }
 
 // Update is called once per frame
