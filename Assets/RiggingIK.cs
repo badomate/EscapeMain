@@ -47,6 +47,7 @@ public class RiggingIK : MonoBehaviour
     public bool gesturePlaySmoothing = true;
     public float shoulderOffsetScale = 0.1f;
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
+    public float armLengthScale = 0.7f;
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -106,6 +107,11 @@ public class RiggingIK : MonoBehaviour
             landmarksCopy[landmark] = rotatedPosition;
         }
 
+        /*
+        //elongate arms
+        landmarksCopy[Pose.Landmark.RIGHT_WRIST] = landmarksCopy[Pose.Landmark.RIGHT_WRIST] + 
+            ((landmarksCopy[Pose.Landmark.RIGHT_WRIST] - landmarksCopy[Pose.Landmark.RIGHT_ELBOW])* armLengthScale);
+        */
 
 
             foreach (var kvp in landmarksCopy)
