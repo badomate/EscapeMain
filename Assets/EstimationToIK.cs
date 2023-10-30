@@ -333,7 +333,8 @@ public class EstimationToIK : MonoBehaviour
 
     private void getDataFromMediapipeStream()
     {
-        if (CameraStreamScript)
+        //functionality replaced by RiggingIK
+        /*if (CameraStreamScript)
         {
 
             if (CameraStream.vector3List.Count > 0)
@@ -341,7 +342,7 @@ public class EstimationToIK : MonoBehaviour
                 landmarks = new Vector3[CameraStream.vector3List.Count];
                 landmarks = CameraStream.vector3List.ToArray();
             }
-        }
+        }*/
 
     }
 

@@ -14,16 +14,35 @@ public class Pose
     /// </summary>
     public enum Landmark
     {
+        //base landmarks (endpoints)
         LEFT_WRIST,
         RIGHT_WRIST,
         LEFT_FOOT,
         RIGHT_FOOT,
+
+        //hint landmarks
         RIGHT_ELBOW,
         LEFT_ELBOW,
         RIGHT_KNEE,
         LEFT_KNEE,
         LEFT_SHOULDER,
-        RIGHT_SHOULDER
+        RIGHT_SHOULDER,
+
+        //hand landmarks
+        LEFT_WRIST_ROOT,
+        RIGHT_WRIST_ROOT,
+
+        RIGHT_INDEX,
+        RIGHT_THUMB,
+        RIGHT_RING,
+        RIGHT_PINKY,
+        RIGHT_MIDDLE,
+
+        LEFT_INDEX,
+        LEFT_THUMB,
+        LEFT_RING,
+        LEFT_PINKY,
+        LEFT_MIDDLE
 
     }
 

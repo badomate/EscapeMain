@@ -10,12 +10,47 @@ public class FeedbackManager : MonoBehaviour
     public int lastDetectedNumeralFeedback;
     public UnityEvent FeedbackEvent = new UnityEvent();
 
+    Gesture negativeGesture;
+    Gesture positiveGesture;
+
+    Animator animator;
+    RiggingIK riggingIKScript;
+
     CompareGesture compareGestureScript;
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<Animator>();
+        riggingIKScript = GetComponent<RiggingIK>();
         compareGestureScript = GetComponent<CompareGesture>();
 
+        //These events are about noticing what the player is doing in the game.
+        TwisterGame.successEvent.AddListener(handleSuccessEvent); //player succeeded
+        TwisterGame.successEvent.AddListener(handleIllegalMoveEvent); //player messed up the game (fell over or lifted a locked limb)
+        TwisterGame.mistakeEvent.AddListener(handleMistakeEvent); //player understood wrong. Perhaps this could also be triggered with a player performed gesture, like tilting their head asking for feedback
+    }
+
+    void handleSuccessEvent()
+    {
+        //play positive feedback animation
+        if (riggingIKScript != null && positiveGesture != null)
+        {
+            riggingIKScript.playGesture(negativeGesture);
+        }
+    }
+
+    void handleIllegalMoveEvent()
+    {
+        //play negative feedback animation
+        if (riggingIKScript != null && negativeGesture != null)
+        {
+            riggingIKScript.playGesture(negativeGesture);
+        }
+    }
+
+    void handleMistakeEvent()
+    {
+        //play negative feedback animation
     }
 
     // Update is called once per frame
@@ -47,6 +82,7 @@ public class FeedbackManager : MonoBehaviour
         //keyboard shortcuts for testing purposes
         if (Input.GetKey("n")) // we could add more shortcuts or perhaps add them in a cleaner manner
         {
+            handleIllegalMoveEvent();
             lastDetectedFeedback = feedbackType.NEGATIVE;
             FeedbackEvent.Invoke();
         }else if (Input.GetKey("p"))

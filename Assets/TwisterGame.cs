@@ -5,7 +5,6 @@ using UnityEngine.Events;
 
 public class TwisterGame : MonoBehaviour
 {
-    public EstimationToIK playerEstimationScript; //TODO: it's important to note that landmarks usually have their origin in relation to the player, which does not work for Twister. We will need to start getting their world-position instead.
     public RiggingIK riggingIKScript; 
 
     public enum TwisterColor { RED, BLUE, YELLOW, GREEN }; //color that limb needs to be put on (if its already there, it moust be moved). Theres a corresponding material array.
@@ -291,15 +290,11 @@ public class TwisterGame : MonoBehaviour
     {
         foreach (KeyValuePair<Pose.Landmark, GameObject> lockEntry in DictionaryToCheck)
         {
-            int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[lockEntry.Key];
-            if (landmarkToCheckIndex < playerEstimationScript.landmarks.Length)
+            Vector3 landmark = CameraStream.playerPose._landmarkArrangement[lockEntry.Key];
+            if (Vector3.Distance(landmark, lockEntry.Value.transform.position) > sphereSize)
             {
-                Vector3 landmark = playerEstimationScript.landmarks[landmarkToCheckIndex];
-                if (Vector3.Distance(landmark, lockEntry.Value.transform.position) > sphereSize)
-                {
-                    illegalMoveEvent.Invoke();
-                    //TODO: Illegal move detected! Listen to the event and send negative feedback from the A.I (or the game itself?)
-                }
+                illegalMoveEvent.Invoke();
+                //TODO: Illegal move detected! Listen to the event and send negative feedback from the A.I (or the game itself?)
             }
         }
     }
@@ -309,12 +304,11 @@ public class TwisterGame : MonoBehaviour
         Pose.Landmark[] forbiddenLandmarks= new Pose.Landmark[] { Pose.Landmark.RIGHT_KNEE };
         for (int i = 0; i < forbiddenLandmarks.Length; i++)
         {
-            int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[forbiddenLandmarks[i]];
-            if (playerEstimationScript.landmarks.Length > landmarkToCheckIndex)
+            if (CameraStream.playerPose._landmarkArrangement.ContainsKey(forbiddenLandmarks[i]))
             {
-                if (Mathf.Abs(topLeftCorner.y - playerEstimationScript.landmarks[landmarkToCheckIndex].y) < hittingFloorThreshold)
+                if (Mathf.Abs(topLeftCorner.y - CameraStream.playerPose._landmarkArrangement[forbiddenLandmarks[i]].y) < hittingFloorThreshold)
                 {
-                    illegalMoveEvent.Invoke();
+                    illegalMoveEvent.Invoke(); //could be a seperate "fall" event if we wanted a different feedback, but it is a similar issue
                 }
             }
         }
@@ -348,10 +342,9 @@ public class TwisterGame : MonoBehaviour
 
         if (lastSpinnedPlayer == 0) //get coordinates for player's limb
         {
-            int landmarkToCheckIndex = LandmarkIndicesDictionary.mediapipeIndices[landmarkToCheck];
-            if (landmarkToCheckIndex < playerEstimationScript.landmarks.Length)
+            if (CameraStream.playerPose._landmarkArrangement.ContainsKey(landmarkToCheck))
             {
-                limbPosition = playerEstimationScript.landmarks[landmarkToCheckIndex];
+                limbPosition = CameraStream.playerPose._landmarkArrangement[landmarkToCheck];
             }
         }
         else //get coordinates for A.I's limb
