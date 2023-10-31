@@ -17,7 +17,7 @@ public class RiggingIK : MonoBehaviour
     Pose currentPose;
     public Dictionary<Pose.Landmark, GameObject> landmarkToTarget = new Dictionary<Pose.Landmark, GameObject>();
 
-    public Dictionary<GameObject, Vector3> targetToInitialPosition = new Dictionary<GameObject, Vector3>();
+    public static Dictionary<GameObject, Vector3> targetToInitialPosition = new Dictionary<GameObject, Vector3>();
 
     Animator animator;
 
@@ -80,6 +80,7 @@ public class RiggingIK : MonoBehaviour
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
 
+        //MAKE FINGERS RELATIVE TO WRIST POSITION
         foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
         {
             if (leftFingers.Contains(landmark))
@@ -98,6 +99,7 @@ public class RiggingIK : MonoBehaviour
 
         }
 
+        //ROTATE LANDMARKS BY INITIAL GAMEOBJECT ROTATION
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
         {
             Vector3 originalPosition = Vector3.Scale(landmarksCopy[landmark], coordinateScale); //always scale first otherwise the positional relativity would break
@@ -112,13 +114,32 @@ public class RiggingIK : MonoBehaviour
             landmarksCopy[landmark] = rotatedPosition;
         }
 
+        //ADD CALIBRATED OFFSET IF MIRRORING AND USING CALIBRATION
+        if(mirroring && lockedInCalibration)
+        {
+            foreach (var landmark in landmarksCopy.Keys.ToList()) {
+                if (landmarkToTarget.ContainsKey(landmark))
+                {
+                    GameObject target = landmarkToTarget[landmark];
+                    if (targetToInitialPosition.ContainsKey(target))
+                    {
+                        landmarksCopy[landmark] = landmarksCopy[landmark] + targetToInitialPosition[target]; //TODO: there is likely a step missing here
+                    }
+
+                }
+
+                
+             }
+        }
+
+
         /*
-        //elongate arms
+        //ELONGATE ARMS
         landmarksCopy[Pose.Landmark.RIGHT_WRIST] = landmarksCopy[Pose.Landmark.RIGHT_WRIST] + 
             ((landmarksCopy[Pose.Landmark.RIGHT_WRIST] - landmarksCopy[Pose.Landmark.RIGHT_ELBOW])* armLengthScale);
         */
 
-
+        //SET TARGET POSITIONS
             foreach (var kvp in landmarksCopy)
         {
             Pose.Landmark landmark = kvp.Key;
@@ -220,13 +241,30 @@ public class RiggingIK : MonoBehaviour
 
     }
 
+    bool lockedInCalibration = false;
+    public bool useCalibration = false;
+
     // Update is called once per frame
     void Update()
     {
         if (mirroring && CameraStream.playerPose._landmarkArrangement.Count > 0)
         {
             SetIKPositions(CameraStream.playerPose, true);
+            if (!lockedInCalibration && useCalibration)
+            {
+                lockedInCalibration = true;
+                StartCoroutine(calibrationTimer());
+
+
+            }
         }
+    }
+
+    IEnumerator calibrationTimer()
+    {
+        yield return new WaitForSeconds(1f);
+        saveCurrentPositions();
+
     }
 
     void LateUpdate()
@@ -261,23 +299,28 @@ public class RiggingIK : MonoBehaviour
     }
 
     //public Dictionary<Pose.Landmark, Vector3> targetToInitialPosition = new Dictionary<GameObject, Vector3>();
-    public void outputCurrentPositions()
+    public void saveCurrentPositions()
     {
-        targetToInitialPosition.Add(LeftHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
-        targetToInitialPosition.Add(LeftElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position);
-
-        targetToInitialPosition.Add(RightHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
-        targetToInitialPosition.Add(RightElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position);
-        //List<GameObject> targets = landmarkToTarget.Values.ToList();
-        /*foreach(GameObject target in targets)
+        if (targetToInitialPosition.Count == 0)
         {
-            targetToInitialPosition.Add(target, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
-        }*/
-    }
 
-    void Awake()
-    {
-        //RightHandTarget.transform.position = new Vector3(10, 10, 10);
+            targetToInitialPosition.Add(LeftHandTarget, LeftHandTarget.transform.position);
+            targetToInitialPosition.Add(LeftElbowHintTarget, LeftElbowHintTarget.transform.position);
+
+            targetToInitialPosition.Add(RightHandTarget, RightHandTarget.transform.position);
+            targetToInitialPosition.Add(RightElbowHintTarget, RightElbowHintTarget.transform.position);
+            /*targetToInitialPosition.Add(LeftHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
+            targetToInitialPosition.Add(LeftElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position);
+
+            targetToInitialPosition.Add(RightHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
+            targetToInitialPosition.Add(RightElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position);*/
+            //List<GameObject> targets = landmarkToTarget.Values.ToList();
+            /*foreach(GameObject target in targets)
+            {
+                targetToInitialPosition.Add(target, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
+            }*/
+            Debug.Log("Saved calibration!");
+        }
     }
 
 
