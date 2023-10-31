@@ -17,7 +17,8 @@ public class RiggingIK : MonoBehaviour
     Pose currentPose;
     public Dictionary<Pose.Landmark, GameObject> landmarkToTarget = new Dictionary<Pose.Landmark, GameObject>();
 
-    public static Dictionary<GameObject, Vector3> targetToInitialPosition = new Dictionary<GameObject, Vector3>();
+    public static Dictionary<GameObject, Vector3> targetToPlayerBasePosition = new Dictionary<GameObject, Vector3>();
+    public static Dictionary<GameObject, Vector3> targetToModelBasePosition = new Dictionary<GameObject, Vector3>();
 
     Animator animator;
 
@@ -52,7 +53,7 @@ public class RiggingIK : MonoBehaviour
     public bool gesturePlaySmoothing = true;
     public float shoulderOffsetScale = 0.1f;
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
-    public float armLengthScale = 0.7f;
+    public float armLengthScale = 1.0f;
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -121,15 +122,17 @@ public class RiggingIK : MonoBehaviour
                 if (landmarkToTarget.ContainsKey(landmark))
                 {
                     GameObject target = landmarkToTarget[landmark];
-                    if (targetToInitialPosition.ContainsKey(target))
+                    if (targetToPlayerBasePosition.ContainsKey(target))
                     {
-                        landmarksCopy[landmark] = landmarksCopy[landmark] + targetToInitialPosition[target]; //TODO: there is likely a step missing here
-                    }
+                        landmarksCopy[landmark] = Vector3.Scale(landmarksCopy[landmark], Vector3.Scale(targetToPlayerBasePosition[target], Vector3.Scale(targetToPlayerBasePosition[target], 
+                            new Vector3(1.0f / targetToModelBasePosition[target].x, 1.0f / targetToModelBasePosition[target].y, 1.0f / targetToModelBasePosition[target].z)))); //TODO: there is likely a step missing here
+                    } // 
+
 
                 }
 
-                
-             }
+
+            }
         }
 
 
@@ -233,6 +236,11 @@ public class RiggingIK : MonoBehaviour
         //for testing the "play gesture" function
         //Gesture exampleGesture = new GestureHandRises(LevelManager.dictionary.GetKnownPoses());
         //StartCoroutine(playGesture(exampleGesture));
+        if(mirroring && useCalibration)
+        {
+            saveCurrentPositions(targetToModelBasePosition);
+        }
+
     }
 
     // Have the A.I correctly take a Twister turn. In normal gameplay, this would be cheating.
@@ -263,7 +271,8 @@ public class RiggingIK : MonoBehaviour
     IEnumerator calibrationTimer()
     {
         yield return new WaitForSeconds(1f);
-        saveCurrentPositions();
+        saveCurrentPositions(targetToPlayerBasePosition);
+        Debug.Log("Saved calibration!");
 
     }
 
@@ -298,17 +307,17 @@ public class RiggingIK : MonoBehaviour
         return intermediatePose;
     }
 
+    Vector3 initialLeftPosition;
     //public Dictionary<Pose.Landmark, Vector3> targetToInitialPosition = new Dictionary<GameObject, Vector3>();
-    public void saveCurrentPositions()
+    public void saveCurrentPositions(Dictionary<GameObject, Vector3> dictionaryToFill)
     {
-        if (targetToInitialPosition.Count == 0)
+        if (dictionaryToFill.Count == 0)
         {
+            dictionaryToFill.Add(LeftHandTarget, LeftHandTarget.transform.position);
+            dictionaryToFill.Add(LeftElbowHintTarget, LeftElbowHintTarget.transform.position);
 
-            targetToInitialPosition.Add(LeftHandTarget, LeftHandTarget.transform.position);
-            targetToInitialPosition.Add(LeftElbowHintTarget, LeftElbowHintTarget.transform.position);
-
-            targetToInitialPosition.Add(RightHandTarget, RightHandTarget.transform.position);
-            targetToInitialPosition.Add(RightElbowHintTarget, RightElbowHintTarget.transform.position);
+            dictionaryToFill.Add(RightHandTarget, RightHandTarget.transform.position);
+            dictionaryToFill.Add(RightElbowHintTarget, RightElbowHintTarget.transform.position);
             /*targetToInitialPosition.Add(LeftHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
             targetToInitialPosition.Add(LeftElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position);
 
@@ -319,7 +328,6 @@ public class RiggingIK : MonoBehaviour
             {
                 targetToInitialPosition.Add(target, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
             }*/
-            Debug.Log("Saved calibration!");
         }
     }
 
