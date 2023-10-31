@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using GestureDictionary.ContentGenerators.StarterGestures;
+using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 ///This class should serve some of the same functions as EstimationToIk 
@@ -15,6 +16,10 @@ public class RiggingIK : MonoBehaviour
 {
     Pose currentPose;
     public Dictionary<Pose.Landmark, GameObject> landmarkToTarget = new Dictionary<Pose.Landmark, GameObject>();
+
+    public Dictionary<GameObject, Vector3> targetToInitialPosition = new Dictionary<GameObject, Vector3>();
+
+    Animator animator;
 
     //main landmarks
     public GameObject RightHandTarget;
@@ -179,6 +184,7 @@ public class RiggingIK : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<Animator>();
         //landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget); //TODO: Add proper left hand functionality to the rig. Currently it keeps trying to override the shoulders completely instead of adjusting them
         landmarkToTarget.Add(Pose.Landmark.RIGHT_WRIST, RightHandTarget);
         landmarkToTarget.Add(Pose.Landmark.LEFT_FOOT, LeftFootTarget);
@@ -254,7 +260,27 @@ public class RiggingIK : MonoBehaviour
         return intermediatePose;
     }
 
-    
+    //public Dictionary<Pose.Landmark, Vector3> targetToInitialPosition = new Dictionary<GameObject, Vector3>();
+    public void outputCurrentPositions()
+    {
+        targetToInitialPosition.Add(LeftHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
+        targetToInitialPosition.Add(LeftElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position);
+
+        targetToInitialPosition.Add(RightHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
+        targetToInitialPosition.Add(RightElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position);
+        //List<GameObject> targets = landmarkToTarget.Values.ToList();
+        /*foreach(GameObject target in targets)
+        {
+            targetToInitialPosition.Add(target, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
+        }*/
+    }
+
+    void Awake()
+    {
+        //RightHandTarget.transform.position = new Vector3(10, 10, 10);
+    }
+
+
     public IEnumerator playGesture(Gesture gestureToPlay)
     {
         for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
@@ -284,7 +310,6 @@ public class RiggingIK : MonoBehaviour
 
     private void adjustHands()
     {
-        Animator animator = GetComponent<Animator>();
         Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
         Transform leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
         rightHand.transform.rotation = rightHand.transform.parent.rotation;
