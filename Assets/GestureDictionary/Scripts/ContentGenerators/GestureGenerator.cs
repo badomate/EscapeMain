@@ -12,7 +12,11 @@ namespace GestureDictionary.ContentGenerators {
         HAND_RISES,
         HAND_FALLS,
         POSITIVE,
-        NEGATIVE
+        NEGATIVE,
+        COME_CLOSER,
+        GO_FURTHER,
+        GO_LEFT,
+        GO_RIGHT
     }
 
     public static class GestureGenerator
@@ -74,7 +78,12 @@ namespace GestureDictionary.ContentGenerators {
                 {
                     AddStarterGesture(new GestureNegative(poseRegistry), dictionaryManager, true);
                     AddStarterGesture(new GesturePositive(poseRegistry), dictionaryManager, true);
-                }
+
+                AddStarterGesture(new GestureComeCloser(poseRegistry), dictionaryManager, true);
+                AddStarterGesture(new GestureGoFurther(poseRegistry), dictionaryManager, true);
+                AddStarterGesture(new GestureGoLeft(poseRegistry), dictionaryManager, true);
+                AddStarterGesture(new GestureGoRight(poseRegistry), dictionaryManager, true);
+            }
                 else {
                     AddStarterGesture(new GestureTestA(poseRegistry), dictionaryManager);
                     AddStarterGesture(new GestureTestB(poseRegistry), dictionaryManager);
