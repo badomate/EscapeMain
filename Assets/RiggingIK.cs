@@ -32,6 +32,9 @@ public class RiggingIK : MonoBehaviour
     public GameObject RightElbowHintTarget;
     public GameObject LeftElbowHintTarget;
 
+    public GameObject RightShoulderTarget;
+    public GameObject LeftShoulderTarget;
+
     //hand landmarks
     public GameObject RightIndexTarget;
     public GameObject RightMiddleTarget;
@@ -55,6 +58,7 @@ public class RiggingIK : MonoBehaviour
     public bool gesturePlaySmoothing = true;
     public float shoulderOffsetScale = 0.1f;
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
+    public float armLengthScale = 1.0f;
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -82,20 +86,34 @@ public class RiggingIK : MonoBehaviour
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
 
+        //ELONGATE ARMS
+        if (mirroring && lockedInCalibration)
+        {
+            Vector3 realPose = targetToPlayerBasePosition[RightHandTarget] - targetToPlayerBasePosition[RightShoulderTarget]; //issue is, this is from the hip not the shoulder
+            Vector3 modelPose = targetToModelBasePosition[RightHandTarget] - targetToModelBasePosition[RightShoulderTarget];
+            float realMagnitude = realPose.magnitude;
+            float modelMagnitude = modelPose.magnitude;
+
+            armLengthScale = realMagnitude / modelMagnitude -1;
+        }
+            landmarksCopy[Pose.Landmark.RIGHT_WRIST] = landmarksCopy[Pose.Landmark.RIGHT_WRIST] +
+            ((landmarksCopy[Pose.Landmark.RIGHT_WRIST] - landmarksCopy[Pose.Landmark.RIGHT_ELBOW]) * armLengthScale);
+        landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
+            ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * armLengthScale);
+
+
         //MAKE FINGERS RELATIVE TO WRIST POSITION
         foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
         {
             if (leftFingers.Contains(landmark))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.LEFT_WRIST_ROOT];
-                //landmarksCopy[landmark] *= 0.75f;
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.LEFT_WRIST];
             }
 
             if (rightFingers.Contains(landmark))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.RIGHT_WRIST_ROOT];
-                //landmarksCopy[landmark] *= 0.75f;
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.RIGHT_WRIST];
             }
 
@@ -134,14 +152,10 @@ public class RiggingIK : MonoBehaviour
             }
         }*/
 
-        /*
-        //ELONGATE ARMS
-        landmarksCopy[Pose.Landmark.RIGHT_WRIST] = landmarksCopy[Pose.Landmark.RIGHT_WRIST] + 
-            ((landmarksCopy[Pose.Landmark.RIGHT_WRIST] - landmarksCopy[Pose.Landmark.RIGHT_ELBOW])* armLengthScale);
-        */
+
 
         //SET TARGET POSITIONS
-            foreach (var kvp in landmarksCopy)
+        foreach (var kvp in landmarksCopy)
         {
             Pose.Landmark landmark = kvp.Key;
             Vector3 position = kvp.Value;
@@ -218,6 +232,10 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget); 
             landmarkToTarget.Add(Pose.Landmark.RIGHT_ELBOW, RightElbowHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_ELBOW, LeftElbowHintTarget);
+
+
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_SHOULDER, RightShoulderTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_SHOULDER, LeftShoulderTarget);
 
 
             landmarkToTarget.Add(Pose.Landmark.RIGHT_INDEX, RightIndexTarget);
@@ -318,6 +336,9 @@ public class RiggingIK : MonoBehaviour
 
             dictionaryToFill.Add(RightHandTarget, RightHandTarget.transform.position);
             dictionaryToFill.Add(RightElbowHintTarget, RightElbowHintTarget.transform.position);
+
+            dictionaryToFill.Add(RightShoulderTarget, RightShoulderTarget.transform.position);
+            dictionaryToFill.Add(LeftShoulderTarget, LeftShoulderTarget.transform.position);
             /*targetToInitialPosition.Add(LeftHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
             targetToInitialPosition.Add(LeftElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position);
 
