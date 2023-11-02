@@ -46,6 +46,8 @@ public class RiggingIK : MonoBehaviour
     public GameObject LeftThumbTarget;
 
     public GameObject ShoulderTarget;
+    public GameObject LeftWristTarget;
+    public GameObject RightWristTarget;
 
     public ChainIKConstraint pointingConstraint;
 
@@ -53,7 +55,6 @@ public class RiggingIK : MonoBehaviour
     public bool gesturePlaySmoothing = true;
     public float shoulderOffsetScale = 0.1f;
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
-    public float armLengthScale = 1.0f;
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -115,6 +116,7 @@ public class RiggingIK : MonoBehaviour
             landmarksCopy[landmark] = rotatedPosition;
         }
 
+        /*
         //ADD CALIBRATED OFFSET IF MIRRORING AND USING CALIBRATION
         if(mirroring && lockedInCalibration)
         {
@@ -124,17 +126,13 @@ public class RiggingIK : MonoBehaviour
                     GameObject target = landmarkToTarget[landmark];
                     if (targetToPlayerBasePosition.ContainsKey(target))
                     {
-                        landmarksCopy[landmark] = Vector3.Scale(landmarksCopy[landmark], Vector3.Scale(targetToPlayerBasePosition[target], Vector3.Scale(targetToPlayerBasePosition[target], 
+                        landmarksCopy[landmark] = Vector3.Scale(landmarksCopy[landmark], 
+                            Vector3.Scale(targetToPlayerBasePosition[target], Vector3.Scale(targetToPlayerBasePosition[target], 
                             new Vector3(1.0f / targetToModelBasePosition[target].x, 1.0f / targetToModelBasePosition[target].y, 1.0f / targetToModelBasePosition[target].z)))); //TODO: there is likely a step missing here
-                    } // 
-
-
+                    }
                 }
-
-
             }
-        }
-
+        }*/
 
         /*
         //ELONGATE ARMS
@@ -164,16 +162,18 @@ public class RiggingIK : MonoBehaviour
                 }
             }
         }
-        shoulderSetMirror(landmarksCopy);
+        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget);
+        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, LeftWristTarget);
+        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, RightWristTarget);
     }
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated
-    public void shoulderSetMirror(Dictionary<Pose.Landmark, Vector3> landmarks)
+    public void setTargetBetweenlandmarks(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, GameObject centerTarget)
     {
-        if (landmarks.ContainsKey(Pose.Landmark.RIGHT_SHOULDER) && landmarks.ContainsKey(Pose.Landmark.LEFT_SHOULDER) && ShoulderTarget != null)
+        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
         {
-            Vector3 leftShoulder = Vector3.Scale(landmarks[Pose.Landmark.LEFT_SHOULDER], coordinateScale);
-            Vector3 rightShoulder = Vector3.Scale(landmarks[Pose.Landmark.RIGHT_SHOULDER], coordinateScale);
+            Vector3 leftShoulder = Vector3.Scale(landmarks[leftLandmark], coordinateScale);
+            Vector3 rightShoulder = Vector3.Scale(landmarks[rightLandmark], coordinateScale);
             //Calculate the center position
             Vector3 centerPosition = (leftShoulder + rightShoulder) / 2;
             centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with Mixamo rig
@@ -183,8 +183,8 @@ public class RiggingIK : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(directionVector);
 
             //Move the target
-            ShoulderTarget.transform.position = centerPosition + gameObject.transform.position; //change if not relative
-            ShoulderTarget.transform.rotation = gameObject.transform.rotation * rotation;
+            centerTarget.transform.position = centerPosition + gameObject.transform.position; //change if not relative
+            centerTarget.transform.rotation = gameObject.transform.rotation * rotation;
         }
     }
 

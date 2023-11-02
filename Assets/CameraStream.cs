@@ -111,6 +111,12 @@ public class CameraStream : MonoBehaviour
                 case "Wrist":
                     identifiedLandmark = Pose.Landmark.LEFT_WRIST_ROOT;
                     break;
+                case "Index-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_WRIST_PIVOTRIGHT;
+                    break;
+                case "Pinky-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_WRIST_PIVOTLEFT;
+                    break;
                 default:
                     included = false;
                     break;
@@ -144,6 +150,12 @@ public class CameraStream : MonoBehaviour
                     break;
                 case "Wrist":
                     identifiedLandmark = Pose.Landmark.RIGHT_WRIST_ROOT;
+                    break;
+                case "Index-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_WRIST_PIVOTLEFT;
+                    break;
+                case "Pinky-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT;
                     break;
                 default:
                     included = false;
@@ -255,7 +267,7 @@ public class CameraStream : MonoBehaviour
         myGet = Task.Run(() => StreamLandmarksAsync(cancellationTokenSource.Token,
                              videoPath: null,
                              staticImageMode: false,
-                             modelComplexity: 0,
+                             modelComplexity: 1,
                              minDetectionConfidence: 0.5,
                              minTrackingConfidence: 0.5,
                              displayFrames: 1,

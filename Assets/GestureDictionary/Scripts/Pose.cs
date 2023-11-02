@@ -28,6 +28,11 @@ public class Pose
         LEFT_SHOULDER,
         RIGHT_SHOULDER,
 
+        LEFT_WRIST_PIVOTRIGHT,
+        LEFT_WRIST_PIVOTLEFT,
+        RIGHT_WRIST_PIVOTRIGHT,
+        RIGHT_WRIST_PIVOTLEFT,
+
         //hand landmarks
         LEFT_WRIST_ROOT,
         RIGHT_WRIST_ROOT,
