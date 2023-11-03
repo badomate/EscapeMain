@@ -19,7 +19,9 @@ namespace GestureDictionary.ContentGenerators {
         GO_LEFT1,
         GO_LEFT2,
         GO_RIGHT1,
-        GO_RIGHT2
+        GO_RIGHT2,
+        DONT_UNDERSTAND1,
+        DONT_UNDERSTAND2
     }
     
     public static class PoseGenerator
@@ -62,6 +64,8 @@ namespace GestureDictionary.ContentGenerators {
             AddStarterPose(new PoseGoLeft2(), poseRegistry);
             AddStarterPose(new PoseGoRight1(), poseRegistry);
             AddStarterPose(new PoseGoRight2(), poseRegistry);
+            AddStarterPose(new PoseDontUnderstand1(), poseRegistry);
+            AddStarterPose(new PoseDontUnderstand2(), poseRegistry);
 
             CustomDebug.LogGen("Added TEST starter poses");
         }

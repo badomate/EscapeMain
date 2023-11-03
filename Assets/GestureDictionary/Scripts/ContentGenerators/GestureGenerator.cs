@@ -16,7 +16,8 @@ namespace GestureDictionary.ContentGenerators {
         COME_CLOSER,
         GO_FURTHER,
         GO_LEFT,
-        GO_RIGHT
+        GO_RIGHT,
+        DONT_UNDERSTAND
     }
 
     public static class GestureGenerator
@@ -83,6 +84,7 @@ namespace GestureDictionary.ContentGenerators {
                 AddStarterGesture(new GestureGoFurther(poseRegistry), dictionaryManager, true);
                 AddStarterGesture(new GestureGoLeft(poseRegistry), dictionaryManager, true);
                 AddStarterGesture(new GestureGoRight(poseRegistry), dictionaryManager, true);
+                AddStarterGesture(new GestureDontUnderstand(poseRegistry), dictionaryManager, true);
             }
                 else {
                     AddStarterGesture(new GestureTestA(poseRegistry), dictionaryManager);
