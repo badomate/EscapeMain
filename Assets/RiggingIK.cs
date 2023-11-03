@@ -52,6 +52,8 @@ public class RiggingIK : MonoBehaviour
     public GameObject LeftWristTarget;
     public GameObject RightWristTarget;
 
+    public GameObject HeadTarget;
+
     public ChainIKConstraint pointingConstraint;
 
     public bool mirroring = false;
@@ -95,11 +97,13 @@ public class RiggingIK : MonoBehaviour
             float modelMagnitude = modelPose.magnitude;
 
             armLengthScale = realMagnitude / modelMagnitude -1;
-        }
+
+
             landmarksCopy[Pose.Landmark.RIGHT_WRIST] = landmarksCopy[Pose.Landmark.RIGHT_WRIST] +
             ((landmarksCopy[Pose.Landmark.RIGHT_WRIST] - landmarksCopy[Pose.Landmark.RIGHT_ELBOW]) * armLengthScale);
-        landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
+            landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
             ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * armLengthScale);
+        }
 
 
         //MAKE FINGERS RELATIVE TO WRIST POSITION
@@ -179,6 +183,7 @@ public class RiggingIK : MonoBehaviour
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, LeftWristTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, RightWristTarget);
+        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, HeadTarget);
     }
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated

@@ -33,6 +33,9 @@ public class Pose
         RIGHT_WRIST_PIVOTRIGHT,
         RIGHT_WRIST_PIVOTLEFT,
 
+        RIGHT_EAR,
+        LEFT_EAR,
+
         //hand landmarks
         LEFT_WRIST_ROOT,
         RIGHT_WRIST_ROOT,
