@@ -60,7 +60,10 @@ public class RiggingIK : MonoBehaviour
     public bool gesturePlaySmoothing = true;
     public float shoulderOffsetScale = 0.1f;
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
-    public float armLengthScale = 1.0f;
+    public float lowerArmLengthScale = 1.0f;
+    public float upperArmLengthScale = 1.0f;
+    public float calibrationWait = 1.0f;
+
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -89,20 +92,13 @@ public class RiggingIK : MonoBehaviour
 
 
         //ELONGATE ARMS
-        if (mirroring && lockedInCalibration)
+        if (mirroring && lockedInCalibration && targetToPlayerBasePosition.ContainsKey(RightHandTarget))
         {
-            Vector3 realPose = targetToPlayerBasePosition[RightHandTarget] - targetToPlayerBasePosition[RightShoulderTarget]; //issue is, this is from the hip not the shoulder
-            Vector3 modelPose = targetToModelBasePosition[RightHandTarget] - targetToModelBasePosition[RightShoulderTarget];
-            float realMagnitude = realPose.magnitude;
-            float modelMagnitude = modelPose.magnitude;
+            ElongateLimb(lowerArmLengthScale, landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW );
+            ElongateLimb(lowerArmLengthScale, landmarksCopy, LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW);
 
-            armLengthScale = realMagnitude / modelMagnitude -1;
-
-
-            landmarksCopy[Pose.Landmark.RIGHT_WRIST] = landmarksCopy[Pose.Landmark.RIGHT_WRIST] +
-            ((landmarksCopy[Pose.Landmark.RIGHT_WRIST] - landmarksCopy[Pose.Landmark.RIGHT_ELBOW]) * armLengthScale);
-            landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
-            ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * armLengthScale);
+            ElongateLimb(upperArmLengthScale, landmarksCopy, LeftShoulderTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER);
+            ElongateLimb(upperArmLengthScale, landmarksCopy, RightShoulderTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
         }
 
 
@@ -184,6 +180,23 @@ public class RiggingIK : MonoBehaviour
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, LeftWristTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, RightWristTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, HeadTarget);
+
+        void ElongateLimb(float scaleVar, Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
+        {
+            Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
+            Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
+            float realMagnitude = realPose.magnitude;
+            float modelMagnitude = modelPose.magnitude;
+
+            scaleVar = modelMagnitude / realMagnitude - 1;
+
+
+            landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] +
+            ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
+
+            landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
+            ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * scaleVar);
+        }
     }
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated
@@ -191,14 +204,14 @@ public class RiggingIK : MonoBehaviour
     {
         if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
         {
-            Vector3 leftShoulder = Vector3.Scale(landmarks[leftLandmark], coordinateScale);
-            Vector3 rightShoulder = Vector3.Scale(landmarks[rightLandmark], coordinateScale);
+            Vector3 leftPivot = Vector3.Scale(landmarks[leftLandmark], coordinateScale);
+            Vector3 rightPivot = Vector3.Scale(landmarks[rightLandmark], coordinateScale);
             //Calculate the center position
-            Vector3 centerPosition = (leftShoulder + rightShoulder) / 2;
+            Vector3 centerPosition = (leftPivot + rightPivot) / 2;
             centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with Mixamo rig
 
             //Calculate what the rotation between the two shoulders might be
-            Vector3 directionVector = rightShoulder - leftShoulder;
+            Vector3 directionVector = rightPivot - leftPivot;
             Quaternion rotation = Quaternion.LookRotation(directionVector);
 
             //Move the target
@@ -290,10 +303,9 @@ public class RiggingIK : MonoBehaviour
             }
         }
     }
-
     IEnumerator calibrationTimer()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(calibrationWait);
         saveCurrentPositions(targetToPlayerBasePosition);
         Debug.Log("Saved calibration!");
 
