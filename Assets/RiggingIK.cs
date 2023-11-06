@@ -53,7 +53,10 @@ public class RiggingIK : MonoBehaviour
     public GameObject RightWristTarget;
 
     public GameObject HeadTarget;
-
+    public GameObject HipRight;
+    public GameObject HipLeft;
+    public GameObject KneeLeft;
+    public GameObject KneeRight;
     public ChainIKConstraint pointingConstraint;
 
     public bool mirroring = false;
@@ -94,7 +97,7 @@ public class RiggingIK : MonoBehaviour
         //ELONGATE ARMS
         if (mirroring && lockedInCalibration && targetToPlayerBasePosition.ContainsKey(RightHandTarget))
         {
-            ElongateLimb(lowerArmLengthScale, landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW );
+            ElongateLimb(lowerArmLengthScale, landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW);
             ElongateLimb(lowerArmLengthScale, landmarksCopy, LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW);
 
             ElongateLimb(upperArmLengthScale, landmarksCopy, LeftShoulderTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER);
@@ -124,7 +127,7 @@ public class RiggingIK : MonoBehaviour
         {
             Vector3 originalPosition = Vector3.Scale(landmarksCopy[landmark], coordinateScale); //always scale first otherwise the positional relativity would break
 
-            Vector3 rotatedPosition; 
+            Vector3 rotatedPosition;
             rotatedPosition = originalPosition;
             if (relative)
             {
@@ -151,8 +154,6 @@ public class RiggingIK : MonoBehaviour
                 }
             }
         }*/
-
-
 
         //SET TARGET POSITIONS
         foreach (var kvp in landmarksCopy)
@@ -181,6 +182,29 @@ public class RiggingIK : MonoBehaviour
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, RightWristTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, HeadTarget);
 
+        float distFromFloor = 0;
+        if (landmarkToTarget.ContainsKey(Pose.Landmark.LEFT_FOOT) && landmarkToTarget.ContainsKey(Pose.Landmark.RIGHT_FOOT))
+        {
+            if (landmarkToTarget[Pose.Landmark.LEFT_FOOT].transform.position.y != 0 || landmarkToTarget[Pose.Landmark.RIGHT_FOOT].transform.position.y != 0)
+                distFromFloor = -Math.Min(landmarkToTarget[Pose.Landmark.LEFT_FOOT].transform.position.y, landmarkToTarget[Pose.Landmark.RIGHT_FOOT].transform.position.y);
+
+        }
+
+        if (distFromFloor != 0)
+        {
+            foreach (var target in landmarkToTarget)
+            {
+                if (target.Value != null)
+                {
+                    float x = target.Value.transform.position.x;
+                    float y = target.Value.transform.position.y;
+                    float z = target.Value.transform.position.z;
+                    target.Value.transform.position = new Vector3(x, y + 1 - 0.938785f + distFromFloor, z);
+                }
+            }
+        }
+
+
         void ElongateLimb(float scaleVar, Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
         {
             Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
@@ -197,6 +221,8 @@ public class RiggingIK : MonoBehaviour
             landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
             ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * scaleVar);
         }
+
+
     }
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated
@@ -247,7 +273,9 @@ public class RiggingIK : MonoBehaviour
         landmarkToTarget.Add(Pose.Landmark.RIGHT_FOOT, RightFootTarget);
         if (mirroring) //some landmarks are only used by the mirror character for now. Later the A.I might need more to copy gestures.
         {
-            landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget); 
+            landmarkToTarget.Add(Pose.Landmark.LEFT_HIP, HipLeft);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_HIP, HipRight);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_ELBOW, RightElbowHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_ELBOW, LeftElbowHintTarget);
 
@@ -267,12 +295,14 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.LEFT_RING, LeftRingTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY, LeftPinkyTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE, LeftMiddleTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_KNEE, KneeLeft);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_KNEE, KneeRight);
         }
 
         //for testing the "play gesture" function
         //Gesture exampleGesture = new GestureHandRises(LevelManager.dictionary.GetKnownPoses());
         //StartCoroutine(playGesture(exampleGesture));
-        if(mirroring && useCalibration)
+        if (mirroring && useCalibration)
         {
             saveCurrentPositions(targetToModelBasePosition);
         }
