@@ -185,6 +185,7 @@ public class RiggingIK : MonoBehaviour
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, HeadTarget);
 
 
+       
         float distFromFloor = 0;
         if (landmarkToTarget.ContainsKey(Pose.Landmark.LEFT_FOOT) && landmarkToTarget.ContainsKey(Pose.Landmark.RIGHT_FOOT))
         {

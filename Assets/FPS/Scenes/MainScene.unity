@@ -525,7 +525,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28564
+  m_Name: pb_Mesh28548
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3171,7 +3171,7 @@ MonoBehaviour:
   KneeLeft: {fileID: 1222844297}
   KneeRight: {fileID: 116661447}
   pointingConstraint: {fileID: 223776741}
-  mirroring: 1
+  mirroring: 0
   gesturePlaySmoothing: 1
   shoulderOffsetScale: 0.1
   coordinateScale: {x: 1, y: 1, z: 1}
@@ -6618,7 +6618,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28658
+  m_Name: pb_Mesh28652
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -13860,6 +13860,12 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1227033074}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1230351750 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2081878954449721519, guid: cf7e257d2b255a84499370f200689835,
+    type: 3}
+  m_PrefabInstance: {fileID: 775988646}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1232858081
 GameObject:
   m_ObjectHideFlags: 0
@@ -17239,7 +17245,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.07
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b0d61dc70153b3647926c65ee14291df,
         type: 3}
@@ -17561,8 +17567,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RightHandTarget: {fileID: 1214607271}
   LeftHandTarget: {fileID: 756889280}
-  RightFootTarget: {fileID: 0}
-  LeftFootTarget: {fileID: 0}
+  RightFootTarget: {fileID: 1230351750}
+  LeftFootTarget: {fileID: 1717853547}
   RightElbowHintTarget: {fileID: 111958109}
   LeftElbowHintTarget: {fileID: 2001831954}
   RightShoulderTarget: {fileID: 628473494}
@@ -18947,6 +18953,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8447082967072642302, guid: b0d61dc70153b3647926c65ee14291df,
     type: 3}
   m_PrefabInstance: {fileID: 319678116}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1717853547 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2081878954449721519, guid: cf7e257d2b255a84499370f200689835,
+    type: 3}
+  m_PrefabInstance: {fileID: 255024930}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1732092579 stripped
 Transform:
@@ -23221,7 +23233,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2729281214152228921}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac00fde5dcd08d7409dc898ab7108905, type: 3}
   m_Name: 
