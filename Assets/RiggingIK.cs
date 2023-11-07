@@ -55,12 +55,14 @@ public class RiggingIK : MonoBehaviour
     public GameObject HeadTarget;
     public GameObject HipRight;
     public GameObject HipLeft;
+    public GameObject HipTarget;
     public GameObject KneeLeft;
     public GameObject KneeRight;
     public ChainIKConstraint pointingConstraint;
 
     public bool mirroring = false;
     public bool gesturePlaySmoothing = true;
+    public bool crouch = true;
     public float shoulderOffsetScale = 0.1f;
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
     public float lowerArmLengthScale = 1.0f;
@@ -179,31 +181,34 @@ public class RiggingIK : MonoBehaviour
                 }
             }
         }
-        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget);
+        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, LeftWristTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, RightWristTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, HeadTarget);
+        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
 
 
-       
-        float distFromFloor = 0;
-        if (landmarkToTarget.ContainsKey(Pose.Landmark.LEFT_FOOT) && landmarkToTarget.ContainsKey(Pose.Landmark.RIGHT_FOOT) && LeftFootTarget && RightFootTarget)
+        if (crouch)
         {
-            if (landmarkToTarget[Pose.Landmark.LEFT_FOOT].transform.position.y != 0 || landmarkToTarget[Pose.Landmark.RIGHT_FOOT].transform.position.y != 0)
-                distFromFloor = -Math.Min(landmarkToTarget[Pose.Landmark.LEFT_FOOT].transform.position.y, landmarkToTarget[Pose.Landmark.RIGHT_FOOT].transform.position.y);
-
-        }
-
-        if (distFromFloor != 0)
-        {
-            foreach (var target in landmarkToTarget)
+            float distFromFloor = 0;
+            if (landmarkToTarget.ContainsKey(Pose.Landmark.LEFT_FOOT) && landmarkToTarget.ContainsKey(Pose.Landmark.RIGHT_FOOT) && LeftFootTarget && RightFootTarget)
             {
-                if (target.Value != null)
+                if (landmarkToTarget[Pose.Landmark.LEFT_FOOT].transform.position.y != 0 || landmarkToTarget[Pose.Landmark.RIGHT_FOOT].transform.position.y != 0)
+                    distFromFloor = -Math.Min(landmarkToTarget[Pose.Landmark.LEFT_FOOT].transform.position.y, landmarkToTarget[Pose.Landmark.RIGHT_FOOT].transform.position.y);
+
+            }
+
+            if (distFromFloor != 0)
+            {
+                foreach (var target in landmarkToTarget)
                 {
-                    float x = target.Value.transform.position.x;
-                    float y = target.Value.transform.position.y;
-                    float z = target.Value.transform.position.z;
-                    target.Value.transform.position = new Vector3(x, y + 1 - 0.938785f + distFromFloor, z);
+                    if (target.Value != null)
+                    {
+                        float x = target.Value.transform.position.x;
+                        float y = target.Value.transform.position.y;
+                        float z = target.Value.transform.position.z;
+                        target.Value.transform.position = new Vector3(x, y + 1 - 0.938785f + distFromFloor, z);
+                    }
                 }
             }
         }
@@ -229,7 +234,7 @@ public class RiggingIK : MonoBehaviour
     }
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated
-    public void setTargetBetweenlandmarks(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, GameObject centerTarget)
+    public void setTargetBetweenlandmarks(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, GameObject centerTarget, float offsetScale = 0.0f)
     {
         if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
         {
@@ -237,7 +242,7 @@ public class RiggingIK : MonoBehaviour
             Vector3 rightPivot = Vector3.Scale(landmarks[rightLandmark], coordinateScale);
             //Calculate the center position
             Vector3 centerPosition = (leftPivot + rightPivot) / 2;
-            centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with Mixamo rig
+            centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with Mixamo rig
 
             //Calculate what the rotation between the two shoulders might be
             Vector3 directionVector = rightPivot - leftPivot;
