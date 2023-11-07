@@ -50,7 +50,11 @@ public class Pose
         LEFT_THUMB,
         LEFT_RING,
         LEFT_PINKY,
-        LEFT_MIDDLE
+        LEFT_MIDDLE,
+
+        LEFT_HIP,
+        RIGHT_HIP,
+
 
     }
 

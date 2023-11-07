@@ -25,7 +25,7 @@ public class AgreementManager : MonoBehaviour
 
     void beginAgreement()
     {
-
+        
     }
 
     void handlePlayerNewWordEvent()

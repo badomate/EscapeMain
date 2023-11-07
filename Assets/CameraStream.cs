@@ -52,7 +52,14 @@ public class CameraStream : MonoBehaviour
         {
             bool included = true; //whether we are going to use it, whether it appears in the switch case somewhere
             switch (body.landmarkName)
+
             {
+                case "Left hip":
+                    identifiedLandmark = Pose.Landmark.LEFT_HIP;
+                    break;
+                case "Right hip":
+                    identifiedLandmark = Pose.Landmark.RIGHT_HIP;
+                    break;
                 case "Left wrist":
                     identifiedLandmark = Pose.Landmark.LEFT_WRIST;
                     break;
@@ -82,6 +89,12 @@ public class CameraStream : MonoBehaviour
                     break;
                 case "Left ear":
                     identifiedLandmark = Pose.Landmark.LEFT_EAR;
+                    break;
+                case "Right knee":
+                    identifiedLandmark = Pose.Landmark.RIGHT_KNEE;
+                    break;
+                case "Left knee":
+                    identifiedLandmark = Pose.Landmark.LEFT_KNEE;
                     break;
                 default:
                     included = false; //if it didn't match anything we need, don't modify the Pose
@@ -213,14 +226,14 @@ public class CameraStream : MonoBehaviour
                               $"&model_complexity={modelComplexity}" +
                               $"&min_detection_confidence={minDetectionConfidence}" +
                               $"&min_tracking_confidence={minTrackingConfidence}" +
-                              $"&display_frames={displayFrames}"+
-                              $"&use_hand_pose={useHandPose}"+
-                              $"&draw_body_pose={drawBodyPose}"+
+                              $"&display_frames={displayFrames}" +
+                              $"&use_hand_pose={useHandPose}" +
+                              $"&draw_body_pose={drawBodyPose}" +
                               $"&draw_hand_pose={drawHandPose}";
 
             // Send the GET request to the API
             var responseStream = await client.GetStreamAsync(baseUrl + apiUrl + queryParams);
-            
+
             // Read the response stream and process each line of data
             using (var reader = new System.IO.StreamReader(responseStream))
             {
@@ -294,8 +307,8 @@ public class CameraStream : MonoBehaviour
         */
     }
 
-// Update is called once per frame
-void Update()
+    // Update is called once per frame
+    void Update()
     {
 
     }
