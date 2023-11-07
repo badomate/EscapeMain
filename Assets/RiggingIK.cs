@@ -94,11 +94,11 @@ public class RiggingIK : MonoBehaviour
         //ELONGATE ARMS
         if (mirroring && lockedInCalibration && targetToPlayerBasePosition.ContainsKey(RightHandTarget))
         {
-            ElongateLimb(lowerArmLengthScale, landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW );
-            ElongateLimb(lowerArmLengthScale, landmarksCopy, LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW);
+            ElongateLimb(landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW );
+            ElongateLimb(landmarksCopy, LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW);
 
-            ElongateLimb(upperArmLengthScale, landmarksCopy, LeftShoulderTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER);
-            ElongateLimb(upperArmLengthScale, landmarksCopy, RightShoulderTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
+            ElongateLimb(landmarksCopy, LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER);
+            ElongateLimb(landmarksCopy, RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
         }
 
 
@@ -181,22 +181,23 @@ public class RiggingIK : MonoBehaviour
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, RightWristTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, HeadTarget);
 
-        void ElongateLimb(float scaleVar, Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
-        {
-            Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
-            Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
-            float realMagnitude = realPose.magnitude;
-            float modelMagnitude = modelPose.magnitude;
+    }
 
-            scaleVar = modelMagnitude / realMagnitude - 1;
+    void ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
+    {
+        Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
+        Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
+        float realMagnitude = realPose.magnitude;
+        float modelMagnitude = modelPose.magnitude;
+
+        float scaleVar = modelMagnitude / realMagnitude - 1;
 
 
-            landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] +
-            ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
+        landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] +
+        ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
 
-            landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
-            ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * scaleVar);
-        }
+        landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
+        ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * scaleVar);
     }
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated
