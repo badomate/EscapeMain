@@ -184,14 +184,7 @@ public class RiggingIK : MonoBehaviour
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, RightWristTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, HeadTarget);
 
-    }
 
-    void ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
-    {
-        Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
-        Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
-        float realMagnitude = realPose.magnitude;
-        float modelMagnitude = modelPose.magnitude;
         float distFromFloor = 0;
         if (landmarkToTarget.ContainsKey(Pose.Landmark.LEFT_FOOT) && landmarkToTarget.ContainsKey(Pose.Landmark.RIGHT_FOOT))
         {
@@ -214,22 +207,24 @@ public class RiggingIK : MonoBehaviour
             }
         }
 
-
-        void ElongateLimb(float scaleVar, Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
-        {
-            Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
-            Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
-            float realMagnitude = realPose.magnitude;
-            float modelMagnitude = modelPose.magnitude;
-
-        float scaleVar = modelMagnitude / realMagnitude - 1;
+    }
 
 
-        landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] +
-        ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
+    void ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
+    {
+        Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
+        Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
+        float realMagnitude = realPose.magnitude;
+        float modelMagnitude = modelPose.magnitude;
 
-        landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
-        ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * scaleVar);
+    float scaleVar = modelMagnitude / realMagnitude - 1;
+
+
+    landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] +
+    ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
+
+    landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
+    ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * scaleVar);
     }
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated
