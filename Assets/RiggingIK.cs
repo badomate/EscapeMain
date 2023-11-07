@@ -65,8 +65,6 @@ public class RiggingIK : MonoBehaviour
     public bool crouch = true;
     public float shoulderOffsetScale = 0.1f;
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
-    public float lowerArmLengthScale = 1.0f;
-    public float upperArmLengthScale = 1.0f;
     public float calibrationWait = 1.0f;
 
 

@@ -3548,8 +3548,6 @@ MonoBehaviour:
   crouch: 1
   shoulderOffsetScale: 0.1
   coordinateScale: {x: 1, y: 1, z: 1}
-  lowerArmLengthScale: 1
-  upperArmLengthScale: 1
   calibrationWait: 1
   useCalibration: 0
 --- !u!1001 &321748711
@@ -17381,10 +17379,8 @@ MonoBehaviour:
   crouch: 1
   shoulderOffsetScale: 0.1
   coordinateScale: {x: 1, y: 1, z: 1}
-  lowerArmLengthScale: 1
-  upperArmLengthScale: 1
-  calibrationWait: 2
-  useCalibration: 0
+  calibrationWait: 3
+  useCalibration: 1
 --- !u!114 &1528204675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21325,7 +21321,7 @@ PrefabInstance:
     - target: {fileID: 2081878954449721519, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
       propertyPath: m_Name
-      value: Left Elbow Hint IK
+      value: Left Elbow Hint IK target
       objectReference: {fileID: 0}
     - target: {fileID: 3228200190902214466, guid: cf7e257d2b255a84499370f200689835,
         type: 3}
@@ -23374,8 +23370,6 @@ MonoBehaviour:
   crouch: 1
   shoulderOffsetScale: 0.1
   coordinateScale: {x: 1, y: 1, z: 1}
-  lowerArmLengthScale: 1
-  upperArmLengthScale: 1
   calibrationWait: 1
   useCalibration: 0
 --- !u!1001 &2729281214287269654
