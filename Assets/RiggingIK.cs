@@ -187,7 +187,7 @@ public class RiggingIK : MonoBehaviour
 
        
         float distFromFloor = 0;
-        if (landmarkToTarget.ContainsKey(Pose.Landmark.LEFT_FOOT) && landmarkToTarget.ContainsKey(Pose.Landmark.RIGHT_FOOT))
+        if (landmarkToTarget.ContainsKey(Pose.Landmark.LEFT_FOOT) && landmarkToTarget.ContainsKey(Pose.Landmark.RIGHT_FOOT) && LeftFootTarget && RightFootTarget)
         {
             if (landmarkToTarget[Pose.Landmark.LEFT_FOOT].transform.position.y != 0 || landmarkToTarget[Pose.Landmark.RIGHT_FOOT].transform.position.y != 0)
                 distFromFloor = -Math.Min(landmarkToTarget[Pose.Landmark.LEFT_FOOT].transform.position.y, landmarkToTarget[Pose.Landmark.RIGHT_FOOT].transform.position.y);
