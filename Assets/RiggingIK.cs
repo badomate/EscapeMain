@@ -226,9 +226,6 @@ public class RiggingIK : MonoBehaviour
 
     landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] +
     ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
-
-    landmarksCopy[Pose.Landmark.LEFT_WRIST] = landmarksCopy[Pose.Landmark.LEFT_WRIST] +
-    ((landmarksCopy[Pose.Landmark.LEFT_WRIST] - landmarksCopy[Pose.Landmark.LEFT_ELBOW]) * scaleVar);
     }
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated
