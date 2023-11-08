@@ -67,6 +67,9 @@ public class RiggingIK : MonoBehaviour
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
     public float calibrationWait = 1.0f;
 
+    public GameObject boneToScale;
+
+
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -310,6 +313,11 @@ public class RiggingIK : MonoBehaviour
             saveCurrentPositions(targetToModelBasePosition);
         }
 
+
+        if (boneToScale)
+        {
+            //boneToScale.transform.localScale = new Vector3(2, 2, 2);
+        }
     }
 
     // Have the A.I correctly take a Twister turn. In normal gameplay, this would be cheating.
