@@ -67,9 +67,16 @@ public class RiggingIK : MonoBehaviour
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
     public float calibrationWait = 1.0f;
 
-    public GameObject boneToScale;
+    bool lockedInCalibration = false;
+    public bool useCalibration = false;
 
+    public GameObject LeftUpperArmBone;
+    public GameObject LeftLowerArmBone;
 
+    public GameObject RightUpperArmBone;
+    public GameObject RightLowerArmBone;
+
+    public RigBuilder rigBuilder;
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -96,16 +103,6 @@ public class RiggingIK : MonoBehaviour
     {
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
-
-        //ELONGATE ARMS
-        if (mirroring && lockedInCalibration && targetToPlayerBasePosition.ContainsKey(RightHandTarget))
-        {
-            ElongateLimb(landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW );
-            ElongateLimb(landmarksCopy, LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW);
-
-            ElongateLimb(landmarksCopy, LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER);
-            ElongateLimb(landmarksCopy, RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
-        }
 
 
         //MAKE FINGERS RELATIVE TO WRIST POSITION
@@ -139,24 +136,6 @@ public class RiggingIK : MonoBehaviour
 
             landmarksCopy[landmark] = rotatedPosition;
         }
-
-        /*
-        //ADD CALIBRATED OFFSET IF MIRRORING AND USING CALIBRATION
-        if(mirroring && lockedInCalibration)
-        {
-            foreach (var landmark in landmarksCopy.Keys.ToList()) {
-                if (landmarkToTarget.ContainsKey(landmark))
-                {
-                    GameObject target = landmarkToTarget[landmark];
-                    if (targetToPlayerBasePosition.ContainsKey(target))
-                    {
-                        landmarksCopy[landmark] = Vector3.Scale(landmarksCopy[landmark], 
-                            Vector3.Scale(targetToPlayerBasePosition[target], Vector3.Scale(targetToPlayerBasePosition[target], 
-                            new Vector3(1.0f / targetToModelBasePosition[target].x, 1.0f / targetToModelBasePosition[target].y, 1.0f / targetToModelBasePosition[target].z)))); //TODO: there is likely a step missing here
-                    }
-                }
-            }
-        }*/
 
 
 
@@ -216,7 +195,19 @@ public class RiggingIK : MonoBehaviour
 
     }
 
+    void ElongateModelLimb(GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, GameObject boneToScale)
+    {
+        Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
+        Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
+        float realMagnitude = realPose.magnitude;
+        float modelMagnitude = modelPose.magnitude;
 
+        float scaleVar = realMagnitude / modelMagnitude;
+
+        boneToScale.transform.localScale = new Vector3(scaleVar, scaleVar, scaleVar);
+    }
+
+    /*
     void ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
     {
         Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
@@ -229,7 +220,7 @@ public class RiggingIK : MonoBehaviour
 
     landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] +
     ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
-    }
+    }*/
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated
     public void setTargetBetweenlandmarks(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, GameObject centerTarget, float offsetScale = 0.0f)
@@ -313,25 +304,8 @@ public class RiggingIK : MonoBehaviour
             saveCurrentPositions(targetToModelBasePosition);
         }
 
-
-        if (boneToScale && unScaled)
-        {
-            unScaled = false;
-            boneToScale.transform.localScale = new Vector3(2, 2, 2);
-            //rigBuilder.Build();
-        }
-
     }
-
-    // Have the A.I correctly take a Twister turn. In normal gameplay, this would be cheating.
-    void SolveTwister()
-    {
-
-    }
-
-    bool lockedInCalibration = false;
-    public bool useCalibration = false;
-
+    
     // Update is called once per frame
     void Update()
     {
@@ -352,19 +326,18 @@ public class RiggingIK : MonoBehaviour
         yield return new WaitForSeconds(calibrationWait);
         saveCurrentPositions(targetToPlayerBasePosition);
         Debug.Log("Saved calibration!");
-
-    }
-
-    public RigBuilder rigBuilder;
-    bool unScaled = true;
-
-    void LateUpdate()
-    {
-        /*
-        if (!mirroring) //mirror has hand landmarks so he doesnt need adjustment
+        //ELONGATE ARMS
+        if (mirroring && lockedInCalibration && rigBuilder)
         {
-            adjustHands();
-        }*/
+            ElongateModelLimb(RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER, RightUpperArmBone);
+            ElongateModelLimb(RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, RightLowerArmBone);
+
+            ElongateModelLimb(LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER, LeftUpperArmBone);
+            ElongateModelLimb(LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW, LeftLowerArmBone);
+            rigBuilder.Build(); //I should not have to do this, but it will not work otherwise
+        }
+        Debug.Log("Adjusted limbs!");
+
     }
 
     Pose makeIntermediateArrangement(Pose posePrev, Pose poseNext, float interpParam)
