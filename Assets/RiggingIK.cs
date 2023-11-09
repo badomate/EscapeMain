@@ -65,10 +65,11 @@ public class RiggingIK : MonoBehaviour
     public bool crouch = true;
     public float shoulderOffsetScale = 0.1f;
     public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
-    public float calibrationWait = 1.0f;
 
     bool lockedInCalibration = false;
     public bool useCalibration = false;
+    public bool reshapeModelForCalibration = false;
+    public float calibrationWait = 1.0f;
 
     public GameObject LeftUpperArmBone;
     public GameObject LeftLowerArmBone;
@@ -103,7 +104,14 @@ public class RiggingIK : MonoBehaviour
     {
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
+        if (!reshapeModelForCalibration)
+        {
+            Vector3 extraShift = ElongateLimb(landmarksCopy, RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
+            ElongateLimb(landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, extraShift);
 
+            extraShift = ElongateLimb(landmarksCopy, LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER);
+            ElongateLimb(landmarksCopy, LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW, extraShift);
+        }
 
         //MAKE FINGERS RELATIVE TO WRIST POSITION
         foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
@@ -207,20 +215,21 @@ public class RiggingIK : MonoBehaviour
         boneToScale.transform.localScale = new Vector3(scaleVar, scaleVar, scaleVar);
     }
 
-    /*
-    void ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
+    //retargets the REAL estimation onto the model and returns the vector so that it may be applied to its children
+    Vector3 ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, Vector3 extraShift = default(Vector3))
     {
         Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
         Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
         float realMagnitude = realPose.magnitude;
         float modelMagnitude = modelPose.magnitude;
 
-    float scaleVar = modelMagnitude / realMagnitude - 1;
+        float scaleVar = modelMagnitude / realMagnitude - 1;
 
+        Vector3 shiftVector = ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
 
-    landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] +
-    ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
-    }*/
+        landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] + shiftVector + extraShift;
+        return shiftVector;
+    }
 
     //on the mirror, shoulder is not set automatically, instead it can be calculated
     public void setTargetBetweenlandmarks(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, GameObject centerTarget, float offsetScale = 0.0f)
@@ -329,12 +338,16 @@ public class RiggingIK : MonoBehaviour
         //ELONGATE ARMS
         if (mirroring && lockedInCalibration && rigBuilder)
         {
-            ElongateModelLimb(RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER, RightUpperArmBone);
-            ElongateModelLimb(RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, RightLowerArmBone);
+            if (reshapeModelForCalibration)
+            {
 
-            ElongateModelLimb(LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER, LeftUpperArmBone);
-            ElongateModelLimb(LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW, LeftLowerArmBone);
-            rigBuilder.Build(); //I should not have to do this, but it will not work otherwise
+                ElongateModelLimb(RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER, RightUpperArmBone);
+                ElongateModelLimb(RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, RightLowerArmBone);
+
+                ElongateModelLimb(LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER, LeftUpperArmBone);
+                ElongateModelLimb(LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW, LeftLowerArmBone);
+                rigBuilder.Build(); //I should not have to do this, but it will not work otherwise
+            }
         }
         Debug.Log("Adjusted limbs!");
 
