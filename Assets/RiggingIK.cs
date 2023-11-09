@@ -53,11 +53,11 @@ public class RiggingIK : MonoBehaviour
     public GameObject RightWristTarget;
 
     public GameObject HeadTarget;
-    public GameObject HipRight;
-    public GameObject HipLeft;
+    public GameObject RightHipTarget;
+    public GameObject LeftHipTarget;
     public GameObject HipTarget;
-    public GameObject KneeLeft;
-    public GameObject KneeRight;
+    public GameObject LeftKneeHintTarget;
+    public GameObject RightKneeHintTarget;
     public ChainIKConstraint pointingConstraint;
 
     public bool mirroring = false;
@@ -81,6 +81,7 @@ public class RiggingIK : MonoBehaviour
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
+        Pose.Landmark.RIGHT_INDEX_KNUCKLE,
         Pose.Landmark.RIGHT_THUMB,
         Pose.Landmark.RIGHT_RING,
         Pose.Landmark.RIGHT_PINKY,
@@ -104,13 +105,20 @@ public class RiggingIK : MonoBehaviour
     {
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
-        if (!reshapeModelForCalibration)
+        if (!reshapeModelForCalibration && targetToPlayerBasePosition.Count > 0)
         {
             Vector3 extraShift = ElongateLimb(landmarksCopy, RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
             ElongateLimb(landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, extraShift);
 
             extraShift = ElongateLimb(landmarksCopy, LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER);
             ElongateLimb(landmarksCopy, LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW, extraShift);
+
+            extraShift = ElongateLimb(landmarksCopy, LeftKneeHintTarget, LeftHipTarget, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_HIP);
+            ElongateLimb(landmarksCopy, LeftFootTarget, LeftKneeHintTarget, Pose.Landmark.LEFT_FOOT, Pose.Landmark.LEFT_KNEE, extraShift);
+
+
+            extraShift = ElongateLimb(landmarksCopy, RightKneeHintTarget, RightHipTarget, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_HIP);
+            ElongateLimb(landmarksCopy, RightFootTarget, RightKneeHintTarget, Pose.Landmark.RIGHT_FOOT, Pose.Landmark.RIGHT_KNEE, extraShift);
         }
 
         //MAKE FINGERS RELATIVE TO WRIST POSITION
@@ -279,8 +287,8 @@ public class RiggingIK : MonoBehaviour
         landmarkToTarget.Add(Pose.Landmark.RIGHT_FOOT, RightFootTarget);
         if (mirroring) //some landmarks are only used by the mirror character for now. Later the A.I might need more to copy gestures.
         {
-            landmarkToTarget.Add(Pose.Landmark.LEFT_HIP, HipLeft);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_HIP, HipRight);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_HIP, LeftHipTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_HIP, RightHipTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_ELBOW, RightElbowHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_ELBOW, LeftElbowHintTarget);
@@ -301,8 +309,8 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.LEFT_RING, LeftRingTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY, LeftPinkyTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE, LeftMiddleTarget);
-            landmarkToTarget.Add(Pose.Landmark.LEFT_KNEE, KneeLeft);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_KNEE, KneeRight);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_KNEE, LeftKneeHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_KNEE, RightKneeHintTarget);
         }
 
         //for testing the "play gesture" function
@@ -389,6 +397,10 @@ public class RiggingIK : MonoBehaviour
 
             dictionaryToFill.Add(RightShoulderTarget, RightShoulderTarget.transform.position);
             dictionaryToFill.Add(LeftShoulderTarget, LeftShoulderTarget.transform.position);
+
+
+            dictionaryToFill.Add(RightKneeHintTarget, RightKneeHintTarget.transform.position);
+            dictionaryToFill.Add(LeftKneeHintTarget, LeftKneeHintTarget.transform.position);
             /*targetToInitialPosition.Add(LeftHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
             targetToInitialPosition.Add(LeftElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position);
 

@@ -41,6 +41,8 @@ public class Pose
         RIGHT_WRIST_ROOT,
 
         RIGHT_INDEX,
+        RIGHT_INDEX_KNUCKLE,
+
         RIGHT_THUMB,
         RIGHT_RING,
         RIGHT_PINKY,

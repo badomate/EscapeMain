@@ -155,6 +155,9 @@ public class CameraStream : MonoBehaviour
                 case "Index-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.RIGHT_INDEX;
                     break;
+                case "Index-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_INDEX_KNUCKLE;
+                    break;
                 case "Thumb-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.RIGHT_THUMB;
                     break;
