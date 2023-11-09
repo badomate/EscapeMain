@@ -178,8 +178,10 @@ public class RiggingIK : MonoBehaviour
             }
         }
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
-        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, LeftWristTarget);
-        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, RightWristTarget);
+        
+        setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, Pose.Landmark.LEFT_WRIST_ROOT, LeftWristTarget);
+        setRotationFromTriangle(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, Pose.Landmark.RIGHT_WRIST_ROOT, RightWristTarget);
+        
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, HeadTarget);
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
 
@@ -257,6 +259,20 @@ public class RiggingIK : MonoBehaviour
             //Move the target
             centerTarget.transform.position = centerPosition + gameObject.transform.position; //change if not relative
             centerTarget.transform.rotation = gameObject.transform.rotation * rotation;
+        }
+    }
+
+    void setRotationFromTriangle(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Pose.Landmark baseLandmark, GameObject centerTarget, float offsetScale = 0.0f)
+    {
+        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && landmarks.ContainsKey(baseLandmark) && centerTarget != null)
+        {
+            Vector3 rightDirection = (landmarks[rightLandmark] - landmarks[leftLandmark]).normalized;
+            Vector3 forwardDirection = Vector3.Cross(rightDirection, (landmarks[baseLandmark] - landmarks[leftLandmark]).normalized).normalized;
+            Vector3 upDirection = Vector3.Cross(forwardDirection, rightDirection).normalized;
+
+            Quaternion orientation = Quaternion.LookRotation(forwardDirection, upDirection);
+
+            centerTarget.transform.rotation = orientation;
         }
     }
 
