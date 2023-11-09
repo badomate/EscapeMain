@@ -401,16 +401,13 @@ public class RiggingIK : MonoBehaviour
 
             dictionaryToFill.Add(RightKneeHintTarget, RightKneeHintTarget.transform.position);
             dictionaryToFill.Add(LeftKneeHintTarget, LeftKneeHintTarget.transform.position);
-            /*targetToInitialPosition.Add(LeftHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
-            targetToInitialPosition.Add(LeftElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.LeftLowerArm).position);
 
-            targetToInitialPosition.Add(RightHandTarget, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
-            targetToInitialPosition.Add(RightElbowHintTarget, animator.GetBoneTransform(HumanBodyBones.RightLowerArm).position);*/
-            //List<GameObject> targets = landmarkToTarget.Values.ToList();
-            /*foreach(GameObject target in targets)
-            {
-                targetToInitialPosition.Add(target, animator.GetBoneTransform(HumanBodyBones.RightHand).position);
-            }*/
+            dictionaryToFill.Add(LeftHipTarget, LeftHipTarget.transform.position);
+            dictionaryToFill.Add(RightHipTarget, RightHipTarget.transform.position);
+
+
+            dictionaryToFill.Add(LeftFootTarget, LeftFootTarget.transform.position);
+            dictionaryToFill.Add(RightFootTarget, RightFootTarget.transform.position);
         }
     }
 
