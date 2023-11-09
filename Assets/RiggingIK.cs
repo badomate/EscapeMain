@@ -411,6 +411,15 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
+    void LateUpdate()
+    {
+        if(mirroring && useCalibration)
+        {
+
+            //adjustHands();
+        }
+    }
+
 
     public IEnumerator playGesture(Gesture gestureToPlay)
     {
@@ -438,13 +447,12 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
-
+    public GameObject rightHandBone;
+    public GameObject leftHandBone;
     private void adjustHands()
     {
-        Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
-        Transform leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
-        rightHand.transform.rotation = rightHand.transform.parent.rotation;
-        leftHand.transform.rotation = leftHand.transform.parent.rotation;
+        rightHandBone.transform.rotation = rightHandBone.transform.parent.rotation;
+        leftHandBone.transform.rotation = leftHandBone.transform.parent.rotation;
 
     }
 }
