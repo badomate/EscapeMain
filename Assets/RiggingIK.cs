@@ -314,10 +314,13 @@ public class RiggingIK : MonoBehaviour
         }
 
 
-        if (boneToScale)
+        if (boneToScale && unScaled)
         {
-            //boneToScale.transform.localScale = new Vector3(2, 2, 2);
+            unScaled = false;
+            boneToScale.transform.localScale = new Vector3(2, 2, 2);
+            //rigBuilder.Build();
         }
+
     }
 
     // Have the A.I correctly take a Twister turn. In normal gameplay, this would be cheating.
@@ -351,6 +354,9 @@ public class RiggingIK : MonoBehaviour
         Debug.Log("Saved calibration!");
 
     }
+
+    public RigBuilder rigBuilder;
+    bool unScaled = true;
 
     void LateUpdate()
     {
