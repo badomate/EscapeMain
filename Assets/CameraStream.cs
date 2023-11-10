@@ -127,6 +127,24 @@ public class CameraStream : MonoBehaviour
                 case "Pinky-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.LEFT_PINKY;
                     break;
+
+                case "Index-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_INDEX_KNUCKLE;
+                    break;
+                case "Thumb-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_THUMB_KNUCKLE;
+                    break;
+                case "Middle-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_MIDDLE_KNUCKLE;
+                    break;
+                case "Ring-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_RING_KNUCKLE;
+                    break;
+                case "Pinky-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_PINKY_KNUCKLE;
+                    break;
+
+
                 case "Wrist":
                     identifiedLandmark = Pose.Landmark.LEFT_WRIST_ROOT;
                     break;
@@ -155,9 +173,6 @@ public class CameraStream : MonoBehaviour
                 case "Index-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.RIGHT_INDEX;
                     break;
-                case "Index-2(knuckle)":
-                    identifiedLandmark = Pose.Landmark.RIGHT_INDEX_KNUCKLE;
-                    break;
                 case "Thumb-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.RIGHT_THUMB;
                     break;
@@ -170,6 +185,25 @@ public class CameraStream : MonoBehaviour
                 case "Pinky-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.RIGHT_PINKY;
                     break;
+
+
+                case "Index-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_INDEX_KNUCKLE;
+                    break;
+                case "Thumb-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_THUMB_KNUCKLE;
+                    break;
+                case "Middle-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_MIDDLE_KNUCKLE;
+                    break;
+                case "Ring-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_RING_KNUCKLE;
+                    break;
+                case "Pinky-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_PINKY_KNUCKLE;
+                    break;
+
+
                 case "Wrist":
                     identifiedLandmark = Pose.Landmark.RIGHT_WRIST_ROOT;
                     break;

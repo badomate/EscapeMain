@@ -37,16 +37,26 @@ public class RiggingIK : MonoBehaviour
 
     //hand landmarks
     public GameObject RightIndexTarget;
+    public GameObject RightIndexHintTarget;
     public GameObject RightMiddleTarget;
+    public GameObject RightMiddleHintTarget;
     public GameObject RightRingTarget;
+    public GameObject RightRingHintTarget;
     public GameObject RightPinkyTarget;
+    public GameObject RightPinkyHintTarget;
     public GameObject RightThumbTarget;
+    public GameObject RightThumbHintTarget;
 
     public GameObject LeftIndexTarget;
+    public GameObject LeftIndexHintTarget;
     public GameObject LeftMiddleTarget;
+    public GameObject LeftMiddleHintTarget;
     public GameObject LeftRingTarget;
+    public GameObject LeftRingHintTarget;
     public GameObject LeftPinkyTarget;
+    public GameObject LeftPinkyHintTarget;
     public GameObject LeftThumbTarget;
+    public GameObject LeftThumbHintTarget;
 
     public GameObject ShoulderTarget;
     public GameObject LeftWristTarget;
@@ -81,18 +91,29 @@ public class RiggingIK : MonoBehaviour
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
-        Pose.Landmark.RIGHT_INDEX_KNUCKLE,
         Pose.Landmark.RIGHT_THUMB,
         Pose.Landmark.RIGHT_RING,
         Pose.Landmark.RIGHT_PINKY,
-        Pose.Landmark.RIGHT_MIDDLE};
+        Pose.Landmark.RIGHT_MIDDLE,
+
+        Pose.Landmark.RIGHT_INDEX_KNUCKLE,
+        Pose.Landmark.RIGHT_THUMB_KNUCKLE,
+        Pose.Landmark.RIGHT_RING_KNUCKLE,
+        Pose.Landmark.RIGHT_PINKY_KNUCKLE,
+        Pose.Landmark.RIGHT_MIDDLE_KNUCKLE};
 
     List<Pose.Landmark> leftFingers = new List<Pose.Landmark> {
         Pose.Landmark.LEFT_INDEX,
         Pose.Landmark.LEFT_THUMB,
         Pose.Landmark.LEFT_RING,
         Pose.Landmark.LEFT_PINKY,
-        Pose.Landmark.LEFT_MIDDLE };
+        Pose.Landmark.LEFT_MIDDLE,
+
+        Pose.Landmark.LEFT_INDEX_KNUCKLE,
+        Pose.Landmark.LEFT_THUMB_KNUCKLE,
+        Pose.Landmark.LEFT_RING_KNUCKLE,
+        Pose.Landmark.LEFT_PINKY_KNUCKLE,
+        Pose.Landmark.LEFT_MIDDLE_KNUCKLE};
 
     //this is just to simplify
     public void SetIKPositions(Pose poseToPlay, bool relative = false)
@@ -105,6 +126,7 @@ public class RiggingIK : MonoBehaviour
     {
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
+        //RETARGET REAL TO MODEL - if we are not reshaping the model, start by reshaping the received coordinates to match us
         if (!reshapeModelForCalibration && targetToPlayerBasePosition.Count > 0)
         {
             Vector3 extraShift = ElongateLimb(landmarksCopy, RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
@@ -320,11 +342,24 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY, RightPinkyTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE, RightMiddleTarget);
 
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_INDEX_KNUCKLE, RightIndexHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_THUMB_KNUCKLE, RightThumbHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_RING_KNUCKLE, RightRingHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY_KNUCKLE, RightPinkyHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE_KNUCKLE, RightMiddleHintTarget);
+
             landmarkToTarget.Add(Pose.Landmark.LEFT_INDEX, LeftIndexTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB, LeftThumbTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_RING, LeftRingTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY, LeftPinkyTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE, LeftMiddleTarget);
+
+            landmarkToTarget.Add(Pose.Landmark.LEFT_INDEX_KNUCKLE, LeftIndexHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB_KNUCKLE, LeftThumbHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_RING_KNUCKLE, LeftRingHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY_KNUCKLE, LeftPinkyHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE_KNUCKLE, LeftMiddleHintTarget);
+
             landmarkToTarget.Add(Pose.Landmark.LEFT_KNEE, LeftKneeHintTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_KNEE, RightKneeHintTarget);
         }

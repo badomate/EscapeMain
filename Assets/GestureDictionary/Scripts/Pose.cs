@@ -41,18 +41,28 @@ public class Pose
         RIGHT_WRIST_ROOT,
 
         RIGHT_INDEX,
-        RIGHT_INDEX_KNUCKLE,
-
         RIGHT_THUMB,
         RIGHT_RING,
         RIGHT_PINKY,
         RIGHT_MIDDLE,
+
+        RIGHT_INDEX_KNUCKLE,
+        RIGHT_THUMB_KNUCKLE,
+        RIGHT_RING_KNUCKLE,
+        RIGHT_PINKY_KNUCKLE,
+        RIGHT_MIDDLE_KNUCKLE,
 
         LEFT_INDEX,
         LEFT_THUMB,
         LEFT_RING,
         LEFT_PINKY,
         LEFT_MIDDLE,
+
+        LEFT_INDEX_KNUCKLE,
+        LEFT_THUMB_KNUCKLE,
+        LEFT_RING_KNUCKLE,
+        LEFT_PINKY_KNUCKLE,
+        LEFT_MIDDLE_KNUCKLE,
 
         LEFT_HIP,
         RIGHT_HIP,
