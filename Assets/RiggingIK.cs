@@ -62,6 +62,9 @@ public class RiggingIK : MonoBehaviour
     public GameObject LeftWristTarget;
     public GameObject RightWristTarget;
 
+    public GameObject LeftEarTarget;
+    public GameObject RightEarTarget;
+    public GameObject NoseTarget;
     public GameObject HeadTarget;
     public GameObject RightHipTarget;
     public GameObject LeftHipTarget;
@@ -200,10 +203,10 @@ public class RiggingIK : MonoBehaviour
         }
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
         
-        setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, Pose.Landmark.LEFT_WRIST_ROOT, LeftWristTarget);
-        setRotationFromTriangle(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, Pose.Landmark.RIGHT_WRIST_ROOT, RightWristTarget);
+        setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, Pose.Landmark.LEFT_WRIST_ROOT, LeftWristTarget, Quaternion.Euler(0, 0, 0));
+        setRotationFromTriangle(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, Pose.Landmark.RIGHT_WRIST_ROOT, RightWristTarget, Quaternion.Euler(0, 0, 0));
 
-        setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, Pose.Landmark.NOSE, HeadTarget);
+        setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, Pose.Landmark.NOSE, HeadTarget, Quaternion.Euler(-90,0,0));
 
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
 
@@ -284,7 +287,7 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
-    void setRotationFromTriangle(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Pose.Landmark baseLandmark, GameObject centerTarget, float offsetScale = 0.0f)
+    void setRotationFromTriangle(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Pose.Landmark baseLandmark, GameObject centerTarget, Quaternion rotationOffset)
     {
         if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && landmarks.ContainsKey(baseLandmark) && centerTarget != null)
         {
@@ -294,7 +297,7 @@ public class RiggingIK : MonoBehaviour
 
             Quaternion orientation = Quaternion.LookRotation(forwardDirection, upDirection);
 
-            centerTarget.transform.rotation = orientation;
+            centerTarget.transform.rotation = orientation * rotationOffset;
         }
     }
 
@@ -362,6 +365,11 @@ public class RiggingIK : MonoBehaviour
 
             landmarkToTarget.Add(Pose.Landmark.LEFT_KNEE, LeftKneeHintTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_KNEE, RightKneeHintTarget);
+
+
+            landmarkToTarget.Add(Pose.Landmark.LEFT_EAR, LeftEarTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_EAR, RightEarTarget);
+            landmarkToTarget.Add(Pose.Landmark.NOSE, NoseTarget);
         }
 
         //for testing the "play gesture" function

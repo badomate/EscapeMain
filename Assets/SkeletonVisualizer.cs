@@ -10,6 +10,7 @@ public class SkeletonVisualizer : MonoBehaviour
     public GameObject[] LeftSideLegToArm;
     public GameObject[] HipsLower;
     public GameObject[] HipsUpper;
+    public GameObject[] Head;
 
     public GameObject[] LeftIndex;
     public GameObject[] LeftMiddle;
@@ -24,6 +25,7 @@ public class SkeletonVisualizer : MonoBehaviour
     public GameObject[] RightPinky;
     public GameObject[] RightRing;
     public GameObject[] RightConnect;
+
 
 
     private LineRenderer[] lineRenderers;
@@ -45,6 +47,7 @@ public class SkeletonVisualizer : MonoBehaviour
             RightPinky,
             RightRing,
             RightConnect,
+            Head,
         };
 
 
