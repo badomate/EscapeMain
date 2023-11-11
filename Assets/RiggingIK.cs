@@ -138,7 +138,6 @@ public class RiggingIK : MonoBehaviour
             extraShift = ElongateLimb(landmarksCopy, LeftKneeHintTarget, LeftHipTarget, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_HIP);
             ElongateLimb(landmarksCopy, LeftFootTarget, LeftKneeHintTarget, Pose.Landmark.LEFT_FOOT, Pose.Landmark.LEFT_KNEE, extraShift);
 
-
             extraShift = ElongateLimb(landmarksCopy, RightKneeHintTarget, RightHipTarget, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_HIP);
             ElongateLimb(landmarksCopy, RightFootTarget, RightKneeHintTarget, Pose.Landmark.RIGHT_FOOT, Pose.Landmark.RIGHT_KNEE, extraShift);
         }
@@ -203,8 +202,9 @@ public class RiggingIK : MonoBehaviour
         
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, Pose.Landmark.LEFT_WRIST_ROOT, LeftWristTarget);
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, Pose.Landmark.RIGHT_WRIST_ROOT, RightWristTarget);
-        
-        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, HeadTarget);
+
+        setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, Pose.Landmark.NOSE, HeadTarget);
+
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
 
 

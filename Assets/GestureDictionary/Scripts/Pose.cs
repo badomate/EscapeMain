@@ -33,6 +33,7 @@ public class Pose
         RIGHT_WRIST_PIVOTRIGHT,
         RIGHT_WRIST_PIVOTLEFT,
 
+        NOSE,
         RIGHT_EAR,
         LEFT_EAR,
 

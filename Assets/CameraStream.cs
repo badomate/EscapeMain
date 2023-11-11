@@ -90,6 +90,9 @@ public class CameraStream : MonoBehaviour
                 case "Left ear":
                     identifiedLandmark = Pose.Landmark.LEFT_EAR;
                     break;
+                case "Nose":
+                    identifiedLandmark = Pose.Landmark.NOSE;
+                    break;
                 case "Right knee":
                     identifiedLandmark = Pose.Landmark.RIGHT_KNEE;
                     break;
