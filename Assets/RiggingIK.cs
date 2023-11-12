@@ -130,8 +130,9 @@ public class RiggingIK : MonoBehaviour
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
         //RETARGET REAL TO MODEL - if we are not reshaping the model, start by reshaping the received coordinates to match us
-        if (!reshapeModelForCalibration && targetToPlayerBasePosition.Count > 0)
+        if (useCalibration && !reshapeModelForCalibration)
         {
+            //saveCurrentPositions(targetToPlayerBasePosition);
             Vector3 extraShift = ElongateLimb(landmarksCopy, RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
             ElongateLimb(landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, extraShift);
 
@@ -253,7 +254,7 @@ public class RiggingIK : MonoBehaviour
     //retargets the REAL estimation onto the model and returns the vector so that it may be applied to its children
     Vector3 ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, Vector3 extraShift = default(Vector3))
     {
-        Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
+        Vector3 realPose = landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]; //issue is, this is from the hip not the shoulder
         Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
         float realMagnitude = realPose.magnitude;
         float modelMagnitude = modelPose.magnitude;
@@ -372,9 +373,7 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.NOSE, NoseTarget);
         }
 
-        //for testing the "play gesture" function
-        //Gesture exampleGesture = new GestureHandRises(LevelManager.dictionary.GetKnownPoses());
-        //StartCoroutine(playGesture(exampleGesture));
+
         if (mirroring && useCalibration)
         {
             saveCurrentPositions(targetToModelBasePosition);
@@ -400,23 +399,22 @@ public class RiggingIK : MonoBehaviour
     IEnumerator calibrationTimer()
     {
         yield return new WaitForSeconds(calibrationWait);
-        saveCurrentPositions(targetToPlayerBasePosition);
-        Debug.Log("Saved calibration!");
+        Debug.Log("Using calibration!");
         //ELONGATE ARMS
         if (mirroring && lockedInCalibration && rigBuilder)
         {
             if (reshapeModelForCalibration)
             {
-
+                saveCurrentPositions(targetToPlayerBasePosition);
                 ElongateModelLimb(RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER, RightUpperArmBone);
                 ElongateModelLimb(RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, RightLowerArmBone);
 
                 ElongateModelLimb(LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER, LeftUpperArmBone);
                 ElongateModelLimb(LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW, LeftLowerArmBone);
                 rigBuilder.Build(); //I should not have to do this, but it will not work otherwise
+                Debug.Log("Reshaped limbs!");
             }
         }
-        Debug.Log("Adjusted limbs!");
 
     }
 
@@ -446,31 +444,32 @@ public class RiggingIK : MonoBehaviour
     //public Dictionary<Pose.Landmark, Vector3> targetToInitialPosition = new Dictionary<GameObject, Vector3>();
     public void saveCurrentPositions(Dictionary<GameObject, Vector3> dictionaryToFill)
     {
-        if (dictionaryToFill.Count == 0)
-        {
-            dictionaryToFill.Add(LeftHandTarget, LeftHandTarget.transform.position);
-            dictionaryToFill.Add(LeftElbowHintTarget, LeftElbowHintTarget.transform.position);
+        dictionaryToFill.Clear();
+        dictionaryToFill.Add(LeftHandTarget, LeftHandTarget.transform.position);
+        dictionaryToFill.Add(LeftElbowHintTarget, LeftElbowHintTarget.transform.position);
 
-            dictionaryToFill.Add(RightHandTarget, RightHandTarget.transform.position);
-            dictionaryToFill.Add(RightElbowHintTarget, RightElbowHintTarget.transform.position);
+        dictionaryToFill.Add(RightHandTarget, RightHandTarget.transform.position);
+        dictionaryToFill.Add(RightElbowHintTarget, RightElbowHintTarget.transform.position);
 
-            dictionaryToFill.Add(RightShoulderTarget, RightShoulderTarget.transform.position);
-            dictionaryToFill.Add(LeftShoulderTarget, LeftShoulderTarget.transform.position);
-
-
-            dictionaryToFill.Add(RightKneeHintTarget, RightKneeHintTarget.transform.position);
-            dictionaryToFill.Add(LeftKneeHintTarget, LeftKneeHintTarget.transform.position);
-
-            dictionaryToFill.Add(LeftHipTarget, LeftHipTarget.transform.position);
-            dictionaryToFill.Add(RightHipTarget, RightHipTarget.transform.position);
+        dictionaryToFill.Add(RightShoulderTarget, RightShoulderTarget.transform.position);
+        dictionaryToFill.Add(LeftShoulderTarget, LeftShoulderTarget.transform.position);
 
 
-            dictionaryToFill.Add(LeftFootTarget, LeftFootTarget.transform.position);
-            dictionaryToFill.Add(RightFootTarget, RightFootTarget.transform.position);
-        }
+        dictionaryToFill.Add(RightKneeHintTarget, RightKneeHintTarget.transform.position);
+        dictionaryToFill.Add(LeftKneeHintTarget, LeftKneeHintTarget.transform.position);
+
+        dictionaryToFill.Add(LeftHipTarget, LeftHipTarget.transform.position);
+        dictionaryToFill.Add(RightHipTarget, RightHipTarget.transform.position);
+
+
+        dictionaryToFill.Add(LeftFootTarget, LeftFootTarget.transform.position);
+        dictionaryToFill.Add(RightFootTarget, RightFootTarget.transform.position);
     }
 
 
+    //you can quickly test the "playGesture" function as such:
+    //Gesture exampleGesture = new GestureHandRises(LevelManager.dictionary.GetKnownPoses());
+    //StartCoroutine(playGesture(exampleGesture));
     public IEnumerator playGesture(Gesture gestureToPlay)
     {
         for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
