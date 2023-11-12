@@ -66,10 +66,10 @@ public class CameraStream : MonoBehaviour
                 case "Right wrist":
                     identifiedLandmark = Pose.Landmark.RIGHT_WRIST;
                     break;
-                case "Left heel":
+                case "Left ankle":
                     identifiedLandmark = Pose.Landmark.LEFT_FOOT;
                     break;
-                case "Right heel":
+                case "Right ankle":
                     identifiedLandmark = Pose.Landmark.RIGHT_FOOT;
                     break;
                 case "Right elbow":

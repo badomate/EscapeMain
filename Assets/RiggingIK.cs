@@ -77,7 +77,6 @@ public class RiggingIK : MonoBehaviour
     public bool gesturePlaySmoothing = true;
     public bool crouch = true;
     public float shoulderOffsetScale = 0.1f;
-    public Vector3 coordinateScale = new Vector3(1, 1, 1); //every landmark vector is multiplied by this
 
     bool lockedInCalibration = false;
     public bool useCalibration = false;
@@ -129,6 +128,16 @@ public class RiggingIK : MonoBehaviour
     {
         Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
+
+        //ROTATE LANDMARKS BY INITIAL GAMEOBJECT ROTATION
+        foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
+        {
+            if (relative)
+            {
+                landmarksCopy[landmark] = gameObject.transform.rotation * landmarksCopy[landmark];
+            }
+        }
+
         //RETARGET REAL TO MODEL - if we are not reshaping the model, start by reshaping the received coordinates to match us
         if (useCalibration && !reshapeModelForCalibration)
         {
@@ -161,21 +170,6 @@ public class RiggingIK : MonoBehaviour
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.RIGHT_WRIST];
             }
 
-        }
-
-        //ROTATE LANDMARKS BY INITIAL GAMEOBJECT ROTATION
-        foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
-        {
-            Vector3 originalPosition = Vector3.Scale(landmarksCopy[landmark], coordinateScale); //always scale first otherwise the positional relativity would break
-
-            Vector3 rotatedPosition;
-            rotatedPosition = originalPosition;
-            if (relative)
-            {
-                rotatedPosition = gameObject.transform.rotation * originalPosition;
-            }
-
-            landmarksCopy[landmark] = rotatedPosition;
         }
 
 
@@ -241,7 +235,7 @@ public class RiggingIK : MonoBehaviour
 
     void ElongateModelLimb(GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, GameObject boneToScale)
     {
-        Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget]; //issue is, this is from the hip not the shoulder
+        Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget];
         Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
         float realMagnitude = realPose.magnitude;
         float modelMagnitude = modelPose.magnitude;
@@ -254,16 +248,23 @@ public class RiggingIK : MonoBehaviour
     //retargets the REAL estimation onto the model and returns the vector so that it may be applied to its children
     Vector3 ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, Vector3 extraShift = default(Vector3))
     {
-        Vector3 realPose = landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]; //issue is, this is from the hip not the shoulder
+        //Vector3 originalSourcePosition = landmarksCopy[sourceLandmark] + (-extraShift);
+        landmarksCopy[goalLandmark] += extraShift;
+        Vector3 realPose = landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark];
         Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
         float realMagnitude = realPose.magnitude;
         float modelMagnitude = modelPose.magnitude;
 
-        float scaleVar = modelMagnitude / realMagnitude - 1;
+        //float scaleVar = (modelMagnitude - realMagnitude)/ realMagnitude;
+        float scaleVar = (modelMagnitude- realMagnitude) / realMagnitude;
 
-        Vector3 shiftVector = ((landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]) * scaleVar);
+        Vector3 shiftVector = realPose * scaleVar;
 
-        landmarksCopy[goalLandmark] = landmarksCopy[goalLandmark] + shiftVector + extraShift;
+        if((realMagnitude + shiftVector.magnitude) -modelMagnitude > 0.001 && scaleVar > 0){
+            Debug.LogWarning("Limb length did not match even after calibration for: " + goalLandmark);
+        }
+
+        landmarksCopy[goalLandmark] += shiftVector; //+ extraShift;
         return shiftVector;
     }
 
@@ -272,8 +273,8 @@ public class RiggingIK : MonoBehaviour
     {
         if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
         {
-            Vector3 leftPivot = Vector3.Scale(landmarks[leftLandmark], coordinateScale);
-            Vector3 rightPivot = Vector3.Scale(landmarks[rightLandmark], coordinateScale);
+            Vector3 leftPivot = landmarks[leftLandmark];
+            Vector3 rightPivot = landmarks[rightLandmark];
             //Calculate the center position
             Vector3 centerPosition = (leftPivot + rightPivot) / 2;
             centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with Mixamo rig
@@ -453,7 +454,6 @@ public class RiggingIK : MonoBehaviour
 
         dictionaryToFill.Add(RightShoulderTarget, RightShoulderTarget.transform.position);
         dictionaryToFill.Add(LeftShoulderTarget, LeftShoulderTarget.transform.position);
-
 
         dictionaryToFill.Add(RightKneeHintTarget, RightKneeHintTarget.transform.position);
         dictionaryToFill.Add(LeftKneeHintTarget, LeftKneeHintTarget.transform.position);
