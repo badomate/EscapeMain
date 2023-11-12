@@ -141,18 +141,30 @@ public class RiggingIK : MonoBehaviour
         //RETARGET REAL TO MODEL - if we are not reshaping the model, start by reshaping the received coordinates to match us
         if (useCalibration && !reshapeModelForCalibration)
         {
+            Vector3 rootShift = targetToModelBasePosition[RightShoulderTarget] - (transform.position + landmarksCopy[Pose.Landmark.RIGHT_SHOULDER]);
             //saveCurrentPositions(targetToPlayerBasePosition);
             Vector3 extraShift = ElongateLimb(landmarksCopy, RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
             ElongateLimb(landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, extraShift);
+            landmarksCopy[Pose.Landmark.RIGHT_ELBOW] += rootShift;
+            landmarksCopy[Pose.Landmark.RIGHT_WRIST] += rootShift;
 
+            rootShift = targetToModelBasePosition[LeftShoulderTarget] - (transform.position + landmarksCopy[Pose.Landmark.LEFT_SHOULDER]);
             extraShift = ElongateLimb(landmarksCopy, LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER);
             ElongateLimb(landmarksCopy, LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW, extraShift);
+            landmarksCopy[Pose.Landmark.LEFT_ELBOW] += rootShift;
+            landmarksCopy[Pose.Landmark.LEFT_WRIST] += rootShift;
 
+            rootShift = targetToModelBasePosition[LeftHipTarget] - (transform.position + landmarksCopy[Pose.Landmark.LEFT_HIP]);
             extraShift = ElongateLimb(landmarksCopy, LeftKneeHintTarget, LeftHipTarget, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_HIP);
             ElongateLimb(landmarksCopy, LeftFootTarget, LeftKneeHintTarget, Pose.Landmark.LEFT_FOOT, Pose.Landmark.LEFT_KNEE, extraShift);
+            landmarksCopy[Pose.Landmark.LEFT_FOOT] += rootShift;
+            landmarksCopy[Pose.Landmark.LEFT_KNEE] += rootShift;
 
+            rootShift = targetToModelBasePosition[RightHipTarget] - (transform.position + landmarksCopy[Pose.Landmark.RIGHT_HIP]);
             extraShift = ElongateLimb(landmarksCopy, RightKneeHintTarget, RightHipTarget, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_HIP);
             ElongateLimb(landmarksCopy, RightFootTarget, RightKneeHintTarget, Pose.Landmark.RIGHT_FOOT, Pose.Landmark.RIGHT_KNEE, extraShift);
+            landmarksCopy[Pose.Landmark.RIGHT_FOOT] += rootShift;
+            landmarksCopy[Pose.Landmark.RIGHT_KNEE] += rootShift;
         }
 
         //MAKE FINGERS RELATIVE TO WRIST POSITION
