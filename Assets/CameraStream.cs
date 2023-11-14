@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.Windows;
 
 public class CameraStream : MonoBehaviour
 {
@@ -45,7 +44,6 @@ public class CameraStream : MonoBehaviour
     void ProcessLandmarksData(string jsonData)
     {
         jsonData = jsonData.Substring(jsonData.IndexOf('{'));
-
 
         //UnityEngine.Debug.Log(jsonData);
         // Deserialize the JSON string into an array of Vector3Data objects
@@ -248,17 +246,18 @@ public class CameraStream : MonoBehaviour
     }
 
     // Asynchronously stream pose landmarks data from the Flask API
-    private async Task StreamLandmarksAsync(CancellationToken cancellationToken,
-                                           string videoPath = null,
+    private async Task StreamLandmarksAsync(CancellationToken cancellationToken, 
                                            bool staticImageMode = false,
                                            int modelComplexity = 1,
                                            double minDetectionConfidence = 0.5,
                                            double minTrackingConfidence = 0.5,
+                                           string outputVideo = "output.mp4",
                                            int displayFrames = 0,
                                            int useHandPose = 1,
                                            int drawBodyPose = 1,
                                            int drawHandPose = 1,
-                                           int UseIndependentHands = 1)
+                                           int UseIndependentHands = 1
+                                           )
     {
         var baseUrl = "http://localhost:5000";
         var apiUrl = "/landmarks";  
@@ -266,11 +265,11 @@ public class CameraStream : MonoBehaviour
         using (var client = new HttpClient())
         {
             // Build the query parameters for the API request
-            var queryParams = $"?video_path={videoPath}" +
-                              $"&static_image_mode={staticImageMode}" +
+            var queryParams = $"?" +
                               $"&model_complexity={modelComplexity}" +
                               $"&min_detection_confidence={minDetectionConfidence}" +
                               $"&min_tracking_confidence={minTrackingConfidence}" +
+                              $"&output_video={outputVideo}" +
                               $"&display_frames={displayFrames}" +
                               $"&use_hand_pose={useHandPose}" +
                               $"&draw_body_pose={drawBodyPose}" +
@@ -279,15 +278,17 @@ public class CameraStream : MonoBehaviour
 
             // Send the GET request to the API
             var responseStream = await client.GetStreamAsync(baseUrl + apiUrl + queryParams);
-
+            
             // Read the response stream and process each line of data
             using (var reader = new System.IO.StreamReader(responseStream))
             {
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
+                UnityEngine.Debug.Log("1");
                 while (!reader.EndOfStream)
                 {
+                    UnityEngine.Debug.Log("2");
                     if (cancellationToken.IsCancellationRequested) //If requested, exit task
                     {
                         // Clean up resources?
@@ -330,11 +331,11 @@ public class CameraStream : MonoBehaviour
 
         // Call the asynchronous method to stream pose landmarks data
         myGet = Task.Run(() => StreamLandmarksAsync(cancellationTokenSource.Token,
-                             videoPath: null,
                              staticImageMode: false,
                              modelComplexity: 1,
                              minDetectionConfidence: 0.5,
                              minTrackingConfidence: 0.5,
+                             outputVideo: "null", //at the moment this still creates an empty file with the name "null", but it won't take up space
                              displayFrames: 1,
                              useHandPose: 1,
                              drawBodyPose: 1,
