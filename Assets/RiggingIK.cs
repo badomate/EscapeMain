@@ -167,33 +167,7 @@ public class RiggingIK : MonoBehaviour
             }
         }
 
-        //RETARGET REAL TO MODEL - if we are not reshaping the model, start by reshaping the received coordinates to match us
-        if (useCalibration && !reshapeModelForCalibration && landmarksCopy.ContainsKey(Pose.Landmark.RIGHT_INDEX_BASE) && landmarksCopy.ContainsKey(Pose.Landmark.LEFT_INDEX_BASE))
-        {
-            //Calibrate limbs
-            calibrateLimb(landmarksCopy, RightUpperArmBone, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST);
-            calibrateLimb(landmarksCopy, LeftUpperArmBone, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST);
 
-            calibrateLimb(landmarksCopy, LeftUpperLegBone, Pose.Landmark.LEFT_HIP, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_FOOT);
-            calibrateLimb(landmarksCopy, RightUpperLegBone, Pose.Landmark.RIGHT_HIP, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_FOOT);
-
-
-            //Calibrate fingers
-            /*
-            calibrateLimb(landmarksCopy, RightIndexBase, Pose.Landmark.RIGHT_INDEX_BASE, Pose.Landmark.RIGHT_INDEX_KNUCKLE, Pose.Landmark.RIGHT_INDEX);
-            calibrateLimb(landmarksCopy, RightThumbBase, Pose.Landmark.RIGHT_THUMB_BASE, Pose.Landmark.RIGHT_THUMB_KNUCKLE, Pose.Landmark.RIGHT_THUMB);
-            calibrateLimb(landmarksCopy, RightMiddleBase, Pose.Landmark.RIGHT_MIDDLE_BASE, Pose.Landmark.RIGHT_MIDDLE_KNUCKLE, Pose.Landmark.RIGHT_MIDDLE);
-            calibrateLimb(landmarksCopy, RightRingBase, Pose.Landmark.RIGHT_RING_BASE, Pose.Landmark.RIGHT_RING_KNUCKLE, Pose.Landmark.RIGHT_RING);
-            calibrateLimb(landmarksCopy, RightPinkyBase, Pose.Landmark.RIGHT_PINKY_BASE, Pose.Landmark.RIGHT_PINKY_KNUCKLE, Pose.Landmark.RIGHT_PINKY);
-
-            calibrateLimb(landmarksCopy, LeftIndexBase, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_INDEX_KNUCKLE, Pose.Landmark.LEFT_INDEX);
-            calibrateLimb(landmarksCopy, LeftThumbBase, Pose.Landmark.LEFT_THUMB_BASE, Pose.Landmark.LEFT_THUMB_KNUCKLE, Pose.Landmark.LEFT_THUMB);
-            calibrateLimb(landmarksCopy, LeftMiddleBase, Pose.Landmark.LEFT_MIDDLE_BASE, Pose.Landmark.LEFT_MIDDLE_KNUCKLE, Pose.Landmark.LEFT_MIDDLE);
-            calibrateLimb(landmarksCopy, LeftRingBase, Pose.Landmark.LEFT_RING_BASE, Pose.Landmark.LEFT_RING_KNUCKLE, Pose.Landmark.LEFT_RING);
-            calibrateLimb(landmarksCopy, LeftPinkyBase, Pose.Landmark.LEFT_PINKY_BASE, Pose.Landmark.LEFT_PINKY_KNUCKLE, Pose.Landmark.LEFT_PINKY);*/
-
-        }
-        
         //MAKE FINGERS RELATIVE TO WRIST POSITION
         foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
         {
@@ -210,8 +184,38 @@ public class RiggingIK : MonoBehaviour
             }
 
         }
-        
 
+        //RETARGET REAL TO MODEL - if we are not reshaping the model, start by reshaping the received coordinates to match us
+        if (useCalibration && !reshapeModelForCalibration)
+        {
+            //Calibrate limbs
+            calibrateLimb(landmarksCopy, RightUpperArmBone, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST);
+            calibrateLimb(landmarksCopy, LeftUpperArmBone, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST);
+
+            calibrateLimb(landmarksCopy, LeftUpperLegBone, Pose.Landmark.LEFT_HIP, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_FOOT);
+            calibrateLimb(landmarksCopy, RightUpperLegBone, Pose.Landmark.RIGHT_HIP, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_FOOT);
+
+
+            //Calibrate fingers
+            if (landmarksCopy.ContainsKey(Pose.Landmark.RIGHT_INDEX_BASE))
+            {
+                calibrateLimb(landmarksCopy, RightIndexBase, Pose.Landmark.RIGHT_INDEX_BASE, Pose.Landmark.RIGHT_INDEX_KNUCKLE, Pose.Landmark.RIGHT_INDEX);
+                calibrateLimb(landmarksCopy, RightThumbBase, Pose.Landmark.RIGHT_THUMB_BASE, Pose.Landmark.RIGHT_THUMB_KNUCKLE, Pose.Landmark.RIGHT_THUMB);
+                calibrateLimb(landmarksCopy, RightMiddleBase, Pose.Landmark.RIGHT_MIDDLE_BASE, Pose.Landmark.RIGHT_MIDDLE_KNUCKLE, Pose.Landmark.RIGHT_MIDDLE);
+                calibrateLimb(landmarksCopy, RightRingBase, Pose.Landmark.RIGHT_RING_BASE, Pose.Landmark.RIGHT_RING_KNUCKLE, Pose.Landmark.RIGHT_RING);
+                calibrateLimb(landmarksCopy, RightPinkyBase, Pose.Landmark.RIGHT_PINKY_BASE, Pose.Landmark.RIGHT_PINKY_KNUCKLE, Pose.Landmark.RIGHT_PINKY);
+            }
+            if (landmarksCopy.ContainsKey(Pose.Landmark.LEFT_INDEX_BASE))
+            {
+                calibrateLimb(landmarksCopy, LeftIndexBase, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_INDEX_KNUCKLE, Pose.Landmark.LEFT_INDEX);
+                calibrateLimb(landmarksCopy, LeftThumbBase, Pose.Landmark.LEFT_THUMB_BASE, Pose.Landmark.LEFT_THUMB_KNUCKLE, Pose.Landmark.LEFT_THUMB);
+                calibrateLimb(landmarksCopy, LeftMiddleBase, Pose.Landmark.LEFT_MIDDLE_BASE, Pose.Landmark.LEFT_MIDDLE_KNUCKLE, Pose.Landmark.LEFT_MIDDLE);
+                calibrateLimb(landmarksCopy, LeftRingBase, Pose.Landmark.LEFT_RING_BASE, Pose.Landmark.LEFT_RING_KNUCKLE, Pose.Landmark.LEFT_RING);
+                calibrateLimb(landmarksCopy, LeftPinkyBase, Pose.Landmark.LEFT_PINKY_BASE, Pose.Landmark.LEFT_PINKY_KNUCKLE, Pose.Landmark.LEFT_PINKY);
+            }
+
+        }
+        
 
         //SET TARGET POSITIONS
         foreach (var kvp in landmarksCopy)
