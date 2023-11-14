@@ -153,12 +153,23 @@ public class CameraStream : MonoBehaviour
                 case "Wrist":
                     identifiedLandmark = Pose.Landmark.LEFT_WRIST_ROOT;
                     break;
+
                 case "Index-1(base)":
-                    identifiedLandmark = Pose.Landmark.LEFT_WRIST_PIVOTRIGHT;
+                    identifiedLandmark = Pose.Landmark.LEFT_INDEX_BASE;
+                    break;
+                case "Thumb-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_THUMB_BASE;
+                    break;
+                case "Middle-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_MIDDLE_BASE;
+                    break;
+                case "Ring-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_RING_BASE;
                     break;
                 case "Pinky-1(base)":
-                    identifiedLandmark = Pose.Landmark.LEFT_WRIST_PIVOTLEFT;
+                    identifiedLandmark = Pose.Landmark.LEFT_PINKY_BASE;
                     break;
+
                 default:
                     included = false;
                     break;
@@ -212,12 +223,23 @@ public class CameraStream : MonoBehaviour
                 case "Wrist":
                     identifiedLandmark = Pose.Landmark.RIGHT_WRIST_ROOT;
                     break;
+
                 case "Index-1(base)":
-                    identifiedLandmark = Pose.Landmark.RIGHT_WRIST_PIVOTLEFT;
+                    identifiedLandmark = Pose.Landmark.RIGHT_INDEX_BASE;
+                    break;
+                case "Thumb-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_THUMB_BASE;
+                    break;
+                case "Middle-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_MIDDLE_BASE;
+                    break;
+                case "Ring-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_RING_BASE;
                     break;
                 case "Pinky-1(base)":
-                    identifiedLandmark = Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT;
+                    identifiedLandmark = Pose.Landmark.RIGHT_PINKY_BASE;
                     break;
+
                 default:
                     included = false;
                     break;
@@ -285,10 +307,8 @@ public class CameraStream : MonoBehaviour
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                UnityEngine.Debug.Log("1");
                 while (!reader.EndOfStream)
                 {
-                    UnityEngine.Debug.Log("2");
                     if (cancellationToken.IsCancellationRequested) //If requested, exit task
                     {
                         // Clean up resources?

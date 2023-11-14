@@ -28,11 +28,6 @@ public class Pose
         LEFT_SHOULDER,
         RIGHT_SHOULDER,
 
-        LEFT_WRIST_PIVOTRIGHT,
-        LEFT_WRIST_PIVOTLEFT,
-        RIGHT_WRIST_PIVOTRIGHT,
-        RIGHT_WRIST_PIVOTLEFT,
-
         NOSE,
         RIGHT_EAR,
         LEFT_EAR,
@@ -47,23 +42,35 @@ public class Pose
         RIGHT_PINKY,
         RIGHT_MIDDLE,
 
-        RIGHT_INDEX_KNUCKLE,
-        RIGHT_THUMB_KNUCKLE,
-        RIGHT_RING_KNUCKLE,
-        RIGHT_PINKY_KNUCKLE,
-        RIGHT_MIDDLE_KNUCKLE,
-
         LEFT_INDEX,
         LEFT_THUMB,
         LEFT_RING,
         LEFT_PINKY,
         LEFT_MIDDLE,
 
+        RIGHT_INDEX_KNUCKLE,
+        RIGHT_THUMB_KNUCKLE,
+        RIGHT_RING_KNUCKLE,
+        RIGHT_PINKY_KNUCKLE,
+        RIGHT_MIDDLE_KNUCKLE,
+
         LEFT_INDEX_KNUCKLE,
         LEFT_THUMB_KNUCKLE,
         LEFT_RING_KNUCKLE,
         LEFT_PINKY_KNUCKLE,
         LEFT_MIDDLE_KNUCKLE,
+
+        RIGHT_INDEX_BASE,
+        RIGHT_THUMB_BASE,
+        RIGHT_RING_BASE,
+        RIGHT_PINKY_BASE,
+        RIGHT_MIDDLE_BASE,
+
+        LEFT_INDEX_BASE,
+        LEFT_THUMB_BASE,
+        LEFT_RING_BASE,
+        LEFT_PINKY_BASE,
+        LEFT_MIDDLE_BASE,
 
         LEFT_HIP,
         RIGHT_HIP,

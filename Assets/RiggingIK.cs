@@ -18,7 +18,7 @@ public class RiggingIK : MonoBehaviour
     public Dictionary<Pose.Landmark, GameObject> landmarkToTarget = new Dictionary<Pose.Landmark, GameObject>();
 
     public static Dictionary<GameObject, Vector3> targetToPlayerBasePosition = new Dictionary<GameObject, Vector3>();
-    public static Dictionary<GameObject, Vector3> targetToModelBasePosition = new Dictionary<GameObject, Vector3>();
+    public static Dictionary<Pose.Landmark, Vector3> landmarkToModelBasePosition = new Dictionary<Pose.Landmark, Vector3>();
 
     Animator animator;
 
@@ -92,6 +92,20 @@ public class RiggingIK : MonoBehaviour
     public GameObject LeftUpperLegBone;
     public GameObject RightUpperLegBone;
 
+
+    public GameObject LeftIndexBase;
+    public GameObject LeftThumbBase;
+    public GameObject LeftRingBase;
+    public GameObject LeftPinkyBase;
+    public GameObject LeftMiddleBase;
+
+    public GameObject RightIndexBase;
+    public GameObject RightThumbBase;
+    public GameObject RightRingBase;
+    public GameObject RightPinkyBase;
+    public GameObject RightMiddleBase;
+
+
     public RigBuilder rigBuilder;
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
@@ -105,7 +119,13 @@ public class RiggingIK : MonoBehaviour
         Pose.Landmark.RIGHT_THUMB_KNUCKLE,
         Pose.Landmark.RIGHT_RING_KNUCKLE,
         Pose.Landmark.RIGHT_PINKY_KNUCKLE,
-        Pose.Landmark.RIGHT_MIDDLE_KNUCKLE};
+        Pose.Landmark.RIGHT_MIDDLE_KNUCKLE,
+
+        Pose.Landmark.RIGHT_INDEX_BASE,
+        Pose.Landmark.RIGHT_THUMB_BASE,
+        Pose.Landmark.RIGHT_RING_BASE,
+        Pose.Landmark.RIGHT_PINKY_BASE,
+        Pose.Landmark.RIGHT_MIDDLE_BASE};
 
     List<Pose.Landmark> leftFingers = new List<Pose.Landmark> {
         Pose.Landmark.LEFT_INDEX,
@@ -118,7 +138,13 @@ public class RiggingIK : MonoBehaviour
         Pose.Landmark.LEFT_THUMB_KNUCKLE,
         Pose.Landmark.LEFT_RING_KNUCKLE,
         Pose.Landmark.LEFT_PINKY_KNUCKLE,
-        Pose.Landmark.LEFT_MIDDLE_KNUCKLE};
+        Pose.Landmark.LEFT_MIDDLE_KNUCKLE,
+
+        Pose.Landmark.LEFT_INDEX_BASE,
+        Pose.Landmark.LEFT_THUMB_BASE,
+        Pose.Landmark.LEFT_RING_BASE,
+        Pose.Landmark.LEFT_PINKY_BASE,
+        Pose.Landmark.LEFT_MIDDLE_BASE};
 
     //this is just to simplify
     public void SetIKPositions(Pose poseToPlay, bool relative = false)
@@ -142,32 +168,29 @@ public class RiggingIK : MonoBehaviour
         }
 
         //RETARGET REAL TO MODEL - if we are not reshaping the model, start by reshaping the received coordinates to match us
-        if (useCalibration && !reshapeModelForCalibration)
+        if (useCalibration && !reshapeModelForCalibration && landmarksCopy.ContainsKey(Pose.Landmark.RIGHT_INDEX))
         {
-            Vector3 rootShift = RightUpperArmBone.transform.position - (transform.position + landmarksCopy[Pose.Landmark.RIGHT_SHOULDER]);
-            //saveCurrentPositions(targetToPlayerBasePosition);
-            Vector3 extraShift = ElongateLimb(landmarksCopy, RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER);
-            ElongateLimb(landmarksCopy, RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, extraShift);
-            landmarksCopy[Pose.Landmark.RIGHT_ELBOW] += rootShift;
-            landmarksCopy[Pose.Landmark.RIGHT_WRIST] += rootShift;
+            //Calibrate limbs
+            calibrateLimb(landmarksCopy, RightUpperArmBone, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST);
+            calibrateLimb(landmarksCopy, LeftUpperArmBone, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST);
 
-            rootShift = LeftUpperArmBone.transform.position - (transform.position + landmarksCopy[Pose.Landmark.LEFT_SHOULDER]);
-            extraShift = ElongateLimb(landmarksCopy, LeftElbowHintTarget, LeftShoulderTarget, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_SHOULDER);
-            ElongateLimb(landmarksCopy, LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW, extraShift);
-            landmarksCopy[Pose.Landmark.LEFT_ELBOW] += rootShift;
-            landmarksCopy[Pose.Landmark.LEFT_WRIST] += rootShift;
+            calibrateLimb(landmarksCopy, LeftUpperLegBone, Pose.Landmark.LEFT_HIP, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_FOOT);
+            calibrateLimb(landmarksCopy, RightUpperLegBone, Pose.Landmark.RIGHT_HIP, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_FOOT);
 
-            rootShift = LeftUpperLegBone.transform.position - (transform.position + landmarksCopy[Pose.Landmark.LEFT_HIP]);
-            extraShift = ElongateLimb(landmarksCopy, LeftKneeHintTarget, LeftHipTarget, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_HIP);
-            ElongateLimb(landmarksCopy, LeftFootTarget, LeftKneeHintTarget, Pose.Landmark.LEFT_FOOT, Pose.Landmark.LEFT_KNEE, extraShift);
-            landmarksCopy[Pose.Landmark.LEFT_FOOT] += rootShift;
-            landmarksCopy[Pose.Landmark.LEFT_KNEE] += rootShift;
 
-            rootShift = RightUpperLegBone.transform.position - (transform.position + landmarksCopy[Pose.Landmark.RIGHT_HIP]);
-            extraShift = ElongateLimb(landmarksCopy, RightKneeHintTarget, RightHipTarget, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_HIP);
-            ElongateLimb(landmarksCopy, RightFootTarget, RightKneeHintTarget, Pose.Landmark.RIGHT_FOOT, Pose.Landmark.RIGHT_KNEE, extraShift);
-            landmarksCopy[Pose.Landmark.RIGHT_FOOT] += rootShift;
-            landmarksCopy[Pose.Landmark.RIGHT_KNEE] += rootShift;
+            //Calibrate fingers
+            calibrateLimb(landmarksCopy, RightIndexBase, Pose.Landmark.RIGHT_INDEX_BASE, Pose.Landmark.RIGHT_INDEX_KNUCKLE, Pose.Landmark.RIGHT_INDEX);
+            calibrateLimb(landmarksCopy, RightThumbBase, Pose.Landmark.RIGHT_THUMB_BASE, Pose.Landmark.RIGHT_THUMB_KNUCKLE, Pose.Landmark.RIGHT_THUMB);
+            calibrateLimb(landmarksCopy, RightMiddleBase, Pose.Landmark.RIGHT_MIDDLE_BASE, Pose.Landmark.RIGHT_MIDDLE_KNUCKLE, Pose.Landmark.RIGHT_MIDDLE);
+            calibrateLimb(landmarksCopy, RightRingBase, Pose.Landmark.RIGHT_RING_BASE, Pose.Landmark.RIGHT_RING_KNUCKLE, Pose.Landmark.RIGHT_RING);
+            calibrateLimb(landmarksCopy, RightPinkyBase, Pose.Landmark.RIGHT_PINKY_BASE, Pose.Landmark.RIGHT_PINKY_KNUCKLE, Pose.Landmark.RIGHT_PINKY);
+
+            calibrateLimb(landmarksCopy, LeftIndexBase, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_INDEX_KNUCKLE, Pose.Landmark.LEFT_INDEX);
+            calibrateLimb(landmarksCopy, LeftThumbBase, Pose.Landmark.LEFT_THUMB_BASE, Pose.Landmark.LEFT_THUMB_KNUCKLE, Pose.Landmark.LEFT_THUMB);
+            calibrateLimb(landmarksCopy, LeftMiddleBase, Pose.Landmark.LEFT_MIDDLE_BASE, Pose.Landmark.LEFT_MIDDLE_KNUCKLE, Pose.Landmark.LEFT_MIDDLE);
+            calibrateLimb(landmarksCopy, LeftRingBase, Pose.Landmark.LEFT_RING_BASE, Pose.Landmark.LEFT_RING_KNUCKLE, Pose.Landmark.LEFT_RING);
+            calibrateLimb(landmarksCopy, LeftPinkyBase, Pose.Landmark.LEFT_PINKY_BASE, Pose.Landmark.LEFT_PINKY_KNUCKLE, Pose.Landmark.LEFT_PINKY);
+
         }
 
         //MAKE FINGERS RELATIVE TO WRIST POSITION
@@ -213,8 +236,8 @@ public class RiggingIK : MonoBehaviour
         }
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
         
-        setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_WRIST_PIVOTLEFT, Pose.Landmark.LEFT_WRIST_PIVOTRIGHT, Pose.Landmark.LEFT_WRIST_ROOT, LeftWristTarget, Quaternion.Euler(0, 0, 0));
-        setRotationFromTriangle(landmarksCopy, Pose.Landmark.RIGHT_WRIST_PIVOTLEFT, Pose.Landmark.RIGHT_WRIST_PIVOTRIGHT, Pose.Landmark.RIGHT_WRIST_ROOT, RightWristTarget, Quaternion.Euler(0, 0, 0));
+        setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_PINKY_BASE, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_WRIST_ROOT, LeftWristTarget, Quaternion.Euler(0, 0, 0));
+        setRotationFromTriangle(landmarksCopy, Pose.Landmark.RIGHT_INDEX_BASE, Pose.Landmark.RIGHT_PINKY_BASE, Pose.Landmark.RIGHT_WRIST_ROOT, RightWristTarget, Quaternion.Euler(0, 0, 0));
 
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, Pose.Landmark.NOSE, HeadTarget, Quaternion.Euler(-90,0,0));
 
@@ -248,6 +271,17 @@ public class RiggingIK : MonoBehaviour
 
     }
 
+    void calibrateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject rootBone, Pose.Landmark rootLandmark, Pose.Landmark midLandmark, Pose.Landmark endLandmark)
+    {
+        Vector3 rootShift = rootBone.transform.position - (transform.position + landmarksCopy[rootLandmark]);
+        //saveCurrentPositions(targetToPlayerBasePosition);
+        Vector3 extraShift = ElongateLimb(landmarksCopy, midLandmark, rootLandmark);
+        ElongateLimb(landmarksCopy, endLandmark, midLandmark, extraShift);
+        landmarksCopy[midLandmark] += rootShift;
+        landmarksCopy[endLandmark] += rootShift;
+    }
+
+    /*
     void ElongateModelLimb(GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, GameObject boneToScale)
     {
         Vector3 realPose = targetToPlayerBasePosition[goalTarget] - targetToPlayerBasePosition[sourceTarget];
@@ -258,15 +292,14 @@ public class RiggingIK : MonoBehaviour
         float scaleVar = realMagnitude / modelMagnitude;
 
         boneToScale.transform.localScale = new Vector3(scaleVar, scaleVar, scaleVar);
-    }
+    }*/
 
     //retargets the REAL estimation onto the model and returns the vector so that it may be applied to its children
-    Vector3 ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, Vector3 extraShift = default(Vector3))
+    Vector3 ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, Vector3 extraShift = default(Vector3))
     {
-        //Vector3 originalSourcePosition = landmarksCopy[sourceLandmark] + (-extraShift);
         landmarksCopy[goalLandmark] += extraShift;
         Vector3 realPose = landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark];
-        Vector3 modelPose = targetToModelBasePosition[goalTarget] - targetToModelBasePosition[sourceTarget];
+        Vector3 modelPose = landmarkToModelBasePosition[goalLandmark] - landmarkToModelBasePosition[sourceLandmark];
         float realMagnitude = realPose.magnitude;
         float modelMagnitude = modelPose.magnitude;
 
@@ -368,6 +401,12 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY_KNUCKLE, RightPinkyHintTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE_KNUCKLE, RightMiddleHintTarget);
 
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_INDEX_BASE, LeftIndexHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_THUMB_BASE, LeftThumbHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_RING_BASE, LeftRingHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY_BASE, LeftPinkyHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE_BASE, LeftMiddleHintTarget);
+
             landmarkToTarget.Add(Pose.Landmark.LEFT_INDEX, LeftIndexTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB, LeftThumbTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_RING, LeftRingTarget);
@@ -379,6 +418,12 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.LEFT_RING_KNUCKLE, LeftRingHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY_KNUCKLE, LeftPinkyHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE_KNUCKLE, LeftMiddleHintTarget);
+
+            landmarkToTarget.Add(Pose.Landmark.LEFT_INDEX_BASE, LeftIndexHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB_BASE, LeftThumbHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_RING_BASE, LeftRingHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY_BASE, LeftPinkyHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE_BASE, LeftMiddleHintTarget);
 
             landmarkToTarget.Add(Pose.Landmark.LEFT_KNEE, LeftKneeHintTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_KNEE, RightKneeHintTarget);
@@ -392,7 +437,7 @@ public class RiggingIK : MonoBehaviour
 
         if (mirroring && useCalibration)
         {
-            saveCurrentPositions(targetToModelBasePosition);
+            saveCurrentPositions(landmarkToModelBasePosition);
         }
 
     }
@@ -421,6 +466,7 @@ public class RiggingIK : MonoBehaviour
         {
             if (reshapeModelForCalibration)
             {
+                /*
                 saveCurrentPositions(targetToPlayerBasePosition);
                 ElongateModelLimb(RightElbowHintTarget, RightShoulderTarget, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_SHOULDER, RightUpperArmBone);
                 ElongateModelLimb(RightHandTarget, RightElbowHintTarget, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.RIGHT_ELBOW, RightLowerArmBone);
@@ -429,6 +475,7 @@ public class RiggingIK : MonoBehaviour
                 ElongateModelLimb(LeftHandTarget, LeftElbowHintTarget, Pose.Landmark.LEFT_WRIST, Pose.Landmark.LEFT_ELBOW, LeftLowerArmBone);
                 rigBuilder.Build(); //I should not have to do this, but it will not work otherwise
                 Debug.Log("Reshaped limbs!");
+                */
             }
         }
 
@@ -458,27 +505,55 @@ public class RiggingIK : MonoBehaviour
 
     Vector3 initialLeftPosition;
     //public Dictionary<Pose.Landmark, Vector3> targetToInitialPosition = new Dictionary<GameObject, Vector3>();
-    public void saveCurrentPositions(Dictionary<GameObject, Vector3> dictionaryToFill)
+    public void saveCurrentPositions(Dictionary<Pose.Landmark, Vector3> dictionaryToFill)
     {
         dictionaryToFill.Clear();
-        dictionaryToFill.Add(LeftHandTarget, LeftHandTarget.transform.position);
-        dictionaryToFill.Add(LeftElbowHintTarget, LeftElbowHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_ELBOW, LeftElbowHintTarget.transform.position);
 
-        dictionaryToFill.Add(RightHandTarget, RightHandTarget.transform.position);
-        dictionaryToFill.Add(RightElbowHintTarget, RightElbowHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_WRIST, RightHandTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_ELBOW, RightElbowHintTarget.transform.position);
 
-        dictionaryToFill.Add(RightShoulderTarget, RightShoulderTarget.transform.position);
-        dictionaryToFill.Add(LeftShoulderTarget, LeftShoulderTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_SHOULDER, RightShoulderTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_SHOULDER, LeftShoulderTarget.transform.position);
 
-        dictionaryToFill.Add(RightKneeHintTarget, RightKneeHintTarget.transform.position);
-        dictionaryToFill.Add(LeftKneeHintTarget, LeftKneeHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_KNEE, RightKneeHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_KNEE, LeftKneeHintTarget.transform.position);
 
-        dictionaryToFill.Add(LeftHipTarget, LeftHipTarget.transform.position);
-        dictionaryToFill.Add(RightHipTarget, RightHipTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_HIP, LeftHipTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_HIP, RightHipTarget.transform.position);
 
 
-        dictionaryToFill.Add(LeftFootTarget, LeftFootTarget.transform.position);
-        dictionaryToFill.Add(RightFootTarget, RightFootTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_FOOT, LeftFootTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_FOOT, RightFootTarget.transform.position);
+
+
+        dictionaryToFill.Add(Pose.Landmark.LEFT_INDEX_BASE, LeftIndexBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_MIDDLE_BASE, LeftMiddleBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_RING_BASE, LeftRingBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_PINKY_BASE, LeftPinkyBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_THUMB_BASE, LeftThumbBase.transform.position);
+
+
+        dictionaryToFill.Add(Pose.Landmark.LEFT_INDEX_KNUCKLE, LeftIndexHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_MIDDLE_KNUCKLE, LeftMiddleHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_RING_KNUCKLE, LeftRingHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_PINKY_KNUCKLE, LeftPinkyHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_THUMB_KNUCKLE, LeftThumbHintTarget.transform.position);
+
+
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_INDEX_KNUCKLE, RightIndexHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_MIDDLE_KNUCKLE, RightMiddleHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_RING_KNUCKLE, RightRingHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_PINKY_KNUCKLE, RightPinkyHintTarget.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_THUMB_KNUCKLE, RightThumbHintTarget.transform.position);
+
+
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_INDEX_BASE, RightIndexBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_MIDDLE_BASE, RightMiddleBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_RING_BASE, RightRingBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_PINKY_BASE, RightPinkyBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.RIGHT_THUMB_BASE, RightThumbBase.transform.position);
     }
 
 
