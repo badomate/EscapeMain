@@ -405,12 +405,12 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.RIGHT_RING_KNUCKLE, RightRingHintTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY_KNUCKLE, RightPinkyHintTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE_KNUCKLE, RightMiddleHintTarget);
-
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_INDEX_BASE, LeftIndexHintTarget);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_THUMB_BASE, LeftThumbHintTarget);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_RING_BASE, LeftRingHintTarget);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY_BASE, LeftPinkyHintTarget);
-            landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE_BASE, LeftMiddleHintTarget);
+            /*
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_INDEX_BASE, RightIndexHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_THUMB_BASE, RightThumbHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_RING_BASE, RightRingHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_PINKY_BASE, RightPinkyHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.RIGHT_MIDDLE_BASE, RightMiddleHintTarget);*/
 
             landmarkToTarget.Add(Pose.Landmark.LEFT_INDEX, LeftIndexTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB, LeftThumbTarget);
@@ -423,12 +423,12 @@ public class RiggingIK : MonoBehaviour
             landmarkToTarget.Add(Pose.Landmark.LEFT_RING_KNUCKLE, LeftRingHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY_KNUCKLE, LeftPinkyHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE_KNUCKLE, LeftMiddleHintTarget);
-
+            /*
             landmarkToTarget.Add(Pose.Landmark.LEFT_INDEX_BASE, LeftIndexHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_THUMB_BASE, LeftThumbHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_RING_BASE, LeftRingHintTarget);
             landmarkToTarget.Add(Pose.Landmark.LEFT_PINKY_BASE, LeftPinkyHintTarget);
-            landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE_BASE, LeftMiddleHintTarget);
+            landmarkToTarget.Add(Pose.Landmark.LEFT_MIDDLE_BASE, LeftMiddleHintTarget);*/
 
             landmarkToTarget.Add(Pose.Landmark.LEFT_KNEE, LeftKneeHintTarget);
             landmarkToTarget.Add(Pose.Landmark.RIGHT_KNEE, RightKneeHintTarget);

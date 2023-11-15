@@ -112,7 +112,7 @@ public class CameraStream : MonoBehaviour
         }
 
         //TODO: there's probably a way to collapse this to a function instead of repeating lines
-        foreach (BodyData body in dataContainer.hands?.left_world)
+        foreach (BodyData body in dataContainer.hands?.right_world)
         {
             bool included = true;
             switch (body.landmarkName)
@@ -181,7 +181,7 @@ public class CameraStream : MonoBehaviour
         }
 
 
-        foreach (BodyData body in dataContainer.hands?.right_world)
+        foreach (BodyData body in dataContainer.hands?.left_world)
         {
             bool included = true;
             switch (body.landmarkName)
