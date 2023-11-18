@@ -24,6 +24,8 @@ public class CameraStream : MonoBehaviour
     {
         public List<BodyData> left;
         public List<BodyData> right;
+        public List<BodyData> left_world;
+        public List<BodyData> right_world;
     }
 
     [Serializable]
@@ -41,7 +43,7 @@ public class CameraStream : MonoBehaviour
     // Process and handle the received landmarks data
     void ProcessLandmarksData(string jsonData)
     {
-        jsonData = jsonData.Substring(5);
+        jsonData = jsonData.Substring(jsonData.IndexOf('{'));
 
         //UnityEngine.Debug.Log(jsonData);
         // Deserialize the JSON string into an array of Vector3Data objects
@@ -52,17 +54,24 @@ public class CameraStream : MonoBehaviour
         {
             bool included = true; //whether we are going to use it, whether it appears in the switch case somewhere
             switch (body.landmarkName)
+
             {
+                case "Left hip":
+                    identifiedLandmark = Pose.Landmark.LEFT_HIP;
+                    break;
+                case "Right hip":
+                    identifiedLandmark = Pose.Landmark.RIGHT_HIP;
+                    break;
                 case "Left wrist":
                     identifiedLandmark = Pose.Landmark.LEFT_WRIST;
                     break;
                 case "Right wrist":
                     identifiedLandmark = Pose.Landmark.RIGHT_WRIST;
                     break;
-                case "Left heel":
+                case "Left ankle":
                     identifiedLandmark = Pose.Landmark.LEFT_FOOT;
                     break;
-                case "Right heel":
+                case "Right ankle":
                     identifiedLandmark = Pose.Landmark.RIGHT_FOOT;
                     break;
                 case "Right elbow":
@@ -77,6 +86,21 @@ public class CameraStream : MonoBehaviour
                 case "Right shoulder":
                     identifiedLandmark = Pose.Landmark.RIGHT_SHOULDER;
                     break;
+                case "Right ear":
+                    identifiedLandmark = Pose.Landmark.RIGHT_EAR;
+                    break;
+                case "Left ear":
+                    identifiedLandmark = Pose.Landmark.LEFT_EAR;
+                    break;
+                case "Nose":
+                    identifiedLandmark = Pose.Landmark.NOSE;
+                    break;
+                case "Right knee":
+                    identifiedLandmark = Pose.Landmark.RIGHT_KNEE;
+                    break;
+                case "Left knee":
+                    identifiedLandmark = Pose.Landmark.LEFT_KNEE;
+                    break;
                 default:
                     included = false; //if it didn't match anything we need, don't modify the Pose
                     break;
@@ -88,7 +112,7 @@ public class CameraStream : MonoBehaviour
         }
 
         //TODO: there's probably a way to collapse this to a function instead of repeating lines
-        foreach (BodyData body in dataContainer.hands?.left)
+        foreach (BodyData body in dataContainer.hands?.right_world)
         {
             bool included = true;
             switch (body.landmarkName)
@@ -108,9 +132,44 @@ public class CameraStream : MonoBehaviour
                 case "Pinky-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.LEFT_PINKY;
                     break;
+
+                case "Index-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_INDEX_KNUCKLE;
+                    break;
+                case "Thumb-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_THUMB_KNUCKLE;
+                    break;
+                case "Middle-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_MIDDLE_KNUCKLE;
+                    break;
+                case "Ring-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_RING_KNUCKLE;
+                    break;
+                case "Pinky-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.LEFT_PINKY_KNUCKLE;
+                    break;
+
+
                 case "Wrist":
                     identifiedLandmark = Pose.Landmark.LEFT_WRIST_ROOT;
                     break;
+
+                case "Index-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_INDEX_BASE;
+                    break;
+                case "Thumb-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_THUMB_BASE;
+                    break;
+                case "Middle-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_MIDDLE_BASE;
+                    break;
+                case "Ring-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_RING_BASE;
+                    break;
+                case "Pinky-1(base)":
+                    identifiedLandmark = Pose.Landmark.LEFT_PINKY_BASE;
+                    break;
+
                 default:
                     included = false;
                     break;
@@ -122,7 +181,7 @@ public class CameraStream : MonoBehaviour
         }
 
 
-        foreach (BodyData body in dataContainer.hands?.right)
+        foreach (BodyData body in dataContainer.hands?.left_world)
         {
             bool included = true;
             switch (body.landmarkName)
@@ -142,9 +201,45 @@ public class CameraStream : MonoBehaviour
                 case "Pinky-4(fingertip)":
                     identifiedLandmark = Pose.Landmark.RIGHT_PINKY;
                     break;
+
+
+                case "Index-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_INDEX_KNUCKLE;
+                    break;
+                case "Thumb-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_THUMB_KNUCKLE;
+                    break;
+                case "Middle-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_MIDDLE_KNUCKLE;
+                    break;
+                case "Ring-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_RING_KNUCKLE;
+                    break;
+                case "Pinky-2(knuckle)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_PINKY_KNUCKLE;
+                    break;
+
+
                 case "Wrist":
                     identifiedLandmark = Pose.Landmark.RIGHT_WRIST_ROOT;
                     break;
+
+                case "Index-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_INDEX_BASE;
+                    break;
+                case "Thumb-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_THUMB_BASE;
+                    break;
+                case "Middle-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_MIDDLE_BASE;
+                    break;
+                case "Ring-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_RING_BASE;
+                    break;
+                case "Pinky-1(base)":
+                    identifiedLandmark = Pose.Landmark.RIGHT_PINKY_BASE;
+                    break;
+
                 default:
                     included = false;
                     break;
@@ -173,32 +268,35 @@ public class CameraStream : MonoBehaviour
     }
 
     // Asynchronously stream pose landmarks data from the Flask API
-    private async Task StreamLandmarksAsync(CancellationToken cancellationToken,
-                                           string videoPath = null,
+    private async Task StreamLandmarksAsync(CancellationToken cancellationToken, 
                                            bool staticImageMode = false,
                                            int modelComplexity = 1,
                                            double minDetectionConfidence = 0.5,
                                            double minTrackingConfidence = 0.5,
+                                           string outputVideo = "output.mp4",
                                            int displayFrames = 0,
                                            int useHandPose = 1,
                                            int drawBodyPose = 1,
-                                           int drawHandPose = 1)
+                                           int drawHandPose = 1,
+                                           int UseIndependentHands = 1
+                                           )
     {
         var baseUrl = "http://localhost:5000";
-        var apiUrl = "/landmarks";
+        var apiUrl = "/landmarks";  
 
         using (var client = new HttpClient())
         {
             // Build the query parameters for the API request
-            var queryParams = $"?video_path={videoPath}" +
-                              $"&static_image_mode={staticImageMode}" +
+            var queryParams = $"?" +
                               $"&model_complexity={modelComplexity}" +
                               $"&min_detection_confidence={minDetectionConfidence}" +
                               $"&min_tracking_confidence={minTrackingConfidence}" +
-                              $"&display_frames={displayFrames}"+
-                              $"&use_hand_pose={useHandPose}"+
-                              $"&draw_body_pose={drawBodyPose}"+
-                              $"&draw_hand_pose={drawHandPose}";
+                              $"&output_video={outputVideo}" +
+                              $"&display_frames={displayFrames}" +
+                              $"&use_hand_pose={useHandPose}" +
+                              $"&draw_body_pose={drawBodyPose}" +
+                              $"&draw_hand_pose={drawHandPose}" +
+                              $"&use_independent_hands_estimation={UseIndependentHands}";
 
             // Send the GET request to the API
             var responseStream = await client.GetStreamAsync(baseUrl + apiUrl + queryParams);
@@ -253,15 +351,16 @@ public class CameraStream : MonoBehaviour
 
         // Call the asynchronous method to stream pose landmarks data
         myGet = Task.Run(() => StreamLandmarksAsync(cancellationTokenSource.Token,
-                             videoPath: null,
                              staticImageMode: false,
-                             modelComplexity: 0,
+                             modelComplexity: 1,
                              minDetectionConfidence: 0.5,
                              minTrackingConfidence: 0.5,
+                             outputVideo: "null", //at the moment this still creates an empty file with the name "null", but it won't take up space
                              displayFrames: 1,
                              useHandPose: 1,
                              drawBodyPose: 1,
-                             drawHandPose: 1
+                             drawHandPose: 1,
+                             UseIndependentHands: 1
                              ));
 
         /*string jsonString = "{\"body\": [{\"id\": 0, \"landmarkName\": \"Nose\", \"data\": [0.0683145523071289, -0.5272032618522644, -0.2814151346683502, 0.534261167049408, 0.5520623326301575, -0.8420344591140747]}, {\"id\": 1, \"landmarkName\": \"Left eye inner\", \"data\": [0.06900090724229813, -0.5620826482772827, -0.2750793397426605, 0.542637050151825, 0.48907387256622314, -0.7762095928192139]}]}";
@@ -276,8 +375,8 @@ public class CameraStream : MonoBehaviour
         */
     }
 
-// Update is called once per frame
-void Update()
+    // Update is called once per frame
+    void Update()
     {
 
     }
