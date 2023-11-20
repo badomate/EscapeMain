@@ -13,7 +13,7 @@ public class RecognizeGesture : MonoBehaviour
 
     public bool recording = false;
 
-    public Vector3[,] characterGesture = new Vector3[recordingLength, sampleLength];
+    public Dictionary<Pose.Landmark, Vector3>[,] characterGesture = new Dictionary<Pose.Landmark, Vector3>[recordingLength, sampleLength];
     private int recordingProgress = 0; //how many samples of the currently playing gesture have we saved so far
     public float matchThreshold = 0.01f; //0 would mean an absolute perfect match across all samples
     public float stillnessThreshold = 0.1f; //used to "lock in" a pose
@@ -39,16 +39,16 @@ public class RecognizeGesture : MonoBehaviour
         // Check if the desired time interval has passed (30fps)
         if (timeSinceLastFrame >= frameInterval && recording)
         {
-            //saveGestureFrame();
+            saveGestureFrame();
             detectStillness();  //TODO: only run this function if needed
-            if (goalGestureCompleted(characterGesture)) //we could use this to detect other gestures too, not just the solution
+            /*if (goalGestureCompleted(characterGesture)) //we could use this to detect other gestures too, not just the solution
             {
                 if(LevelManagerScript.currentPlayer == 0)
                 {
                     recording = false; recordingProgress = 0;
                     LevelManagerScript.Success();
                 }
-            }
+            }*/
             timeSinceLastFrame = 0f; // Reset the time counter
         }
     }
@@ -67,11 +67,11 @@ public class RecognizeGesture : MonoBehaviour
         {
             for (int sampleIndex = 0; sampleIndex < sampleLength; sampleIndex++)
             {
-                if (Vector3.Distance(characterGesture[recordingIndex, sampleIndex],characterGesture[recordingIndex + 1, sampleIndex]) > stillnessThreshold)
+                /*if (Vector3.Distance(characterGesture[recordingIndex, sampleIndex],characterGesture[recordingIndex + 1, sampleIndex]) > stillnessThreshold)
                 {
                     Debug.Log("Not still");
                     return; // Difference exceeded the threshold
-                }
+                }*/
             }
         }
         if (StillnessEvent != null)
@@ -96,24 +96,21 @@ public class RecognizeGesture : MonoBehaviour
         return recording && recordingProgress == recordingLength && goalGesture.GestureMatches(gestureToCompare);
     }
 
-    /*private Socket_toHl2 TcpScript;
     //We save the gesture's samples received through TCP as a matrix and keep comparing it to the goal until they match. Every row is a sample (at 30hz) from hololens
     //If the matrix is full, we will throw away the oldest sample so we can keep matrix size the same
     public void saveGestureFrame()
     {
         if (recording)
         {
-            TcpScript = GetComponent<Socket_toHl2>();
             //float[] currentPositions = { TcpScript.position.x, TcpScript.position.y, TcpScript.position.z }; this will have to be a matrix built from pieces of the tcpscript
 
             
             if (recordingProgress < recordingLength) //building up the matrix
             {
-                CustomDebug.LogAlex("Position: Len=" + TcpScript.position.Length + ". Items=" + string.Join(", ", TcpScript.position));
+                //CustomDebug.LogAlex("Position: Len=" + TcpScript.position.Length + ". Items=" + string.Join(", ", TcpScript.position));
                 for (int k = 0; k < sampleLength; k++) {
-                    CustomDebug.LogAlex("SAVING FRAME: charaterGesture[" + recordingProgress + "," + k + "].");
-                    Vector3 posA = TcpScript.position[k];
-                    characterGesture[recordingProgress, k] = posA;
+                    Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(CameraStream.playerPose._landmarkArrangement); //Dictoinary must to be copied before we do the iteration
+                    characterGesture[recordingProgress, k] = landmarksCopy;
                 }
                 recordingProgress++;
             }
@@ -128,13 +125,12 @@ public class RecognizeGesture : MonoBehaviour
                 }
                 for (int i = 0; i < sampleLength; i++)
                 {
-                    characterGesture[characterGesture.GetLength(0) - 1, i] = TcpScript.position[i];
+                    //characterGesture[characterGesture.GetLength(0) - 1, i] = TcpScript.position[i];
                 }
 
             }
         }
     }
-    */
 
     /*
     public float MeanSquaredError(float[,] matrix1, float[,] matrix2)

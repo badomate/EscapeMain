@@ -33,7 +33,7 @@ public class AgreementManager : MonoBehaviour
         if (agreementInProgress)
         {
             //the player suggested a word. We should mimic it or reply positively to show that we agree.
-            LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(recognizeGesture.characterGesture), "shortcut", false);
+            //LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(recognizeGesture.characterGesture), "shortcut", false);
             //TODO: "shortcut" should be the unique identifier of the gesture built so far, as such:
             //LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(recognizeGesture.characterGesture), pointerScript.GestureBeingBuilt.id, false); //TODO: "shortcut" should be the unique identifier of LevelManager.goalGesture
         }

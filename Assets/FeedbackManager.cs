@@ -55,7 +55,7 @@ public class FeedbackManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   /*
         if (RecognizeGestureScript != null)
         {
             Gesture characterGesture = Gesture.MatrixToGesture(RecognizeGestureScript.characterGesture);
@@ -76,7 +76,7 @@ public class FeedbackManager : MonoBehaviour
             {
                 FeedbackEvent.Invoke();
             }
-        }
+        }*/
 
 
         //keyboard shortcuts for testing purposes
