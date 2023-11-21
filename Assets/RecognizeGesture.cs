@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using AuxiliarContent;
 using System.Linq;
+using System;
 
 public class RecognizeGesture : MonoBehaviour
 {
@@ -133,6 +134,26 @@ public class RecognizeGesture : MonoBehaviour
                 playerMovementRecord[playerMovementRecord.GetLength(0) - 1] = landmarksCopy;
 
             }
+        }
+    }
+
+    bool fingerDown(Pose.Landmark fingerTip)
+    {
+        Dictionary<Pose.Landmark, Vector3> poseToExamine = playerMovementRecord[playerMovementRecord.GetLength(0) - 1];
+
+        Pose.Landmark fingerMiddle;
+        Pose.Landmark fingerBase;
+        Enum.TryParse(fingerTip + "_KNUCKLE", out fingerMiddle);
+        Enum.TryParse(fingerTip + "_BASE", out fingerBase);
+
+        if (Vector3.Distance(poseToExamine[fingerMiddle], poseToExamine[fingerBase]) > Vector3.Distance(poseToExamine[fingerTip], poseToExamine[fingerBase])) //I'm just using distances here but this could be done with angles
+        {
+            //Finger is down
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
