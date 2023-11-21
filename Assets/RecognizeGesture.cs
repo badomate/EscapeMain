@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using AuxiliarContent;
+using System.Linq;
 
 public class RecognizeGesture : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class RecognizeGesture : MonoBehaviour
 
     public bool recording = false;
 
-    public Dictionary<Pose.Landmark, Vector3>[,] characterGesture = new Dictionary<Pose.Landmark, Vector3>[recordingLength, sampleLength];
+    public Dictionary<Pose.Landmark, Vector3>[] playerMovementRecord = new Dictionary<Pose.Landmark, Vector3>[recordingLength];
     private int recordingProgress = 0; //how many samples of the currently playing gesture have we saved so far
     public float matchThreshold = 0.01f; //0 would mean an absolute perfect match across all samples
     public float stillnessThreshold = 0.1f; //used to "lock in" a pose
@@ -65,13 +66,14 @@ public class RecognizeGesture : MonoBehaviour
         // the difference in each element of the last stillnessFramesRequired rows must be under threshold
         for (int recordingIndex = recordingLength - stillnessFramesRequired; recordingIndex < recordingLength -1; recordingIndex++)
         {
-            for (int sampleIndex = 0; sampleIndex < sampleLength; sampleIndex++)
+            foreach (var landmark in playerMovementRecord[recordingIndex].Keys.ToList()) //adjust hand origin
             {
-                /*if (Vector3.Distance(characterGesture[recordingIndex, sampleIndex],characterGesture[recordingIndex + 1, sampleIndex]) > stillnessThreshold)
+                if (Vector3.Distance(playerMovementRecord[recordingIndex][landmark], playerMovementRecord[recordingIndex + 1][landmark]) > stillnessThreshold)
                 {
                     Debug.Log("Not still");
                     return; // Difference exceeded the threshold
-                }*/
+                }
+
             }
         }
         if (StillnessEvent != null)
@@ -96,37 +98,35 @@ public class RecognizeGesture : MonoBehaviour
         return recording && recordingProgress == recordingLength && goalGesture.GestureMatches(gestureToCompare);
     }
 
-    //We save the gesture's samples received through TCP as a matrix and keep comparing it to the goal until they match. Every row is a sample (at 30hz) from hololens
+    //We save the gesture's samples received through the mediapipe stream as a matrix and keep comparing it to the goal until they match. Every row is a sample (at 30hz)
     //If the matrix is full, we will throw away the oldest sample so we can keep matrix size the same
+    //TODO: we may be taking more samples than we are receiving from mediapipe if the stream rate is low. It would be good to make sure we only call this function when the player's pose has definitely been updated.
     public void saveGestureFrame()
     {
         if (recording)
         {
-            //float[] currentPositions = { TcpScript.position.x, TcpScript.position.y, TcpScript.position.z }; this will have to be a matrix built from pieces of the tcpscript
+            Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(CameraStream.playerPose._landmarkArrangement);
 
-            
+
             if (recordingProgress < recordingLength) //building up the matrix
             {
-                //CustomDebug.LogAlex("Position: Len=" + TcpScript.position.Length + ". Items=" + string.Join(", ", TcpScript.position));
-                for (int k = 0; k < sampleLength; k++) {
-                    Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(CameraStream.playerPose._landmarkArrangement); //Dictoinary must to be copied before we do the iteration
-                    characterGesture[recordingProgress, k] = landmarksCopy;
+                foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
+                {
+                    playerMovementRecord[recordingProgress][landmark] = landmarksCopy[landmark];
                 }
                 recordingProgress++;
             }
             else //updating the matrix
             {
-                for (int i = 0; i < characterGesture.GetLength(0) -1; i++)
+                for (int i = 0; i < playerMovementRecord.GetLength(0) -1; i++)
                 {
                     for (int j = 0; j < sampleLength; j++)
                     {
-                        characterGesture[i, j] = characterGesture[i + 1, j];
+                        playerMovementRecord[i] = playerMovementRecord[i + 1];
                     }
                 }
-                for (int i = 0; i < sampleLength; i++)
-                {
-                    //characterGesture[characterGesture.GetLength(0) - 1, i] = TcpScript.position[i];
-                }
+
+                playerMovementRecord[playerMovementRecord.GetLength(0) - 1] = landmarksCopy;
 
             }
         }
