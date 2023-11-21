@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using AuxiliarContent;
 using System.Linq;
 using System;
+using UnityEngine.Windows;
 
 public class RecognizeGesture : MonoBehaviour
 {
@@ -53,6 +54,7 @@ public class RecognizeGesture : MonoBehaviour
             }*/
             timeSinceLastFrame = 0f; // Reset the time counter
         }
+        Debug.Log(fingerDown(Pose.Landmark.LEFT_INDEX));
     }
 
     public void detectStillness()
@@ -139,14 +141,24 @@ public class RecognizeGesture : MonoBehaviour
 
     bool fingerDown(Pose.Landmark fingerTip)
     {
+        if (playerMovementRecord[playerMovementRecord.GetLength(0) - 1] == null)
+        {
+            return false;
+        }
         Dictionary<Pose.Landmark, Vector3> poseToExamine = playerMovementRecord[playerMovementRecord.GetLength(0) - 1];
 
-        Pose.Landmark fingerMiddle;
-        Pose.Landmark fingerBase;
-        Enum.TryParse(fingerTip + "_KNUCKLE", out fingerMiddle);
-        Enum.TryParse(fingerTip + "_BASE", out fingerBase);
 
-        if (Vector3.Distance(poseToExamine[fingerMiddle], poseToExamine[fingerBase]) > Vector3.Distance(poseToExamine[fingerTip], poseToExamine[fingerBase])) //I'm just using distances here but this could be done with angles
+        Pose.Landmark wrist;
+        Pose.Landmark fingerMiddle;
+        Enum.TryParse(fingerTip + "_KNUCKLE", out fingerMiddle);
+        Enum.TryParse(fingerTip.ToString().Substring(fingerTip.ToString().IndexOf('_')) + "WRIST", out wrist);
+
+        if (!poseToExamine.ContainsKey(fingerMiddle) || !poseToExamine.ContainsKey(wrist) || !poseToExamine.ContainsKey(fingerTip))
+        {
+            return false;
+        }
+
+        if (Vector3.Distance(poseToExamine[fingerMiddle], poseToExamine[wrist]) < Vector3.Distance(poseToExamine[fingerTip], poseToExamine[wrist])) //I'm just using distances here but this could be done with angles
         {
             //Finger is down
             return true;
