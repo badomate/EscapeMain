@@ -7194,13 +7194,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dce46c1181343f4c9488063476804b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stillnessFramesRequired: 2
+  recordingLength: 60
+  stillnessFramesRequired: 30
   recording: 0
   matchThreshold: 0.01
-  stillnessThreshold: 0.1
-  MimicEvent:
-    m_PersistentCalls:
-      m_Calls: []
+  stillnessThreshold: 0.15
 --- !u!114 &319678133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7218,7 +7216,7 @@ MonoBehaviour:
   twisterRules: 1
   currentPlayer: 1
   riggingIKScript: {fileID: 319678158}
-  recognizeGestureScript: {fileID: 0}
+  recognizeGestureScript: {fileID: 319678130}
   pointerScript: {fileID: 2729281214152228945}
   twisterGame: {fileID: 319678152}
   InfoBox: {fileID: 998058053}

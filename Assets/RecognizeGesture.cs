@@ -7,26 +7,26 @@ using System.Linq;
 
 public class RecognizeGesture : MonoBehaviour
 {
-    public static int recordingLength = 2; //how many frames do we save for comparison? should match the dictionary
-    public static int sampleLength = Pose.LandmarkIds.Count; //how many landmarks are we receiving in total?
+    public int recordingLength = 2; //how many frames do we save for comparison? should match the dictionary
     public int stillnessFramesRequired = 2;
 
 
     public bool recording = false;
 
-    public Dictionary<Pose.Landmark, Vector3>[] playerMovementRecord = new Dictionary<Pose.Landmark, Vector3>[recordingLength];
+    public Dictionary<Pose.Landmark, Vector3>[] playerMovementRecord;
     private int recordingProgress = 0; //how many samples of the currently playing gesture have we saved so far
     public float matchThreshold = 0.01f; //0 would mean an absolute perfect match across all samples
     public float stillnessThreshold = 0.1f; //used to "lock in" a pose
 
     public static UnityEvent StillnessEvent = new UnityEvent();
-    public UnityEvent MimicEvent = new UnityEvent(); 
+    //public UnityEvent MimicEvent = new UnityEvent(); 
 
     private LevelManager LevelManagerScript;
     // Start is called before the first frame update
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
+        playerMovementRecord = new Dictionary<Pose.Landmark, Vector3>[recordingLength];
     }
 
 
@@ -59,18 +59,24 @@ public class RecognizeGesture : MonoBehaviour
         // Check if there are enough rows to check for stillness
         if (recordingLength < stillnessFramesRequired)
         {
-            Debug.Log("Recording length is set too short");
-            return;
+           Debug.LogWarning("Stillness frames required are greater than the set total recording memory!");
+           return;
         }
 
         // the difference in each element of the last stillnessFramesRequired rows must be under threshold
         for (int recordingIndex = recordingLength - stillnessFramesRequired; recordingIndex < recordingLength -1; recordingIndex++)
         {
+            if (playerMovementRecord[recordingIndex] == null)
+            {
+                return; //recording is incomplete
+            }
+
+            //Debug.Log(playerMovementRecord[recordingIndex]);
             foreach (var landmark in playerMovementRecord[recordingIndex].Keys.ToList()) //adjust hand origin
             {
                 if (Vector3.Distance(playerMovementRecord[recordingIndex][landmark], playerMovementRecord[recordingIndex + 1][landmark]) > stillnessThreshold)
                 {
-                    Debug.Log("Not still");
+                    //Debug.Log("This landmark broke the stillness: " + landmark);
                     return; // Difference exceeded the threshold
                 }
 
@@ -78,6 +84,7 @@ public class RecognizeGesture : MonoBehaviour
         }
         if (StillnessEvent != null)
         {
+            //Debug.LogWarning("Still!");
             StillnessEvent.Invoke();
         }
         else
@@ -120,10 +127,7 @@ public class RecognizeGesture : MonoBehaviour
             {
                 for (int i = 0; i < playerMovementRecord.GetLength(0) -1; i++)
                 {
-                    for (int j = 0; j < sampleLength; j++)
-                    {
-                        playerMovementRecord[i] = playerMovementRecord[i + 1];
-                    }
+                    playerMovementRecord[i] = playerMovementRecord[i + 1];
                 }
 
                 playerMovementRecord[playerMovementRecord.GetLength(0) - 1] = landmarksCopy;

@@ -13,7 +13,7 @@ public class AgreementManager : MonoBehaviour
     void Start()
     {
         feedbackManager.FeedbackEvent.AddListener(handleFeedbackEvent);
-        recognizeGesture.MimicEvent.AddListener(handleHelperNewWordEvent);
+        //recognizeGesture.MimicEvent.AddListener(handleHelperNewWordEvent);
         RecognizeGesture.StillnessEvent.AddListener(handlePlayerNewWordEvent);
     }
 
