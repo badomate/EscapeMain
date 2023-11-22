@@ -24,11 +24,29 @@ public class RecognizeGesture : MonoBehaviour
     //public UnityEvent MimicEvent = new UnityEvent(); 
 
     private LevelManager LevelManagerScript;
+
+    public GameObject InfoBox;
     // Start is called before the first frame update
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
         playerMovementRecord = new Dictionary<Pose.Landmark, Vector3>[recordingLength];
+        StillnessEvent.AddListener(handlleStillness);
+    }
+
+    void handlleStillness()
+    {
+        if(!fingerDown(Pose.Landmark.LEFT_INDEX) && !fingerDown(Pose.Landmark.LEFT_MIDDLE) && fingerDown(Pose.Landmark.LEFT_RING) && fingerDown(Pose.Landmark.LEFT_PINKY))
+        {
+            InfoBox.SetActive(true);
+            Debug.Log("Victory sign detected!!");
+        }
+        else
+        {
+            InfoBox.SetActive(false);
+
+        }
+
     }
 
 
@@ -54,7 +72,6 @@ public class RecognizeGesture : MonoBehaviour
             }*/
             timeSinceLastFrame = 0f; // Reset the time counter
         }
-        Debug.Log(fingerDown(Pose.Landmark.LEFT_INDEX));
     }
 
     public void detectStillness()
