@@ -27,6 +27,8 @@ public class RecognizeGesture : MonoBehaviour
 
     public GameObject InfoBox;
     // Start is called before the first frame update
+
+    public RiggingIK playerRig;
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
@@ -198,6 +200,26 @@ public class RecognizeGesture : MonoBehaviour
             float thumbDirectionDot = Vector3.Dot(wristDirection.normalized, thumbDirection.normalized);
             return thumbDirectionDot < 0;
         }
+    }
+
+    //Check if the wrist's rotation is close enough to a given rotation for hand sign recognition
+    bool checkWristRot(Quaternion requiredRotation, float threshold, bool leftHand)
+    {
+        Quaternion currentRotation;
+        if (leftHand)
+        {
+            currentRotation = playerRig.LeftWristTarget.transform.rotation;
+        }
+        else
+        {
+            currentRotation = playerRig.RightWristTarget.transform.rotation;
+        }
+
+        float diffX = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.x, currentRotation.eulerAngles.x));
+        float diffY = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.y, currentRotation.eulerAngles.y));
+        float diffZ = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.z, currentRotation.eulerAngles.z));
+
+        return diffX < threshold && diffY < threshold && diffZ < threshold;
     }
 
     /*
