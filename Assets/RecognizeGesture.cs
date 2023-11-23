@@ -23,6 +23,9 @@ public class RecognizeGesture : MonoBehaviour
     public static UnityEvent StillnessEvent = new UnityEvent();
     //public UnityEvent MimicEvent = new UnityEvent(); 
 
+    public delegate void RecognitionEventDel(string gestureName);
+    public static RecognitionEventDel RecognitionEvent;
+
     private LevelManager LevelManagerScript;
 
     public GameObject InfoBox;
@@ -39,7 +42,7 @@ public class RecognizeGesture : MonoBehaviour
         if(!fingerDown(Pose.Landmark.LEFT_INDEX) && !fingerDown(Pose.Landmark.LEFT_MIDDLE) && fingerDown(Pose.Landmark.LEFT_RING) && fingerDown(Pose.Landmark.LEFT_PINKY))
         {
             InfoBox.SetActive(true);
-            Debug.Log("Victory sign detected!!");
+            RecognizeGesture.RecognitionEvent.Invoke("victory");
         }
         else
         {
