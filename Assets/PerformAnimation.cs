@@ -6,10 +6,14 @@ using static FeedbackManager;
 public class PerformAnimation : MonoBehaviour
 {
     RecognizeGesture recognizer;
+    Animator animator;
+
+
     // Start is called before the first frame update
     void Start()
     {
         RecognizeGesture.RecognitionEvent += handleRecognitionEvent;
+        animator = GetComponent<Animator>();
     }
 
     void handleRecognitionEvent(string gestureName)
@@ -21,6 +25,7 @@ public class PerformAnimation : MonoBehaviour
                 break;
             case "victory":
                 Debug.Log("Victory sign detected");
+                animator.SetTrigger("Backflip"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
                 break;
             default:
                 break;
@@ -36,7 +41,12 @@ public class PerformAnimation : MonoBehaviour
         }
         else if (Input.GetKey("2"))
         {
-            RecognizeGesture.RecognitionEvent.Invoke("2");
+            RecognizeGesture.RecognitionEvent.Invoke("victory");
         }
+    }
+
+    private void OnDisable()
+    {
+        RecognizeGesture.RecognitionEvent -= handleRecognitionEvent;
     }
 }
