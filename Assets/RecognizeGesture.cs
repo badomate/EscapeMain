@@ -30,6 +30,8 @@ public class RecognizeGesture : MonoBehaviour
 
     public GameObject InfoBox;
     // Start is called before the first frame update
+
+    public RiggingIK playerRig;
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
@@ -159,6 +161,7 @@ public class RecognizeGesture : MonoBehaviour
         }
     }
 
+    //TODO: this function parses a lot of enums as strings and vice-versa, there might be a better apporoach, perhaps by pre-defining the hierarchy of which landmarks belong to which finger or hand
     bool fingerDown(Pose.Landmark fingerTip)
     {
         if (playerMovementRecord[playerMovementRecord.GetLength(0) - 1] == null)
@@ -178,15 +181,48 @@ public class RecognizeGesture : MonoBehaviour
             return false;
         }
 
-        if (Vector3.Distance(poseToExamine[fingerMiddle], poseToExamine[wrist]) < Vector3.Distance(poseToExamine[fingerTip], poseToExamine[wrist])) //I'm just using distances here but this could be done with angles
+        if (!fingerTip.ToString().Contains("THUMB"))
         {
-            //Finger is down
-            return true;
+            if (Vector3.Distance(poseToExamine[fingerMiddle], poseToExamine[wrist]) < Vector3.Distance(poseToExamine[fingerTip], poseToExamine[wrist])) //I'm just using distances here but this could be done with angles
+            {
+                //Finger is down
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else //calculate the thumb, it is an exception
+        {
+            Pose.Landmark elbow;
+            Enum.TryParse(fingerTip.ToString().Substring(fingerTip.ToString().IndexOf('_')) + "ELBOW", out elbow);
+
+            Vector3 wristDirection = poseToExamine[wrist] - poseToExamine[elbow];
+            Vector3 thumbDirection = poseToExamine[fingerTip] - poseToExamine[fingerMiddle];
+            float thumbDirectionDot = Vector3.Dot(wristDirection.normalized, thumbDirection.normalized);
+            return thumbDirectionDot < 0;
+        }
+    }
+
+    //Check if the wrist's rotation is close enough to a given rotation for hand sign recognition
+    bool checkWristRot(Quaternion requiredRotation, float threshold, bool leftHand)
+    {
+        Quaternion currentRotation;
+        if (leftHand)
+        {
+            currentRotation = playerRig.LeftWristTarget.transform.rotation;
         }
         else
         {
-            return false;
+            currentRotation = playerRig.RightWristTarget.transform.rotation;
         }
+
+        float diffX = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.x, currentRotation.eulerAngles.x));
+        float diffY = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.y, currentRotation.eulerAngles.y));
+        float diffZ = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.z, currentRotation.eulerAngles.z));
+
+        return diffX < threshold && diffY < threshold && diffZ < threshold;
     }
 
     /*
