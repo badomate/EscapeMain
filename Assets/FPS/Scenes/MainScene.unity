@@ -6998,7 +6998,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recordingLength: 60
   stillnessFramesRequired: 30
-  recording: 0
+  recording: 1
   matchThreshold: 0.01
   stillnessThreshold: 0.15
   InfoBox: {fileID: 871849345}
