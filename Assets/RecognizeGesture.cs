@@ -6,6 +6,21 @@ using AuxiliarContent;
 using System.Linq;
 using System;
 using UnityEngine.Windows;
+using System.Runtime.CompilerServices;
+
+public enum Actions
+{
+    GO_LEFT,
+    GO_RIGHT,
+    GO_FORWARD,
+    GO_BACKWARD,
+
+    TURN_LEFT,
+    TURN_RIGHT,
+
+    VICTORY,
+    SUPERMAN
+}
 
 public class RecognizeGesture : MonoBehaviour
 {
@@ -23,7 +38,7 @@ public class RecognizeGesture : MonoBehaviour
     public static UnityEvent StillnessEvent = new UnityEvent();
     //public UnityEvent MimicEvent = new UnityEvent(); 
 
-    public delegate void RecognitionEventDel(string gestureName);
+    public delegate void RecognitionEventDel(Actions action);
     public static RecognitionEventDel RecognitionEvent;
 
     private LevelManager LevelManagerScript;
@@ -36,15 +51,69 @@ public class RecognizeGesture : MonoBehaviour
     {
         LevelManagerScript = GetComponent<LevelManager>();
         playerMovementRecord = new Dictionary<Pose.Landmark, Vector3>[recordingLength];
-        StillnessEvent.AddListener(handlleStillness);
+        StillnessEvent.AddListener(handleStillness);
     }
 
-    void handlleStillness()
+    void handleStillness()
     {
-        if(!fingerDown(Pose.Landmark.LEFT_INDEX) && !fingerDown(Pose.Landmark.LEFT_MIDDLE) && fingerDown(Pose.Landmark.LEFT_RING) && fingerDown(Pose.Landmark.LEFT_PINKY))
+
+        bool isVictory = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                         !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY);
+
+        bool isGoRight = !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                         !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                         !fingerDown(Pose.Landmark.RIGHT_RING) &&
+                         !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+                         checkJointRot(new Quaternion(0,-0.7f,0,0.7f), playerRig.RightElbowHintTarget.transform.rotation, 10) &&
+                         checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.RightShoulderTarget.transform.rotation, 10);
+
+        bool isTurnRight = fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                           fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                           fingerDown(Pose.Landmark.RIGHT_RING) &&
+                           fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+                           checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.RightElbowHintTarget.transform.rotation, 10) &&
+                           checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.RightShoulderTarget.transform.rotation, 10);
+
+        bool isGoLeft = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                        !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                        !fingerDown(Pose.Landmark.LEFT_RING) &&
+                        !fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                        checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.LeftElbowHintTarget.transform.rotation, 10) &&
+                        checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.LeftShoulderTarget.transform.rotation, 10);
+
+        bool isTurnLeft = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.LeftElbowHintTarget.transform.rotation, 10) &&
+                          checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.LeftShoulderTarget.transform.rotation, 10);
+
+        if (isVictory)
         {
             InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke("victory");
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
+        }
+        else if (isGoRight)
+        {
+            InfoBox.SetActive(true);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
+        }
+        else if (isTurnRight)
+        {
+            InfoBox.SetActive(true);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
+        }
+        else if (isGoLeft)
+        {
+            InfoBox.SetActive(true);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
+        }
+        else if (isTurnLeft)
+        {
+            InfoBox.SetActive(true);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
         }
         else
         {
@@ -84,12 +153,12 @@ public class RecognizeGesture : MonoBehaviour
         // Check if there are enough rows to check for stillness
         if (recordingLength < stillnessFramesRequired)
         {
-           Debug.LogWarning("Stillness frames required are greater than the set total recording memory!");
-           return;
+            Debug.LogWarning("Stillness frames required are greater than the set total recording memory!");
+            return;
         }
 
         // the difference in each element of the last stillnessFramesRequired rows must be under threshold
-        for (int recordingIndex = recordingLength - stillnessFramesRequired; recordingIndex < recordingLength -1; recordingIndex++)
+        for (int recordingIndex = recordingLength - stillnessFramesRequired; recordingIndex < recordingLength - 1; recordingIndex++)
         {
             if (playerMovementRecord[recordingIndex] == null)
             {
@@ -122,7 +191,7 @@ public class RecognizeGesture : MonoBehaviour
 
     public bool goalGestureCompleted(Vector3[,] gestureToCompareMatrix)
     {
-       // Debug.Log("CURRENT GESTURE MATRIX:\n" + gestureToCompareMatrix + "\n\nGOAL GESTURE MATRIX:\n" + LevelManagerScript.goalGesture);
+        // Debug.Log("CURRENT GESTURE MATRIX:\n" + gestureToCompareMatrix + "\n\nGOAL GESTURE MATRIX:\n" + LevelManagerScript.goalGesture);
 
         Gesture gestureToCompare = Gesture.MatrixToGesture(gestureToCompareMatrix);
         Gesture goalGesture = LevelManagerScript.goalGesture;
@@ -150,7 +219,7 @@ public class RecognizeGesture : MonoBehaviour
             }
             else //updating the matrix
             {
-                for (int i = 0; i < playerMovementRecord.GetLength(0) -1; i++)
+                for (int i = 0; i < playerMovementRecord.GetLength(0) - 1; i++)
                 {
                     playerMovementRecord[i] = playerMovementRecord[i + 1];
                 }
@@ -205,19 +274,15 @@ public class RecognizeGesture : MonoBehaviour
         }
     }
 
-    //Check if the wrist's rotation is close enough to a given rotation for hand sign recognition
-    bool checkWristRot(Quaternion requiredRotation, float threshold, bool leftHand)
+    /// <summary>
+    /// Checking if a given rotation <paramref name="currentRotation"/> is close enough to the <paramref name="requiredRotation"/> with respect to a <paramref name="threshold"/>
+    /// </summary>
+    /// <param name="requiredRotation"></param>
+    /// <param name="currentRotation"></param>
+    /// <param name="threshold"></param>
+    /// <returns></returns>
+    bool checkJointRot(Quaternion requiredRotation, Quaternion currentRotation, float threshold)
     {
-        Quaternion currentRotation;
-        if (leftHand)
-        {
-            currentRotation = playerRig.LeftWristTarget.transform.rotation;
-        }
-        else
-        {
-            currentRotation = playerRig.RightWristTarget.transform.rotation;
-        }
-
         float diffX = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.x, currentRotation.eulerAngles.x));
         float diffY = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.y, currentRotation.eulerAngles.y));
         float diffZ = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.z, currentRotation.eulerAngles.z));

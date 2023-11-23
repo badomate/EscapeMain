@@ -16,14 +16,17 @@ public class PerformAnimation : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    void handleRecognitionEvent(string gestureName)
+    void handleRecognitionEvent(Actions action)
     {
-        switch (gestureName)
+        switch (action)
         {
-            case "1":
+            case Actions.GO_FORWARD:
                 Debug.Log("Play animation 1 now!");
                 break;
-            case "victory":
+            case Actions.GO_RIGHT:
+                Debug.Log("Play animation 1 now!");
+                break;
+            case Actions.VICTORY:
                 Debug.Log("Victory sign detected");
                 animator.SetTrigger("Backflip"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
                 break;
@@ -37,11 +40,11 @@ public class PerformAnimation : MonoBehaviour
     {
         if (Input.GetKey("1")) //this usually causes the event to fire multiple times, but that's fine, we want animations to play while the gesture is held
         {
-            RecognizeGesture.RecognitionEvent.Invoke("1");
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
         }
         else if (Input.GetKey("2"))
         {
-            RecognizeGesture.RecognitionEvent.Invoke("victory");
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
         }
     }
 
