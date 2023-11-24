@@ -22,7 +22,8 @@ public class PerformAnimation : MonoBehaviour
         {
             case Actions.GO_FORWARD:
                 Debug.Log("Play animation GO_FORWARD now!");
-                animator.SetBool("WalkFwd", true); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
+                //animator.SetBool("WalkFwd", true);
+                animator.SetTrigger("WalkFwd"); 
                 break;
             case Actions.GO_RIGHT:
                 Debug.Log("Play animation GO_RIGHT now!");
@@ -46,6 +47,10 @@ public class PerformAnimation : MonoBehaviour
         else if (Input.GetKey("2"))
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
+        }
+        else if (Input.GetKey("3"))
+        {
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
         }
     }
 
