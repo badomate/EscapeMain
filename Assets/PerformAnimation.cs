@@ -21,10 +21,11 @@ public class PerformAnimation : MonoBehaviour
         switch (action)
         {
             case Actions.GO_FORWARD:
-                Debug.Log("Play animation 1 now!");
+                Debug.Log("Play animation GO_FORWARD now!");
+                animator.SetBool("WalkFwd", true); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
                 break;
             case Actions.GO_RIGHT:
-                Debug.Log("Play animation 1 now!");
+                Debug.Log("Play animation GO_RIGHT now!");
                 break;
             case Actions.VICTORY:
                 Debug.Log("Victory sign detected");
@@ -44,7 +45,7 @@ public class PerformAnimation : MonoBehaviour
         }
         else if (Input.GetKey("2"))
         {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
         }
     }
 
