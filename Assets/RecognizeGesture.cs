@@ -19,7 +19,8 @@ public enum Actions
     TURN_RIGHT,
 
     VICTORY,
-    SUPERMAN
+    SUPERMAN,
+    UNRECOGNIZED,
 }
 
 public class RecognizeGesture : MonoBehaviour
@@ -118,6 +119,7 @@ public class RecognizeGesture : MonoBehaviour
         else
         {
             InfoBox.SetActive(false);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.UNRECOGNIZED);
 
         }
 
@@ -135,26 +137,24 @@ public class RecognizeGesture : MonoBehaviour
         if (timeSinceLastFrame >= frameInterval && recording)
         {
             saveGestureFrame();
-            detectStillness();  //TODO: only run this function if needed
-            /*if (goalGestureCompleted(characterGesture)) //we could use this to detect other gestures too, not just the solution
+            if(detectStillness()){
+                StillnessEvent.Invoke();
+            }
+            else
             {
-                if(LevelManagerScript.currentPlayer == 0)
-                {
-                    recording = false; recordingProgress = 0;
-                    LevelManagerScript.Success();
-                }
-            }*/
+                RecognizeGesture.RecognitionEvent.Invoke(Actions.UNRECOGNIZED);
+            }
             timeSinceLastFrame = 0f; // Reset the time counter
         }
     }
 
-    public void detectStillness()
+    public bool detectStillness()
     {
         // Check if there are enough rows to check for stillness
         if (recordingLength < stillnessFramesRequired)
         {
             Debug.LogWarning("Stillness frames required are greater than the set total recording memory!");
-            return;
+            return false;
         }
 
         // the difference in each element of the last stillnessFramesRequired rows must be under threshold
@@ -162,7 +162,7 @@ public class RecognizeGesture : MonoBehaviour
         {
             if (playerMovementRecord[recordingIndex] == null)
             {
-                return; //recording is incomplete
+                return false; //recording is incomplete
             }
 
             //Debug.Log(playerMovementRecord[recordingIndex]);
@@ -171,7 +171,7 @@ public class RecognizeGesture : MonoBehaviour
                 if (Vector3.Distance(playerMovementRecord[recordingIndex][landmark], playerMovementRecord[recordingIndex + 1][landmark]) > stillnessThreshold)
                 {
                     //Debug.Log("This landmark broke the stillness: " + landmark);
-                    return; // Difference exceeded the threshold
+                    return false; // Difference exceeded the threshold
                 }
 
             }
@@ -179,12 +179,12 @@ public class RecognizeGesture : MonoBehaviour
         if (StillnessEvent != null)
         {
             //Debug.LogWarning("Still!");
-            StillnessEvent.Invoke();
+            return true;
         }
         else
         {
             StillnessEvent = new UnityEvent();
-            StillnessEvent.Invoke();
+            return true;
         }
 
     }
