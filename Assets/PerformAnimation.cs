@@ -26,6 +26,7 @@ public class PerformAnimation : MonoBehaviour
                 break;
             case Actions.GO_RIGHT:
                 Debug.Log("Play animation GO_RIGHT now!");
+                animator.SetBool("WalkRight", true);
                 break;
             case Actions.GO_LEFT:
                 Debug.Log("Play animation GO_LEFT now!");
@@ -43,7 +44,10 @@ public class PerformAnimation : MonoBehaviour
                 Debug.Log("Victory sign detected");
                 animator.SetTrigger("Backflip"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
                 break;
-            default:
+            default: //turn off all animations when gesture unrecognized
+                animator.SetBool("WalkFwd", false);
+                animator.SetBool("WalkRight", false);
+                animator.SetBool("WalkLeft", false);
                 break;
         }
     }
@@ -63,6 +67,11 @@ public class PerformAnimation : MonoBehaviour
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
         }
         else if (Input.GetKey("3"))
+        {
+            pressing = true;
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
+        }
+        else if (Input.GetKey("4"))
         {
             pressing = true;
             RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);

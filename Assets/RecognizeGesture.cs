@@ -118,7 +118,7 @@ public class RecognizeGesture : MonoBehaviour
         else if (isGoRight)
         {
             InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
+            //RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT); //commented out because it was constantly invoking before mediapipe even starts
         }
         else if (isTurnRight)
         {
