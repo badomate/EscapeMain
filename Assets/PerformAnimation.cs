@@ -36,12 +36,6 @@ public class PerformAnimation : MonoBehaviour
                 break;
             case Actions.TURN_LEFT:
                 Debug.Log("Play animation TURN_LEFT now!");
-                break;
-            case Actions.TURN_RIGHT:
-                Debug.Log("Play animation TURN_RIGHT now!");
-                break;
-            case Actions.TURN_LEFT:
-                Debug.Log("Play animation TURN_LEFT now!");
                 animator.SetBool("TurnLeft", true);
                 break;
             case Actions.TURN_RIGHT:
