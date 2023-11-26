@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c5bd0f4e55d88444885aaf0b8a52e3ef
+guid: 598cd23fa2964124cb45660cec395256
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
@@ -22,8 +22,8 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    importAnimatedCustomProperties: 0
-    importConstraints: 0
+    importAnimatedCustomProperties: 1
+    importConstraints: 1
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -33,11 +33,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: idle2
+      name: TurningRight45
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 500
+      lastFrame: 219
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
