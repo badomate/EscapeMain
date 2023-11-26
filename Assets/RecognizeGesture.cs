@@ -7,6 +7,8 @@ using System.Linq;
 using System;
 using UnityEngine.Windows;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public enum Actions
 {
@@ -57,6 +59,14 @@ public class RecognizeGesture : MonoBehaviour
 
     void handleStillness()
     {
+        bool isLeftHandStraight = isJointStraight(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST, 30f);
+        bool isRightHandStraight = isJointStraight(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 30f);
+
+        bool isLeftHandLeveled = isJointSideLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.15f);
+        bool isRightHandLeveled = isJointSideLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.15f);
+
+        bool isLeftHandFrontLeveled = isJointFrontLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.15f);
+        bool isRightHandFrontLeveled = isJointFrontLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.15f);
 
         bool isVictory = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
@@ -67,34 +77,43 @@ public class RecognizeGesture : MonoBehaviour
                          !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
                          !fingerDown(Pose.Landmark.RIGHT_RING) &&
                          !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
-                         checkJointRot(new Quaternion(0,-0.7f,0,0.7f), playerRig.RightElbowHintTarget.transform.rotation, 10) &&
-                         checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.RightShoulderTarget.transform.rotation, 10);
+                         isRightHandLeveled &&
+                         isRightHandStraight;
+
 
         bool isTurnRight = fingerDown(Pose.Landmark.RIGHT_INDEX) &&
                            fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
                            fingerDown(Pose.Landmark.RIGHT_RING) &&
                            fingerDown(Pose.Landmark.RIGHT_PINKY) &&
-                           checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.RightElbowHintTarget.transform.rotation, 10) &&
-                           checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.RightShoulderTarget.transform.rotation, 10);
+                           isRightHandStraight && 
+                           isRightHandLeveled;
 
         bool isGoLeft = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                         !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                         !fingerDown(Pose.Landmark.LEFT_RING) &&
                         !fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                        checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.LeftElbowHintTarget.transform.rotation, 10) &&
-                        checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.LeftShoulderTarget.transform.rotation, 10);
+                        isLeftHandLeveled &&
+                        isLeftHandStraight;
 
         bool isTurnLeft = fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                          checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.LeftElbowHintTarget.transform.rotation, 10) &&
-                          checkJointRot(new Quaternion(0, -0.7f, 0, 0.7f), playerRig.LeftShoulderTarget.transform.rotation, 10);
+                          isLeftHandLeveled &&
+                          isLeftHandStraight;
+
+        bool isGoForward = isLeftHandFrontLeveled && 
+                           isLeftHandStraight;
 
         if (isVictory)
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
+        }
+        else if (isGoForward)
+        {
+            InfoBox.SetActive(true);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
         }
         else if (isGoRight)
         {
@@ -274,22 +293,70 @@ public class RecognizeGesture : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Checking if a given rotation <paramref name="currentRotation"/> is close enough to the <paramref name="requiredRotation"/> with respect to a <paramref name="threshold"/>
-    /// </summary>
-    /// <param name="requiredRotation"></param>
-    /// <param name="currentRotation"></param>
-    /// <param name="threshold"></param>
-    /// <returns></returns>
-    bool checkJointRot(Quaternion requiredRotation, Quaternion currentRotation, float threshold)
+    bool isJointSideLeveled(Pose.Landmark start, Pose.Landmark end, float margin)
     {
-        float diffX = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.x, currentRotation.eulerAngles.x));
-        float diffY = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.y, currentRotation.eulerAngles.y));
-        float diffZ = Mathf.Abs(Mathf.DeltaAngle(requiredRotation.eulerAngles.z, currentRotation.eulerAngles.z));
+        try
+        {
+            Vector3 startVect = playerMovementRecord[0][start];
+            Vector3 endVect = playerMovementRecord[0][end];
 
-        return diffX < threshold && diffY < threshold && diffZ < threshold;
+            Vector3 v = endVect - startVect;
+    
+            v = Vector3.Normalize(v);
+
+            return Math.Abs(v.y) < margin && Math.Abs(v.z) < margin;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
+    bool isJointFrontLeveled(Pose.Landmark start, Pose.Landmark end, float margin)
+    {
+        try
+        {
+            Vector3 startVect = playerMovementRecord[0][start];
+            Vector3 endVect = playerMovementRecord[0][end];
+
+            Vector3 v = endVect - startVect;
+
+            v = Vector3.Normalize(v);
+
+            return Math.Abs(v.y) < margin && Math.Abs(v.x) < margin;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    bool isJointStraight(Pose.Landmark start, Pose.Landmark middle, Pose.Landmark end, float margin)
+    {
+        try
+        {
+            Vector3 startVect = playerMovementRecord[0][start];
+            Vector3 middleVect = playerMovementRecord[0][middle];
+            Vector3 endVect = playerMovementRecord[0][end];
+
+            Vector3 V1 = middleVect - startVect;
+            Vector3 V2 = endVect - middleVect;
+
+            V1 = Vector3.Normalize(V1);
+            V2 = Vector3.Normalize(V2);
+
+            Vector3 rotationAxis = Vector3.Cross(V1, V2);
+
+            float cosTheta = Vector3.Dot(V1, V2);
+            float theta = (float)Math.Acos(cosTheta) * 180 / (float)Math.PI;
+
+            return theta < margin;
+        }
+        catch
+        {
+            return false;
+        }
+    }
     /*
     public float MeanSquaredError(float[,] matrix1, float[,] matrix2)
     {

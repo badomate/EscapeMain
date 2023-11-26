@@ -27,12 +27,23 @@ public class PerformAnimation : MonoBehaviour
             case Actions.GO_RIGHT:
                 Debug.Log("Play animation GO_RIGHT now!");
                 break;
+            case Actions.GO_LEFT:
+                Debug.Log("Play animation GO_LEFT now!");
+                break;
+            case Actions.GO_BACKWARD:
+                Debug.Log("Play animation GO_BACKWARD now!");
+                break;
+            case Actions.TURN_LEFT:
+                Debug.Log("Play animation TURN_LEFT now!");
+                break;
+            case Actions.TURN_RIGHT:
+                Debug.Log("Play animation TURN_RIGHT now!");
+                break;
             case Actions.VICTORY:
                 Debug.Log("Victory sign detected");
                 animator.SetTrigger("Backflip"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
                 break;
             default:
-                animator.SetBool("WalkFwd", false);
                 break;
         }
     }
