@@ -30,6 +30,7 @@ public class PerformAnimation : MonoBehaviour
                 break;
             case Actions.GO_LEFT:
                 Debug.Log("Play animation GO_LEFT now!");
+                animator.SetBool("WalkLeft", true);
                 break;
             case Actions.GO_BACKWARD:
                 Debug.Log("Play animation GO_BACKWARD now!");
