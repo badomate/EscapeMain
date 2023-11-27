@@ -37,11 +37,13 @@ public class PerformAnimation : MonoBehaviour
                 break;
             case Actions.TURN_LEFT:
                 Debug.Log("Play animation TURN_LEFT now!");
-                animator.SetBool("TurnLeft", true);
+                //animator.SetBool("TurnLeft", true);
+                animator.SetTrigger("TurnLeft");
                 break;
             case Actions.TURN_RIGHT:
                 Debug.Log("Play animation TURN_RIGHT now!");
-                animator.SetBool("TurnRight", true);
+                //animator.SetBool("TurnRight", true);
+                animator.SetTrigger("TurnRight");
                 break;
             case Actions.VICTORY:
                 Debug.Log("Victory sign detected");
@@ -55,8 +57,8 @@ public class PerformAnimation : MonoBehaviour
                 animator.SetBool("WalkFwd", false);
                 animator.SetBool("WalkRight", false);
                 animator.SetBool("WalkLeft", false);
-                animator.SetBool("TurnRight", false);
-                animator.SetBool("TurnLeft", false);
+                //animator.SetBool("TurnRight", false);
+                //animator.SetBool("TurnLeft", false);
                 break;
         }
     }
