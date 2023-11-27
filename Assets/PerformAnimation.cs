@@ -47,6 +47,10 @@ public class PerformAnimation : MonoBehaviour
                 Debug.Log("Victory sign detected");
                 animator.SetTrigger("Backflip"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
                 break;
+            case Actions.SUPERMAN:
+                Debug.Log("Flying sign detected");
+                animator.SetTrigger("Flying"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
+                break;
             default: //turn off all animations when gesture unrecognized
                 animator.SetBool("WalkFwd", false);
                 animator.SetBool("WalkRight", false);
@@ -86,10 +90,15 @@ public class PerformAnimation : MonoBehaviour
             pressing = true;
             RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
         }
-        else if (Input.GetKey("6"))
+        else if (Input.GetKeyDown("6"))
         {
             pressing = true;
             RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
+        }
+        else if (Input.GetKeyDown("7"))
+        {
+            pressing = true;
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
         }
         else if(pressing)
         {
