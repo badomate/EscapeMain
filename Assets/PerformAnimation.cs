@@ -22,7 +22,7 @@ public class PerformAnimation : MonoBehaviour
         {
             case Actions.AMBIGUOUS:
                 Debug.Log("Play animation AMBIGUOUS now!");
-                //animator.SetTrigger("Ambiguous");
+                animator.SetTrigger("Ambiguous");
                 break;
             case Actions.GO_FORWARD:
                 Debug.Log("Play animation GO_FORWARD now!");
@@ -38,7 +38,7 @@ public class PerformAnimation : MonoBehaviour
                 break;
             case Actions.GO_BACKWARD:
                 Debug.Log("Play animation GO_BACKWARD now!");
-                // animator.SetBool("WalkBwd", true);
+                animator.SetBool("WalkBwd", true);
                 break;
             case Actions.TURN_LEFT:
                 Debug.Log("Play animation TURN_LEFT now!");
@@ -62,6 +62,7 @@ public class PerformAnimation : MonoBehaviour
                 animator.SetBool("WalkFwd", false);
                 animator.SetBool("WalkRight", false);
                 animator.SetBool("WalkLeft", false);
+                animator.SetBool("WalkBwd", false);
                 //animator.SetBool("TurnRight", false);
                 //animator.SetBool("TurnLeft", false);
                 break;
@@ -80,32 +81,42 @@ public class PerformAnimation : MonoBehaviour
         else if (Input.GetKey("2"))
         {
             pressing = true;
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_BACKWARD);
         }
         else if (Input.GetKey("3"))
         {
             pressing = true;
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
         }
         else if (Input.GetKey("4"))
         {
             pressing = true;
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
         }
-        else if (Input.GetKey("5"))
+        else if (Input.GetKeyDown("5"))
         {
             pressing = true;
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
         }
         else if (Input.GetKeyDown("6"))
         {
             pressing = true;
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
         }
         else if (Input.GetKeyDown("7"))
         {
             pressing = true;
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
+        }
+        else if (Input.GetKeyDown("8"))
+        {
+            pressing = true;
             RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
+        }
+        else if (Input.GetKeyDown("9"))
+        {
+            pressing = true;
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.AMBIGUOUS);
         }
         else if(pressing)
         {
