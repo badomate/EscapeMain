@@ -20,6 +20,10 @@ public class PerformAnimation : MonoBehaviour
     {
         switch (action)
         {
+            case Actions.AMBIGUOUS:
+                Debug.Log("Play animation AMBIGUOUS now!");
+                animator.SetTrigger("Ambiguous");
+                break;
             case Actions.GO_FORWARD:
                 Debug.Log("Play animation GO_FORWARD now!");
                 animator.SetBool("WalkFwd", true);
@@ -34,6 +38,7 @@ public class PerformAnimation : MonoBehaviour
                 break;
             case Actions.GO_BACKWARD:
                 Debug.Log("Play animation GO_BACKWARD now!");
+                // animator.SetBool("WalkBwd", true);
                 break;
             case Actions.TURN_LEFT:
                 Debug.Log("Play animation TURN_LEFT now!");

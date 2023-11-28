@@ -23,6 +23,7 @@ public enum Actions
     VICTORY,
     SUPERMAN,
     UNRECOGNIZED,
+    AMBIGUOUS
 }
 
 public class RecognizeGesture : MonoBehaviour
@@ -109,8 +110,12 @@ public class RecognizeGesture : MonoBehaviour
         bool isGoForward = isJoint90Degrees(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST, 0.3f);
         bool isGoBackward = isJoint90Degrees(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
-
-        if (isVictory)
+        if(Truth(isVictory, isGoBackward, isGoForward, isSuperman, isTurnLeft, isGoLeft, isTurnRight, isGoRight) == 1)
+        {
+            InfoBox.SetActive(true);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.AMBIGUOUS);
+        }
+        else if (isVictory)
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
@@ -182,7 +187,10 @@ public class RecognizeGesture : MonoBehaviour
             timeSinceLastFrame = 0f; // Reset the time counter
         }
     }
-
+    public static int Truth(params bool[] booleans)
+    {
+        return booleans.Count(b => b);
+    }
     public bool detectStillness()
     {
         // Check if there are enough rows to check for stillness
