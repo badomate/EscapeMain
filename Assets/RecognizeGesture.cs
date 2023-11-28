@@ -91,8 +91,11 @@ public class RecognizeGesture : MonoBehaviour
                           isLeftHandStraight &&
                           isJointAbove(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
 
-        bool isGoForward = isJoint90Degrees(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST, 0.3f);
-        bool isGoBackward = isJoint90Degrees(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 0.3f);
+        bool isGoForward = isJoint90Degrees(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST, 0.3f) &&
+                           allFingersDown(Pose.Landmark.LEFT_INDEX, Pose.Landmark.LEFT_MIDDLE, Pose.Landmark.LEFT_RING, Pose.Landmark.LEFT_PINKY);
+
+        bool isGoBackward = isJoint90Degrees(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 0.3f) &&
+                            allFingersDown(Pose.Landmark.RIGHT_INDEX, Pose.Landmark.RIGHT_MIDDLE, Pose.Landmark.RIGHT_RING, Pose.Landmark.RIGHT_PINKY);
 
         Actions recognizedAction = RecognizeAction(isVictory, isGoBackward, isGoForward, isSuperman, isTurnLeft, isGoLeft, isTurnRight, isGoRight);
 

@@ -22,7 +22,7 @@ public class PerformAnimation : MonoBehaviour
         {
             case Actions.AMBIGUOUS:
                 Debug.Log("Play animation AMBIGUOUS now!");
-                animator.SetTrigger("Ambiguous");
+                //animator.SetTrigger("Ambiguous");
                 break;
             case Actions.GO_FORWARD:
                 Debug.Log("Play animation GO_FORWARD now!");
