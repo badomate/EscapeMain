@@ -23,6 +23,7 @@ public enum Actions
     VICTORY,
     SUPERMAN,
     UNRECOGNIZED,
+    AMBIGUOUS
 }
 
 public class RecognizeGesture : MonoBehaviour
@@ -59,91 +60,48 @@ public class RecognizeGesture : MonoBehaviour
 
     void handleStillness()
     {
-        bool isLeftHandStraight = isJointStraight(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST, 30f);
-        bool isRightHandStraight = isJointStraight(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 30f);
+        bool isLeftHandStraight = isHandStraight(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST, 45f);
+        bool isRightHandStraight = isHandStraight(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 45f);
 
-        bool isLeftHandLeveled = isJointSideLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.15f);
-        bool isRightHandLeveled = isJointSideLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.15f);
-
-        bool isLeftHandFrontLeveled = isJointFrontLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.15f);
-        bool isRightHandFrontLeveled = isJointFrontLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.15f);
+        bool isLeftHandLeveled = isHandLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
+        bool isRightHandLeveled = isHandLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
         bool isVictory = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
-                          fingerDown(Pose.Landmark.LEFT_RING) &&
-                          fingerDown(Pose.Landmark.LEFT_PINKY);
+                         fingerDown(Pose.Landmark.LEFT_RING) &&
+                         fingerDown(Pose.Landmark.LEFT_PINKY);
 
-        bool isGoRight = !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
-                         !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
-                         !fingerDown(Pose.Landmark.RIGHT_RING) &&
-                         !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+        bool isGoRight = !anyFingerDown(Pose.Landmark.RIGHT_INDEX, Pose.Landmark.RIGHT_MIDDLE, Pose.Landmark.RIGHT_RING, Pose.Landmark.RIGHT_PINKY) &&
                          isRightHandLeveled &&
                          isRightHandStraight;
 
-
-        bool isTurnRight = fingerDown(Pose.Landmark.RIGHT_INDEX) &&
-                           fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
-                           fingerDown(Pose.Landmark.RIGHT_RING) &&
-                           fingerDown(Pose.Landmark.RIGHT_PINKY) &&
-                           isRightHandStraight && 
+        bool isTurnRight = allFingersDown(Pose.Landmark.RIGHT_INDEX, Pose.Landmark.RIGHT_MIDDLE, Pose.Landmark.RIGHT_RING, Pose.Landmark.RIGHT_PINKY) &&
+                           isRightHandStraight &&
                            isRightHandLeveled;
 
-        bool isGoLeft = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
-                        !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
-                        !fingerDown(Pose.Landmark.LEFT_RING) &&
-                        !fingerDown(Pose.Landmark.LEFT_PINKY) &&
+        bool isGoLeft = !anyFingerDown(Pose.Landmark.LEFT_INDEX, Pose.Landmark.LEFT_MIDDLE, Pose.Landmark.LEFT_RING, Pose.Landmark.LEFT_PINKY) &&
                         isLeftHandLeveled &&
                         isLeftHandStraight;
 
-        bool isTurnLeft = fingerDown(Pose.Landmark.LEFT_INDEX) &&
-                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
-                          fingerDown(Pose.Landmark.LEFT_RING) &&
-                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+        bool isTurnLeft = allFingersDown(Pose.Landmark.LEFT_INDEX, Pose.Landmark.LEFT_MIDDLE, Pose.Landmark.LEFT_RING, Pose.Landmark.LEFT_PINKY) &&
                           isLeftHandLeveled &&
                           isLeftHandStraight;
 
-        bool isGoForward = isLeftHandFrontLeveled && 
-                           isLeftHandStraight;
+        bool isSuperman = allFingersDown(Pose.Landmark.LEFT_INDEX, Pose.Landmark.LEFT_MIDDLE, Pose.Landmark.LEFT_RING, Pose.Landmark.LEFT_PINKY) &&
+                          isLeftHandStraight &&
+                          isJointAbove(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
 
-        if (isVictory)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
-        }
-        else if (isGoForward)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
-        }
-        else if (isGoRight)
-        {
-            InfoBox.SetActive(true);
-            //RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT); //commented out because it was constantly invoking before mediapipe even starts
-        }
-        else if (isTurnRight)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
-        }
-        else if (isGoLeft)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
-        }
-        else if (isTurnLeft)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
-        }
-        else
-        {
-            InfoBox.SetActive(false);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.UNRECOGNIZED);
+        bool isGoForward = isJoint90Degrees(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST, 0.3f) &&
+                           allFingersDown(Pose.Landmark.LEFT_INDEX, Pose.Landmark.LEFT_MIDDLE, Pose.Landmark.LEFT_RING, Pose.Landmark.LEFT_PINKY);
 
-        }
+        bool isGoBackward = isJoint90Degrees(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 0.3f) &&
+                            allFingersDown(Pose.Landmark.RIGHT_INDEX, Pose.Landmark.RIGHT_MIDDLE, Pose.Landmark.RIGHT_RING, Pose.Landmark.RIGHT_PINKY);
+
+        Actions recognizedAction = RecognizeAction(isVictory, isGoBackward, isGoForward, isSuperman, isTurnLeft, isGoLeft, isTurnRight, isGoRight);
+
+        SetInfoBoxAndInvokeAction(recognizedAction);
 
     }
-
 
     private float frameInterval = 1f / 30f; // 30hz
     private float timeSinceLastFrame = 0f;
@@ -165,6 +123,47 @@ public class RecognizeGesture : MonoBehaviour
             }
             timeSinceLastFrame = 0f; // Reset the time counter
         }
+    }
+
+    private bool isHandStraight(Pose.Landmark shoulder, Pose.Landmark elbow, Pose.Landmark wrist, float margin)
+    {
+        return isJointStraight(shoulder, elbow, wrist, margin);
+    }
+
+    private bool isHandLeveled(Pose.Landmark shoulder, Pose.Landmark wrist, float margin)
+    {
+        return isJointLeveled(shoulder, wrist, margin);
+    }
+
+    private bool anyFingerDown(params Pose.Landmark[] fingerTips)
+    {
+        return fingerTips.Any(fingerDown);
+    }
+
+    private bool allFingersDown(params Pose.Landmark[] fingerTips)
+    {
+        return fingerTips.All(fingerDown);
+    }
+
+    private Actions RecognizeAction(params bool[] conditions)
+    {
+        int trueConditionsCount = Truth(conditions);
+        if (trueConditionsCount == 0) return Actions.UNRECOGNIZED;
+        return trueConditionsCount == 1 ? (Actions)Array.IndexOf(conditions, true) : Actions.AMBIGUOUS;
+    }
+
+    private void SetInfoBoxAndInvokeAction(Actions action)
+    {
+        if (action == Actions.UNRECOGNIZED)
+            InfoBox.SetActive(false);
+        else
+            InfoBox.SetActive(true);
+        RecognizeGesture.RecognitionEvent.Invoke(action);
+    }
+
+    public static int Truth(params bool[] booleans)
+    {
+        return booleans.Count(b => b);
     }
 
     public bool detectStillness()
@@ -293,12 +292,12 @@ public class RecognizeGesture : MonoBehaviour
         }
     }
 
-    bool isJointSideLeveled(Pose.Landmark start, Pose.Landmark end, float margin)
+    bool isJointLeveled(Pose.Landmark start, Pose.Landmark end, float margin)
     {
         try
         {
-            Vector3 startVect = playerMovementRecord[0][start];
-            Vector3 endVect = playerMovementRecord[0][end];
+            Vector3 startVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][start];
+            Vector3 endVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][end];
 
             Vector3 v = endVect - startVect;
     
@@ -311,19 +310,44 @@ public class RecognizeGesture : MonoBehaviour
             return false;
         }
     }
-
-    bool isJointFrontLeveled(Pose.Landmark start, Pose.Landmark end, float margin)
+    bool isJointAbove(Pose.Landmark start, Pose.Landmark end, float margin)
     {
         try
         {
-            Vector3 startVect = playerMovementRecord[0][start];
-            Vector3 endVect = playerMovementRecord[0][end];
+            Vector3 startVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][start];
+            Vector3 endVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][end];
 
             Vector3 v = endVect - startVect;
 
             v = Vector3.Normalize(v);
 
-            return Math.Abs(v.y) < margin && Math.Abs(v.x) < margin;
+            return Math.Abs(v.z) < margin && Math.Abs(v.x) < margin;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    bool isJoint90Degrees(Pose.Landmark start, Pose.Landmark middle, Pose.Landmark end, float margin)
+    {
+        try
+        {
+            Vector3 startVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][start];
+            Vector3 middleVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][middle];
+            Vector3 endVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][end];
+
+            Vector3 V1 = middleVect - startVect;
+            Vector3 V2 = endVect - middleVect;
+
+            V1 = Vector3.Normalize(V1);
+            V2 = Vector3.Normalize(V2);
+
+            Vector3 rotationAxis = Vector3.Cross(V1, V2);
+
+            float cosTheta = Vector3.Dot(V1, V2);
+
+            return cosTheta < margin;
         }
         catch
         {
@@ -335,9 +359,9 @@ public class RecognizeGesture : MonoBehaviour
     {
         try
         {
-            Vector3 startVect = playerMovementRecord[0][start];
-            Vector3 middleVect = playerMovementRecord[0][middle];
-            Vector3 endVect = playerMovementRecord[0][end];
+            Vector3 startVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][start];
+            Vector3 middleVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][middle];
+            Vector3 endVect = playerMovementRecord[playerMovementRecord.GetLength(0) - 1][end];
 
             Vector3 V1 = middleVect - startVect;
             Vector3 V2 = endVect - middleVect;
