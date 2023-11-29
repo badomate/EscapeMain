@@ -7,6 +7,7 @@ public class PerformAnimation : MonoBehaviour
 {
     RecognizeGesture recognizer;
     Animator animator;
+    public bool performStandardAnimations = true;
 
 
     // Start is called before the first frame update
@@ -18,54 +19,57 @@ public class PerformAnimation : MonoBehaviour
 
     void handleRecognitionEvent(Actions action)
     {
-        switch (action)
+        if (performStandardAnimations)
         {
-            case Actions.AMBIGUOUS:
-                Debug.Log("Play animation AMBIGUOUS now!");
-                animator.SetTrigger("Ambiguous");
-                break;
-            case Actions.GO_FORWARD:
-                Debug.Log("Play animation GO_FORWARD now!");
-                animator.SetBool("WalkFwd", true);
-                break;
-            case Actions.GO_RIGHT:
-                Debug.Log("Play animation GO_RIGHT now!");
-                animator.SetBool("WalkRight", true);
-                break;
-            case Actions.GO_LEFT:
-                Debug.Log("Play animation GO_LEFT now!");
-                animator.SetBool("WalkLeft", true);
-                break;
-            case Actions.GO_BACKWARD:
-                Debug.Log("Play animation GO_BACKWARD now!");
-                animator.SetBool("WalkBwd", true);
-                break;
-            case Actions.TURN_LEFT:
-                Debug.Log("Play animation TURN_LEFT now!");
-                //animator.SetBool("TurnLeft", true);
-                animator.SetTrigger("TurnLeft");
-                break;
-            case Actions.TURN_RIGHT:
-                Debug.Log("Play animation TURN_RIGHT now!");
-                //animator.SetBool("TurnRight", true);
-                animator.SetTrigger("TurnRight");
-                break;
-            case Actions.VICTORY:
-                Debug.Log("Victory sign detected");
-                animator.SetTrigger("Backflip"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
-                break;
-            case Actions.SUPERMAN:
-                Debug.Log("Flying sign detected");
-                animator.SetTrigger("Flying"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
-                break;
-            default: //turn off all animations when gesture unrecognized
-                animator.SetBool("WalkFwd", false);
-                animator.SetBool("WalkRight", false);
-                animator.SetBool("WalkLeft", false);
-                animator.SetBool("WalkBwd", false);
-                //animator.SetBool("TurnRight", false);
-                //animator.SetBool("TurnLeft", false);
-                break;
+            switch (action)
+            {
+                case Actions.AMBIGUOUS:
+                    Debug.Log("Play animation AMBIGUOUS now!");
+                    animator.SetTrigger("Ambiguous");
+                    break;
+                case Actions.GO_FORWARD:
+                    Debug.Log("Play animation GO_FORWARD now!");
+                    animator.SetBool("WalkFwd", true);
+                    break;
+                case Actions.GO_RIGHT:
+                    Debug.Log("Play animation GO_RIGHT now!");
+                    animator.SetBool("WalkRight", true);
+                    break;
+                case Actions.GO_LEFT:
+                    Debug.Log("Play animation GO_LEFT now!");
+                    animator.SetBool("WalkLeft", true);
+                    break;
+                case Actions.GO_BACKWARD:
+                    Debug.Log("Play animation GO_BACKWARD now!");
+                    animator.SetBool("WalkBwd", true);
+                    break;
+                case Actions.TURN_LEFT:
+                    Debug.Log("Play animation TURN_LEFT now!");
+                    //animator.SetBool("TurnLeft", true);
+                    animator.SetTrigger("TurnLeft");
+                    break;
+                case Actions.TURN_RIGHT:
+                    Debug.Log("Play animation TURN_RIGHT now!");
+                    //animator.SetBool("TurnRight", true);
+                    animator.SetTrigger("TurnRight");
+                    break;
+                case Actions.VICTORY:
+                    Debug.Log("Victory sign detected");
+                    animator.SetTrigger("Backflip"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
+                    break;
+                case Actions.SUPERMAN:
+                    Debug.Log("Flying sign detected");
+                    animator.SetTrigger("Flying"); //needs to have the exact name of an animationController trigger (currently using DemoAnimController)
+                    break;
+                default: //turn off all animations when gesture unrecognized
+                    animator.SetBool("WalkFwd", false);
+                    animator.SetBool("WalkRight", false);
+                    animator.SetBool("WalkLeft", false);
+                    animator.SetBool("WalkBwd", false);
+                    //animator.SetBool("TurnRight", false);
+                    //animator.SetBool("TurnLeft", false);
+                    break;
+            }
         }
     }
 
