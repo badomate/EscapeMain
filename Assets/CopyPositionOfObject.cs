@@ -8,6 +8,9 @@ public class CopyPositionOfObject : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        transform.position = ObjectToCopy.transform.position;
+        if (ObjectToCopy)
+        {
+            transform.position = ObjectToCopy.transform.position;
+        }
     }
 }
