@@ -605,8 +605,6 @@ public class RiggingIK : MonoBehaviour
             }
         }
     }
-
-
     private void adjustHands()
     {
         Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
