@@ -28,19 +28,19 @@ public enum Actions
 
 public class RecognizeGesture : MonoBehaviour
 {
-    public int recordingLength = 2; //how many frames do we save for comparison? should match the dictionary
+    public int recordingLength = 2; // how many frames do we save for comparison? should match the dictionary
     public int stillnessFramesRequired = 2;
 
 
     public bool recording = false;
 
     public Dictionary<Pose.Landmark, Vector3>[] playerMovementRecord;
-    private int recordingProgress = 0; //how many samples of the currently playing gesture have we saved so far
-    public float matchThreshold = 0.01f; //0 would mean an absolute perfect match across all samples
-    public float stillnessThreshold = 0.1f; //used to "lock in" a pose
+    private int recordingProgress = 0; // how many samples of the currently playing gesture have we saved so far
+    public float matchThreshold = 0.01f; // 0 would mean an absolute perfect match across all samples
+    public float stillnessThreshold = 0.1f; // used to "lock in" a pose
 
     public static UnityEvent StillnessEvent = new UnityEvent();
-    //public UnityEvent MimicEvent = new UnityEvent(); 
+    // public UnityEvent MimicEvent = new UnityEvent(); 
 
     public delegate void RecognitionEventDel(Actions action);
     public static RecognitionEventDel RecognitionEvent;
@@ -71,7 +71,7 @@ public class RecognizeGesture : MonoBehaviour
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY);
 
-        bool isGoRight = !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+        bool isTurnLeft = !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
                          !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
                          !fingerDown(Pose.Landmark.RIGHT_RING) &&
                          !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
@@ -79,21 +79,21 @@ public class RecognizeGesture : MonoBehaviour
                          isRightHandStraight;
 
 
-        bool isTurnRight = fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+        bool isGoLeft = fingerDown(Pose.Landmark.RIGHT_INDEX) &&
                            fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
                            fingerDown(Pose.Landmark.RIGHT_RING) &&
                            fingerDown(Pose.Landmark.RIGHT_PINKY) &&
                            isRightHandStraight &&
                            isRightHandLeveled;
 
-        bool isGoLeft = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
+        bool isGoRight = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                         !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                         !fingerDown(Pose.Landmark.LEFT_RING) &&
                         !fingerDown(Pose.Landmark.LEFT_PINKY) &&
                         isLeftHandLeveled &&
                         isLeftHandStraight;
 
-        bool isTurnLeft = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+        bool isTurnRight = fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY) &&
