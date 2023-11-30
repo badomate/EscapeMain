@@ -71,7 +71,7 @@ public class RecognizeGesture : MonoBehaviour
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY);
 
-        bool isGoRight = !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+        bool isTurnRight = !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
                          !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
                          !fingerDown(Pose.Landmark.RIGHT_RING) &&
                          !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
@@ -79,7 +79,7 @@ public class RecognizeGesture : MonoBehaviour
                          isRightHandStraight;
 
 
-        bool isTurnRight = fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+        bool isGoRight = fingerDown(Pose.Landmark.RIGHT_INDEX) &&
                            fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
                            fingerDown(Pose.Landmark.RIGHT_RING) &&
                            fingerDown(Pose.Landmark.RIGHT_PINKY) &&
