@@ -10208,6 +10208,12 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 885480405}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &895254993 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 430108200687226393, guid: c0418887015feff47ba6fa643912230c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1166921219}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &912377588
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14378,6 +14384,8 @@ MonoBehaviour:
   useCalibration: 1
   reshapeModelForCalibration: 0
   calibrationWait: 1
+  useWorldCoordinates: 0
+  skeletonRoot: {fileID: 895254993}
   LeftUpperArmBone: {fileID: 0}
   LeftLowerArmBone: {fileID: 0}
   RightUpperArmBone: {fileID: 0}
@@ -21541,6 +21549,8 @@ MonoBehaviour:
   useCalibration: 0
   reshapeModelForCalibration: 0
   calibrationWait: 3
+  useWorldCoordinates: 0
+  skeletonRoot: {fileID: 0}
   LeftUpperArmBone: {fileID: 0}
   LeftLowerArmBone: {fileID: 0}
   RightUpperArmBone: {fileID: 0}
