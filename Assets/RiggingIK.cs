@@ -4,8 +4,6 @@ using System.Linq;
 using System;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using GestureDictionary.ContentGenerators.StarterGestures;
-using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 ///This class should serve some of the same functions as EstimationToIk 
@@ -81,7 +79,9 @@ public class RiggingIK : MonoBehaviour
     bool lockedInCalibration = false;
     public bool useCalibration = false;
     public bool reshapeModelForCalibration = false;
-    public float calibrationWait = 1.0f;
+    public bool useWorldCoordinates = false;
+
+    public GameObject skeletonRoot;
 
     public GameObject LeftUpperArmBone;
     public GameObject LeftLowerArmBone;
@@ -248,6 +248,11 @@ public class RiggingIK : MonoBehaviour
 
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
 
+        
+        if (useWorldCoordinates)
+        {
+           skeletonRoot.transform.position = HipTarget.transform.position;
+        }
 
         if (crouch)
         {
@@ -452,7 +457,7 @@ public class RiggingIK : MonoBehaviour
     {
         if (mirroring && CameraStream.playerPose._landmarkArrangement.Count > 0)
         {
-            SetIKPositions(CameraStream.playerPose, true);
+            SetIKPositions(CameraStream.playerPose, !useWorldCoordinates);
             if (!lockedInCalibration && useCalibration)
             {
                 lockedInCalibration = true;
@@ -464,7 +469,7 @@ public class RiggingIK : MonoBehaviour
     }
     IEnumerator calibrationTimer()
     {
-        yield return new WaitForSeconds(calibrationWait);
+        yield return new WaitForSeconds(1f);
         Debug.Log("Using calibration!");
         //ELONGATE ARMS
         if (mirroring && lockedInCalibration && rigBuilder)
