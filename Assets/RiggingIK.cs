@@ -79,6 +79,7 @@ public class RiggingIK : MonoBehaviour
     bool lockedInCalibration = false;
     public bool useCalibration = false;
     public bool reshapeModelForCalibration = false;
+    public bool calibrateFingers = true; //turn off if model doesnt have fingers anyway
     public bool useWorldCoordinates = false;
 
     public GameObject skeletonRoot;
@@ -197,7 +198,7 @@ public class RiggingIK : MonoBehaviour
 
 
             //Calibrate fingers
-            if (landmarksCopy.ContainsKey(Pose.Landmark.RIGHT_INDEX_BASE) && RightIndexBase != null)
+            if (landmarksCopy.ContainsKey(Pose.Landmark.RIGHT_INDEX_BASE) && calibrateFingers)
             {
                 calibrateLimb(landmarksCopy, RightIndexBase, Pose.Landmark.RIGHT_INDEX_BASE, Pose.Landmark.RIGHT_INDEX_KNUCKLE, Pose.Landmark.RIGHT_INDEX);
                 calibrateLimb(landmarksCopy, RightThumbBase, Pose.Landmark.RIGHT_THUMB_BASE, Pose.Landmark.RIGHT_THUMB_KNUCKLE, Pose.Landmark.RIGHT_THUMB);
@@ -205,7 +206,7 @@ public class RiggingIK : MonoBehaviour
                 calibrateLimb(landmarksCopy, RightRingBase, Pose.Landmark.RIGHT_RING_BASE, Pose.Landmark.RIGHT_RING_KNUCKLE, Pose.Landmark.RIGHT_RING);
                 calibrateLimb(landmarksCopy, RightPinkyBase, Pose.Landmark.RIGHT_PINKY_BASE, Pose.Landmark.RIGHT_PINKY_KNUCKLE, Pose.Landmark.RIGHT_PINKY);
             }
-            if (landmarksCopy.ContainsKey(Pose.Landmark.LEFT_INDEX_BASE) &&LeftIndexBase != null)
+            if (landmarksCopy.ContainsKey(Pose.Landmark.LEFT_INDEX_BASE) && calibrateFingers)
             {
                 calibrateLimb(landmarksCopy, LeftIndexBase, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_INDEX_KNUCKLE, Pose.Landmark.LEFT_INDEX);
                 calibrateLimb(landmarksCopy, LeftThumbBase, Pose.Landmark.LEFT_THUMB_BASE, Pose.Landmark.LEFT_THUMB_KNUCKLE, Pose.Landmark.LEFT_THUMB);
@@ -229,7 +230,7 @@ public class RiggingIK : MonoBehaviour
                 GameObject landmarkTarget = landmarkToTarget[landmark];
 
                 //Move the target gameobject to the position our Pose specified
-                if (relative)
+                if (relative && !useWorldCoordinates)
                 {
                     landmarkTarget.transform.position = position + gameObject.transform.position;
                 }
@@ -254,7 +255,7 @@ public class RiggingIK : MonoBehaviour
            skeletonRoot.transform.position = HipTarget.transform.position;
         }
 
-        if (crouch)
+        if (crouch) //TODO: check why this wasn't working properly last demo
         {
             float distFromFloor = 0;
             if (landmarkToTarget.ContainsKey(Pose.Landmark.LEFT_FOOT) && landmarkToTarget.ContainsKey(Pose.Landmark.RIGHT_FOOT) && LeftFootTarget && RightFootTarget)
@@ -564,7 +565,7 @@ public class RiggingIK : MonoBehaviour
         dictionaryToFill.Add(Pose.Landmark.RIGHT_PINKY_KNUCKLE, RightPinkyHintTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_THUMB_KNUCKLE, RightThumbHintTarget.transform.position);
 
-        if(LeftIndexBase && RightIndexBase)
+        if(calibrateFingers)
         {
 
         dictionaryToFill.Add(Pose.Landmark.LEFT_INDEX_BASE, LeftIndexBase.transform.position);
