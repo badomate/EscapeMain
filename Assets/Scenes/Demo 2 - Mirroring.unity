@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 1372863213}
 --- !u!65 &5501308
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1201,6 +1201,12 @@ MonoBehaviour:
     m_HintWeight: 1
     m_MaintainTargetPositionOffset: 0
     m_MaintainTargetRotationOffset: 0
+--- !u!1 &89354387 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7242993359035194598, guid: c0418887015feff47ba6fa643912230c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1166921219}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &92291635
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4688,6 +4694,12 @@ Transform:
   m_Father: {fileID: 1075292855}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &396194936 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -6591919036847234910, guid: c0418887015feff47ba6fa643912230c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1166921219}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &423188985
 Mesh:
   m_ObjectHideFlags: 0
@@ -5438,7 +5450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 1222623269}
 --- !u!1 &490768147 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5966074166800511893, guid: c0418887015feff47ba6fa643912230c,
@@ -6418,7 +6430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 1267543847}
 --- !u!1001 &570380617
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8525,7 +8537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 1655724933}
 --- !u!43 &772590866
 Mesh:
   m_ObjectHideFlags: 0
@@ -9610,7 +9622,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 365767535}
 --- !u!65 &822046068
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12358,7 +12370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 2031215997}
 --- !u!43 &991291370
 Mesh:
   m_ObjectHideFlags: 0
@@ -12866,7 +12878,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 1250672095}
 --- !u!1 &1019448778
 GameObject:
   m_ObjectHideFlags: 0
@@ -13481,9 +13493,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1075292854}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.067, y: 1.364, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.000000059604645, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.06699992, y: 1.3640002, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0.9999999}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 661305049}
@@ -15759,6 +15771,12 @@ Transform:
   m_Father: {fileID: 1115658470}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1250672095 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7973576822035291401, guid: c0418887015feff47ba6fa643912230c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1166921219}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1258642510
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15994,6 +16012,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 90, y: -90, z: -2.488}
+--- !u!1 &1267543847 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6950137226260877016, guid: c0418887015feff47ba6fa643912230c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1166921219}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1308002397
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16741,6 +16765,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: beanbag_iphon_full_mesh
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: fa58c0162aa30054cb64375fa2421fe3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4830692096060939696, guid: fa58c0162aa30054cb64375fa2421fe3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -17007,7 +17036,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 490768147}
 --- !u!43 &1350494037
 Mesh:
   m_ObjectHideFlags: 0
@@ -17792,7 +17821,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 396194936}
 --- !u!43 &1388204619
 Mesh:
   m_ObjectHideFlags: 0
@@ -19390,6 +19419,12 @@ MonoBehaviour:
     m_HintWeight: 1
     m_MaintainTargetPositionOffset: 0
     m_MaintainTargetRotationOffset: 0
+--- !u!1 &1496716373 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 906860925323602227, guid: c0418887015feff47ba6fa643912230c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1166921219}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1499838816
 Mesh:
   m_ObjectHideFlags: 0
@@ -20003,7 +20038,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 89354387}
 --- !u!1001 &1619598062
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20354,6 +20389,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectToCopy: {fileID: 0}
+--- !u!1 &1655724933 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3026522392604817644, guid: c0418887015feff47ba6fa643912230c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1166921219}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1658345979
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20503,7 +20544,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 1079470207}
 --- !u!1 &1662824139
 GameObject:
   m_ObjectHideFlags: 0
@@ -26980,6 +27021,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c996b53e9f849234393d1e90f68d1679, type: 3}
+--- !u!1 &2031215997 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5512944345145251879, guid: c0418887015feff47ba6fa643912230c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1166921219}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2037811969
 GameObject:
   m_ObjectHideFlags: 0
@@ -27351,7 +27398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 1496716373}
 --- !u!1 &2053497671
 GameObject:
   m_ObjectHideFlags: 0
@@ -27723,7 +27770,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42465e27b12dee74e8d1e8a94f2c4fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectToCopy: {fileID: 0}
+  ObjectToCopy: {fileID: 749627103}
 --- !u!1001 &2078082029
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28590,7 +28637,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2145791138}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.067, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -28612,7 +28659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 796b75e345bd64d47a31edd757bd2670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Data:
     m_Root: {fileID: 642841702}
     m_Tip: {fileID: 642841698}
@@ -28621,5 +28668,5 @@ MonoBehaviour:
     m_TipRotationWeight: 0
     m_MaxIterations: 15
     m_Tolerance: 0.0001
-    m_MaintainTargetPositionOffset: 1
+    m_MaintainTargetPositionOffset: 0
     m_MaintainTargetRotationOffset: 0

@@ -230,7 +230,12 @@ public class RiggingIK : MonoBehaviour
                 GameObject landmarkTarget = landmarkToTarget[landmark];
 
                 //Move the target gameobject to the position our Pose specified
-                if (relative && !useWorldCoordinates)
+                
+                if(relative && skeletonRoot)
+                {
+                    landmarkTarget.transform.position = position + skeletonRoot.transform.position;
+                }
+                else if (relative && !useWorldCoordinates)
                 {
                     landmarkTarget.transform.position = position + gameObject.transform.position;
                 }
@@ -459,15 +464,16 @@ public class RiggingIK : MonoBehaviour
         if (mirroring && CameraStream.playerPose._landmarkArrangement.Count > 0)
         {
             SetIKPositions(CameraStream.playerPose, !useWorldCoordinates);
-            if (!lockedInCalibration && useCalibration)
+            /*if (!lockedInCalibration && useCalibration) ///ive commented out everything related to the alternate calibration method as it is likely not needed for a while
             {
                 lockedInCalibration = true;
                 StartCoroutine(calibrationTimer());
 
 
-            }
+            }*/
         }
     }
+
     IEnumerator calibrationTimer()
     {
         yield return new WaitForSeconds(1f);
