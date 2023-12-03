@@ -231,7 +231,7 @@ public class RiggingIK : MonoBehaviour
 
                 //Move the target gameobject to the position our Pose specified
                 
-                if(relative && skeletonRoot)
+                if(relative && skeletonRoot && !useWorldCoordinates)
                 {
                     landmarkTarget.transform.position = position + skeletonRoot.transform.position;
                 }

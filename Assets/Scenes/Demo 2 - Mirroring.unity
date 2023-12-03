@@ -4583,7 +4583,7 @@ MonoBehaviour:
       m_Item7:
         transform: {fileID: 0}
         weight: 0
-    m_Offset: {x: 180, y: 0, z: 0}
+    m_Offset: {x: 0, y: 90, z: 0}
     m_ConstrainedAxes:
       x: 1
       y: 1
@@ -10238,12 +10238,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 885480405}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &895254993 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 430108200687226393, guid: c0418887015feff47ba6fa643912230c,
-    type: 3}
-  m_PrefabInstance: {fileID: 1166921219}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &912377588
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13495,7 +13489,7 @@ Transform:
   m_GameObject: {fileID: 1075292854}
   m_LocalRotation: {x: 0.000000059604645, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.06699992, y: 1.3640002, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.9999999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 661305049}
@@ -14491,7 +14485,7 @@ MonoBehaviour:
   reshapeModelForCalibration: 0
   calibrateFingers: 0
   useWorldCoordinates: 0
-  skeletonRoot: {fileID: 895254993}
+  skeletonRoot: {fileID: 1571647388}
   LeftUpperArmBone: {fileID: 1222623269}
   LeftLowerArmBone: {fileID: 1079470207}
   RightUpperArmBone: {fileID: 490768147}
@@ -16768,7 +16762,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: fa58c0162aa30054cb64375fa2421fe3,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4830692096060939696, guid: fa58c0162aa30054cb64375fa2421fe3,
         type: 3}
@@ -19889,6 +19883,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObjectToCopy: {fileID: 0}
+--- !u!1 &1571647388 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3196511607817033700, guid: c0418887015feff47ba6fa643912230c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1166921219}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1614416918
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25805,7 +25805,7 @@ MonoBehaviour:
       m_Item7:
         transform: {fileID: 0}
         weight: 0
-    m_Offset: {x: 180, y: 0, z: 0}
+    m_Offset: {x: 0, y: -90, z: 0}
     m_ConstrainedAxes:
       x: 1
       y: 1
