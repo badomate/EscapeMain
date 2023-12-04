@@ -245,6 +245,16 @@ public class RiggingIK : MonoBehaviour
                 }
             }
         }
+
+
+        /*Vector3 centerPosition;
+        centerPosition  = (landmarksCopy[Pose.Landmark.LEFT_SHOULDER] + landmarksCopy[Pose.Landmark.RIGHT_SHOULDER]) / 2;
+        centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with rig
+        ShoulderTarget.transform.position = centerPosition + gameObject.transform.position;
+
+        centerPosition = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
+        HipTarget.transform.position = centerPosition + gameObject.transform.position;*/
+
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
         
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_PINKY_BASE, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_WRIST, LeftWristTarget, Quaternion.Euler(0, 0, 0));
@@ -252,7 +262,9 @@ public class RiggingIK : MonoBehaviour
 
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, Pose.Landmark.NOSE, HeadTarget, Quaternion.Euler(-90,0,0));
 
-        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
+
+        //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, Pose.Landmark.LEFT_SHOULDER, HipTarget, Quaternion.Euler(0, 0, 180));
 
 
 
@@ -333,6 +345,7 @@ public class RiggingIK : MonoBehaviour
         return shiftVector;
     }
 
+    /*
     //on the mirror, shoulder is not set automatically, instead it can be calculated
     public void setTargetBetweenlandmarks(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, GameObject centerTarget, float offsetScale = 0.0f)
     {
@@ -353,6 +366,44 @@ public class RiggingIK : MonoBehaviour
             centerTarget.transform.rotation = orientation;
         }
     }
+    */
+
+    public void setTargetBetweenlandmarks(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, GameObject centerTarget, float offsetScale = 0.0f)
+    {
+        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
+        {
+            Vector3 leftPivot = landmarks[leftLandmark];
+            Vector3 rightPivot = landmarks[rightLandmark];
+            //Calculate the center position
+            Vector3 centerPosition = (leftPivot + rightPivot) / 2;
+            centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with Mixamo rig
+
+            //Calculate what the rotation between the two shoulders might be
+            Vector3 directionVector = rightPivot - leftPivot;
+            Quaternion rotation = Quaternion.LookRotation(directionVector);
+
+            //Move the target
+            centerTarget.transform.position = centerPosition + gameObject.transform.position; //change if not relative
+            centerTarget.transform.rotation = gameObject.transform.rotation * rotation;
+
+        }
+    }
+
+    void setRotationFromTriangleAlternative(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Pose.Landmark baseLandmark, GameObject centerTarget, Quaternion rotationOffset)
+    {
+        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && landmarks.ContainsKey(baseLandmark) && centerTarget != null)
+        {
+            Vector3 rightDirection = (landmarks[rightLandmark] - landmarks[leftLandmark]).normalized;
+            Vector3 upDirection = (landmarks[leftLandmark] - landmarks[baseLandmark]).normalized;
+
+            Vector3 forwardDirection = Vector3.Cross(upDirection, rightDirection).normalized;
+
+            Quaternion orientation = Quaternion.LookRotation(forwardDirection, upDirection);
+
+            centerTarget.transform.rotation = orientation * rotationOffset;
+        }
+    }
+
 
     void setRotationFromTriangle(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Pose.Landmark baseLandmark, GameObject centerTarget, Quaternion rotationOffset)
     {
