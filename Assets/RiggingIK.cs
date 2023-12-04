@@ -346,10 +346,10 @@ public class RiggingIK : MonoBehaviour
 
             //place it
             Vector3 centerPosition = (landmarks[leftLandmark] + landmarks[rightLandmark]) / 2;
-            centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with Mixamo rig
+            centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with rig
 
             //Move the target
-            centerTarget.transform.position = centerPosition + skeletonRoot.transform.position; //change if not relative
+            centerTarget.transform.position = centerPosition;
             centerTarget.transform.rotation = orientation;
         }
     }

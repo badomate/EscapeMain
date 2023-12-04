@@ -3049,7 +3049,7 @@ Transform:
   - {fileID: 1980357314}
   - {fileID: 1453144706}
   m_Father: {fileID: 1564144582}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &124684001
 MonoBehaviour:
@@ -19740,7 +19740,7 @@ Transform:
   - {fileID: 628473495}
   - {fileID: 871544789}
   m_Father: {fileID: 1564144582}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1029832074
 MonoBehaviour:
@@ -19756,11 +19756,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weight: 1
   m_Data:
-    m_Root: {fileID: 175484522}
+    m_Root: {fileID: 1528204671}
     m_Tip: {fileID: 1701493493}
     m_Target: {fileID: 1254077444}
     m_ChainRotationWeight: 1
-    m_TipRotationWeight: 0
+    m_TipRotationWeight: 1
     m_MaxIterations: 15
     m_Tolerance: 0.0001
     m_MaintainTargetPositionOffset: 1
@@ -21776,7 +21776,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh121154
+  m_Name: pb_Mesh178070
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -27107,7 +27107,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh121402
+  m_Name: pb_Mesh178318
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -30211,8 +30211,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 124683999}
   - {fileID: 1029832073}
+  - {fileID: 124683999}
   - {fileID: 1294840262}
   - {fileID: 1539658862}
   - {fileID: 1374366024}
@@ -33618,7 +33618,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh121720
+  m_Name: pb_Mesh178636
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
