@@ -254,7 +254,8 @@ public class RiggingIK : MonoBehaviour
 
         setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
 
-        
+
+
         if (useWorldCoordinates)
         {
            skeletonRoot.transform.position = HipTarget.transform.position;
@@ -337,19 +338,19 @@ public class RiggingIK : MonoBehaviour
     {
         if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
         {
-            Vector3 leftPivot = landmarks[leftLandmark];
-            Vector3 rightPivot = landmarks[rightLandmark];
-            //Calculate the center position
-            Vector3 centerPosition = (leftPivot + rightPivot) / 2;
-            centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with Mixamo rig
+            Vector3 rightDirection = (landmarks[rightLandmark] - landmarks[leftLandmark]).normalized;
+            Vector3 forwardDirection = Vector3.Cross(landmarks[rightLandmark].normalized, landmarks[leftLandmark].normalized).normalized;
+            Vector3 upDirection = Vector3.Cross(forwardDirection, rightDirection).normalized;
 
-            //Calculate what the rotation between the two shoulders might be
-            Vector3 directionVector = rightPivot - leftPivot;
-            Quaternion rotation = Quaternion.LookRotation(directionVector);
+            Quaternion orientation = Quaternion.LookRotation(forwardDirection, upDirection);
+
+            //place it
+            Vector3 centerPosition = (landmarks[leftLandmark] + landmarks[rightLandmark]) / 2;
+            centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with Mixamo rig
 
             //Move the target
             centerTarget.transform.position = centerPosition + gameObject.transform.position; //change if not relative
-            centerTarget.transform.rotation = gameObject.transform.rotation * rotation;
+            centerTarget.transform.rotation = orientation;
         }
     }
 

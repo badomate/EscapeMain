@@ -8,7 +8,23 @@ public class RotateCamera : MonoBehaviour
     public float fastRotationMultiplier = 10.0f;
     public Vector3 rotationCenter = Vector3.zero;
 
-    void Update()
+    void Start()
+    {
+        RecognizeGesture.RecognitionEvent += handleRotationRecognitionEvent;
+    }
+
+    void handleRotationRecognitionEvent(Actions action)
+    {
+        if(action == Actions.CAMERA_LEFT)
+        {
+            RotateCameraAround(rotationSpeed * -fastRotationMultiplier);
+        }
+        else if(action == Actions.CAMERA_RIGHT)
+        {
+            RotateCameraAround(rotationSpeed * fastRotationMultiplier);
+        }
+    }
+        void Update()
     {
         // Check for arrow key presses
         if (Input.GetKey(KeyCode.LeftArrow))
@@ -28,6 +44,12 @@ public class RotateCamera : MonoBehaviour
 
         // Rotate the camera around the rotation center
         transform.RotateAround(rotationCenter, rotationAxis, speed * Time.deltaTime);
+    }
+
+
+    private void OnDisable()
+    {
+        RecognizeGesture.RecognitionEvent -= handleRotationRecognitionEvent;
     }
 
 }

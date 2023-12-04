@@ -23,7 +23,10 @@ public enum Actions
     VICTORY,
     SUPERMAN,
     UNRECOGNIZED,
-    AMBIGUOUS
+    AMBIGUOUS,
+
+    CAMERA_LEFT,
+    CAMERA_RIGHT,
 }
 
 public class RecognizeGesture : MonoBehaviour
