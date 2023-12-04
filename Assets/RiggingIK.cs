@@ -349,7 +349,7 @@ public class RiggingIK : MonoBehaviour
             centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with Mixamo rig
 
             //Move the target
-            centerTarget.transform.position = centerPosition + gameObject.transform.position; //change if not relative
+            centerTarget.transform.position = centerPosition + skeletonRoot.transform.position; //change if not relative
             centerTarget.transform.rotation = orientation;
         }
     }
