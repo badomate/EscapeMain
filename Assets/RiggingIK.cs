@@ -255,8 +255,9 @@ public class RiggingIK : MonoBehaviour
         centerPosition = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
         HipTarget.transform.position = centerPosition + gameObject.transform.position;*/
 
-        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
-        
+        //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.LEFT_HIP, ShoulderTarget, Quaternion.Euler(0, 180, 0));
+
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_PINKY_BASE, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_WRIST, LeftWristTarget, Quaternion.Euler(0, 0, 0));
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.RIGHT_INDEX_BASE, Pose.Landmark.RIGHT_PINKY_BASE, Pose.Landmark.RIGHT_WRIST, RightWristTarget, Quaternion.Euler(0, 0, 0));
 
