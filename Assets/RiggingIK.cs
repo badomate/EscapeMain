@@ -263,8 +263,8 @@ public class RiggingIK : MonoBehaviour
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, Pose.Landmark.NOSE, HeadTarget, Quaternion.Euler(-90,0,0));
 
 
-        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
-        //rotateHips(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, ShoulderTarget.transform.position, HipTarget, Quaternion.Euler(0, 180, 0));
+        //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, Pose.Landmark.LEFT_SHOULDER, HipTarget, Quaternion.Euler(0, 0, 180));
 
 
 
@@ -389,19 +389,21 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
-    void rotateHips(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Vector3 BasePosition, GameObject centerTarget, Quaternion rotationOffset)
+    void setRotationFromTriangleAlternative(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Pose.Landmark baseLandmark, GameObject centerTarget, Quaternion rotationOffset)
     {
-        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
+        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && landmarks.ContainsKey(baseLandmark) && centerTarget != null)
         {
             Vector3 rightDirection = (landmarks[rightLandmark] - landmarks[leftLandmark]).normalized;
-            Vector3 forwardDirection = Vector3.Cross(rightDirection, (BasePosition - landmarks[leftLandmark]).normalized).normalized;
-            Vector3 upDirection = Vector3.Cross(forwardDirection, rightDirection).normalized;
+            Vector3 upDirection = (landmarks[leftLandmark] - landmarks[baseLandmark]).normalized;
+
+            Vector3 forwardDirection = Vector3.Cross(upDirection, rightDirection).normalized;
 
             Quaternion orientation = Quaternion.LookRotation(forwardDirection, upDirection);
 
             centerTarget.transform.rotation = orientation * rotationOffset;
         }
     }
+
 
     void setRotationFromTriangle(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Pose.Landmark baseLandmark, GameObject centerTarget, Quaternion rotationOffset)
     {
