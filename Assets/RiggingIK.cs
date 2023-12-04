@@ -349,7 +349,7 @@ public class RiggingIK : MonoBehaviour
             centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with rig
 
             //Move the target
-            centerTarget.transform.position = centerPosition;
+            centerTarget.transform.position = centerPosition + gameObject.transform.position;
             centerTarget.transform.rotation = orientation;
         }
     }
