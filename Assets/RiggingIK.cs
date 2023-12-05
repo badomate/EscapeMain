@@ -172,13 +172,13 @@ public class RiggingIK : MonoBehaviour
         //MAKE FINGERS RELATIVE TO WRIST POSITION
         foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
         {
-            if (leftFingers.Contains(landmark))
+            if (leftFingers.Contains(landmark) && landmarksCopy.ContainsKey(Pose.Landmark.LEFT_WRIST))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.LEFT_WRIST_ROOT];
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.LEFT_WRIST];
             }
 
-            if (rightFingers.Contains(landmark))
+            if (rightFingers.Contains(landmark) && landmarksCopy.ContainsKey(Pose.Landmark.RIGHT_WRIST))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.RIGHT_WRIST_ROOT];
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.RIGHT_WRIST];
@@ -256,23 +256,18 @@ public class RiggingIK : MonoBehaviour
 
         Vector3 centerPosition;
         centerPosition  = (landmarksCopy[Pose.Landmark.LEFT_SHOULDER] + landmarksCopy[Pose.Landmark.RIGHT_SHOULDER]) / 2;
-        //centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with rig
-        if (useCalibration)
-        {
-            centerPosition = centerPosition.normalized;
-            centerPosition *= spineExtent;
-        }
+
         ShoulderTarget.transform.position = centerPosition + gameObject.transform.position;
 
-        centerPosition = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
-        HipTarget.transform.position = centerPosition + gameObject.transform.position;
+        Vector3 centerPosition2 = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
+        HipTarget.transform.position = centerPosition2 + gameObject.transform.position;
 
 
         //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
-        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, HipTarget.transform.position, ShoulderTarget, Quaternion.Euler(0, 180, 0));
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, new Vector3(0,0,0), ShoulderTarget, Quaternion.Euler(0, 180, 0));
 
         //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
-        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, ShoulderTarget.transform.position, HipTarget, Quaternion.Euler(0, 0, 180));
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, centerPosition, HipTarget, Quaternion.Euler(180, 180, 0));
 
 
 
@@ -402,7 +397,7 @@ public class RiggingIK : MonoBehaviour
         if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
         {
             Vector3 rightDirection = (landmarks[rightLandmark] - landmarks[leftLandmark]).normalized;
-            Vector3 upDirection = (centerTarget.transform.position - baseLandmark).normalized;
+            Vector3 upDirection = ( (centerTarget.transform.position - gameObject.transform.position) - baseLandmark).normalized;
 
             Vector3 forwardDirection = Vector3.Cross(upDirection, rightDirection).normalized;
 
