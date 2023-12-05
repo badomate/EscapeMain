@@ -247,16 +247,6 @@ public class RiggingIK : MonoBehaviour
         }
 
 
-        /*Vector3 centerPosition;
-        centerPosition  = (landmarksCopy[Pose.Landmark.LEFT_SHOULDER] + landmarksCopy[Pose.Landmark.RIGHT_SHOULDER]) / 2;
-        centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with rig
-        ShoulderTarget.transform.position = centerPosition + gameObject.transform.position;
-
-        centerPosition = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
-        HipTarget.transform.position = centerPosition + gameObject.transform.position;*/
-
-        //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
-        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.LEFT_HIP, ShoulderTarget, Quaternion.Euler(0, 180, 0));
 
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_PINKY_BASE, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_WRIST, LeftWristTarget, Quaternion.Euler(0, 0, 0));
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.RIGHT_INDEX_BASE, Pose.Landmark.RIGHT_PINKY_BASE, Pose.Landmark.RIGHT_WRIST, RightWristTarget, Quaternion.Euler(0, 0, 0));
@@ -264,8 +254,20 @@ public class RiggingIK : MonoBehaviour
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, Pose.Landmark.NOSE, HeadTarget, Quaternion.Euler(-90,0,0));
 
 
+        Vector3 centerPosition;
+        centerPosition  = (landmarksCopy[Pose.Landmark.LEFT_SHOULDER] + landmarksCopy[Pose.Landmark.RIGHT_SHOULDER]) / 2;
+        //centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with rig
+        ShoulderTarget.transform.position = centerPosition + gameObject.transform.position;
+
+        centerPosition = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
+        HipTarget.transform.position = centerPosition + gameObject.transform.position;
+
+
+        //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, HipTarget.transform.position, ShoulderTarget, Quaternion.Euler(0, 180, 0));
+
         //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
-        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, Pose.Landmark.LEFT_SHOULDER, HipTarget, Quaternion.Euler(0, 0, 180));
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, ShoulderTarget.transform.position, HipTarget, Quaternion.Euler(0, 0, 180));
 
 
 
@@ -390,12 +392,12 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
-    void setRotationFromTriangleAlternative(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Pose.Landmark baseLandmark, GameObject centerTarget, Quaternion rotationOffset)
+    void setRotationFromTriangleAlternative(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Vector3 baseLandmark, GameObject centerTarget, Quaternion rotationOffset)
     {
-        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && landmarks.ContainsKey(baseLandmark) && centerTarget != null)
+        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
         {
             Vector3 rightDirection = (landmarks[rightLandmark] - landmarks[leftLandmark]).normalized;
-            Vector3 upDirection = (landmarks[leftLandmark] - landmarks[baseLandmark]).normalized;
+            Vector3 upDirection = (centerTarget.transform.position - baseLandmark).normalized;
 
             Vector3 forwardDirection = Vector3.Cross(upDirection, rightDirection).normalized;
 
