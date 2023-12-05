@@ -257,6 +257,11 @@ public class RiggingIK : MonoBehaviour
         Vector3 centerPosition;
         centerPosition  = (landmarksCopy[Pose.Landmark.LEFT_SHOULDER] + landmarksCopy[Pose.Landmark.RIGHT_SHOULDER]) / 2;
         //centerPosition -= Vector3.up * shoulderOffsetScale; // Slightly lower it to match with rig
+        if (useCalibration)
+        {
+            centerPosition = centerPosition.normalized;
+            centerPosition *= spineExtent;
+        }
         ShoulderTarget.transform.position = centerPosition + gameObject.transform.position;
 
         centerPosition = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
@@ -509,9 +514,16 @@ public class RiggingIK : MonoBehaviour
         if (mirroring && useCalibration)
         {
             saveCurrentPositions(landmarkToModelBasePosition);
+            if (ShoulderTarget)
+            {
+                spineExtent = ShoulderTarget.transform.localPosition.magnitude;
+
+            }
         }
 
     }
+
+    float spineExtent;
     
     // Update is called once per frame
     void Update()
