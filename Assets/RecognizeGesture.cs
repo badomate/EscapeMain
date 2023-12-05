@@ -73,7 +73,6 @@ public class RecognizeGesture : MonoBehaviour
         bool isVictory = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
-                          fingerDown(Pose.Landmark.LEFT_THUMB) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY);
 
         bool isTurnLeft = !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
