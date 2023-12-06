@@ -109,6 +109,10 @@ public class RiggingIK : MonoBehaviour
 
     public RigBuilder rigBuilder;
 
+    public bool keepWristsNeutral = false;
+    public GameObject leftHand; //for setting wrist rotation to neutral after rotating the body
+    public GameObject rightHand;
+
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
         Pose.Landmark.RIGHT_THUMB,
@@ -677,12 +681,16 @@ public class RiggingIK : MonoBehaviour
             }
         }
     }
+    private void LateUpdate()
+    {
+        if (keepWristsNeutral)
+        {
+            adjustHands();
+        }
+    }
     private void adjustHands()
     {
-        Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
-        Transform leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
         rightHand.transform.rotation = rightHand.transform.parent.rotation;
         leftHand.transform.rotation = leftHand.transform.parent.rotation;
-
     }
 }
