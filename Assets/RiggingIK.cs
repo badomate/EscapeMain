@@ -607,6 +607,9 @@ public class RiggingIK : MonoBehaviour
         dictionaryToFill.Add(Pose.Landmark.RIGHT_FOOT, RightFootTarget.transform.position);
 
 
+        if(calibrateFingers)
+        {
+
         dictionaryToFill.Add(Pose.Landmark.LEFT_INDEX, LeftIndexTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.LEFT_MIDDLE, LeftMiddleTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.LEFT_RING, LeftRingTarget.transform.position);
@@ -619,8 +622,6 @@ public class RiggingIK : MonoBehaviour
         dictionaryToFill.Add(Pose.Landmark.LEFT_PINKY_KNUCKLE, LeftPinkyHintTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.LEFT_THUMB_KNUCKLE, LeftThumbHintTarget.transform.position);
 
-
-
         dictionaryToFill.Add(Pose.Landmark.RIGHT_INDEX, RightIndexTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_MIDDLE, RightMiddleTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_RING, RightRingTarget.transform.position);
@@ -632,9 +633,6 @@ public class RiggingIK : MonoBehaviour
         dictionaryToFill.Add(Pose.Landmark.RIGHT_RING_KNUCKLE, RightRingHintTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_PINKY_KNUCKLE, RightPinkyHintTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_THUMB_KNUCKLE, RightThumbHintTarget.transform.position);
-
-        if(calibrateFingers)
-        {
 
         dictionaryToFill.Add(Pose.Landmark.LEFT_INDEX_BASE, LeftIndexBase.transform.position);
         dictionaryToFill.Add(Pose.Landmark.LEFT_MIDDLE_BASE, LeftMiddleBase.transform.position);
