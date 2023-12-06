@@ -513,7 +513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weight: 1
   m_Data:
-    m_Root: {fileID: 680573632}
+    m_Root: {fileID: 642841705}
     m_Tip: {fileID: 642841698}
     m_RootTarget: {fileID: 680573632}
     m_TipTarget: {fileID: 855325088}
