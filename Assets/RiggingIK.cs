@@ -282,7 +282,7 @@ public class RiggingIK : MonoBehaviour
 
 
         //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
-        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, new Vector3(0,0,0), ShoulderTarget, Quaternion.Euler(0, 180, 0));
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, centerPosition2, ShoulderTarget, Quaternion.Euler(0, 180, 0));
 
         //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
         setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, centerPosition, HipTarget, Quaternion.Euler(180, 180, 0));
