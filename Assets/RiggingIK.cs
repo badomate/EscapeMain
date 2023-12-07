@@ -235,11 +235,11 @@ public class RiggingIK : MonoBehaviour
 
                 //Move the target gameobject to the position our Pose specified
                 
-                if(relative && skeletonRoot && !useWorldCoordinates)
+                /*if(relative && skeletonRoot && !useWorldCoordinates)
                 {
                     landmarkTarget.transform.position = position + skeletonRoot.transform.position;
-                }
-                else if (relative && !useWorldCoordinates)
+                }*/
+                if (relative && !useWorldCoordinates)
                 {
                     landmarkTarget.transform.position = position + gameObject.transform.position;
                 }
@@ -260,11 +260,25 @@ public class RiggingIK : MonoBehaviour
 
         Vector3 centerPosition;
         centerPosition  = (landmarksCopy[Pose.Landmark.LEFT_SHOULDER] + landmarksCopy[Pose.Landmark.RIGHT_SHOULDER]) / 2;
-
-        ShoulderTarget.transform.position = centerPosition + gameObject.transform.position;
+        if (!useWorldCoordinates)
+        {
+            ShoulderTarget.transform.position = centerPosition + gameObject.transform.position;
+        }
+        else
+        {
+            ShoulderTarget.transform.position = centerPosition;
+        }
 
         Vector3 centerPosition2 = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
         HipTarget.transform.position = centerPosition2 + gameObject.transform.position;
+        if (!useWorldCoordinates)
+        {
+            HipTarget.transform.position = centerPosition2 + gameObject.transform.position;
+        }
+        else
+        {
+            HipTarget.transform.position = centerPosition2;
+        }
 
 
         //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
@@ -401,7 +415,15 @@ public class RiggingIK : MonoBehaviour
         if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
         {
             Vector3 rightDirection = (landmarks[rightLandmark] - landmarks[leftLandmark]).normalized;
-            Vector3 upDirection = ( (centerTarget.transform.position - gameObject.transform.position) - baseLandmark).normalized;
+            Vector3 upDirection;
+            if (!useWorldCoordinates)
+            {
+                upDirection = ((centerTarget.transform.position - gameObject.transform.position) - baseLandmark).normalized;
+            }
+            else
+            {
+                upDirection = (centerTarget.transform.position - baseLandmark).normalized;
+            }
 
             Vector3 forwardDirection = Vector3.Cross(upDirection, rightDirection).normalized;
 

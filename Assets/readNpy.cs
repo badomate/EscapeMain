@@ -33,7 +33,7 @@ public class readNpy : MonoBehaviour
                     double y = npArray[i, 1, landmarkIndex];
                     double z = npArray[i, 2, landmarkIndex];
 
-                    Vector3 landmarkPosition = new Vector3((float)x, (float)y, (float)z);
+                    Vector3 landmarkPosition = new Vector3((float)x, -(float)y, (float)z);
 
                     currentPose._landmarkArrangement.Add(landmark, landmarkPosition);
                 }
