@@ -323,8 +323,17 @@ public class RiggingIK : MonoBehaviour
 
     void calibrateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject rootBone, Pose.Landmark rootLandmark, Pose.Landmark midLandmark, Pose.Landmark endLandmark)
     {
-        Vector3 rootShift = rootBone.transform.position - (transform.position + landmarksCopy[rootLandmark]);
-        
+        Vector3 rootShift;
+        if (!useWorldCoordinates)
+        {
+            rootShift = rootBone.transform.position - (transform.position + landmarksCopy[rootLandmark]);
+        }
+        else
+        {
+            rootShift = rootBone.transform.position - landmarksCopy[rootLandmark];
+        }
+
+
         Vector3 extraShift = ElongateLimb(landmarksCopy, midLandmark, rootLandmark);
         ElongateLimb(landmarksCopy, endLandmark, midLandmark, extraShift);
         landmarksCopy[midLandmark] += rootShift;
