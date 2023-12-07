@@ -8953,7 +8953,7 @@ MonoBehaviour:
   gesturePlaySmoothing: 0
   crouch: 0
   shoulderOffsetScale: 0.1
-  useCalibration: 1
+  useCalibration: 0
   reshapeModelForCalibration: 0
   calibrateFingers: 0
   useWorldCoordinates: 0
