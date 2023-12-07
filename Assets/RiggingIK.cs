@@ -519,7 +519,6 @@ public class RiggingIK : MonoBehaviour
 
             }
         }
-
     }
 
     float spineExtent;
@@ -658,6 +657,7 @@ public class RiggingIK : MonoBehaviour
     //StartCoroutine(playGesture(exampleGesture));
     public IEnumerator playGesture(Gesture gestureToPlay)
     {
+        Debug.Log("Playing gesture...");
         for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
         {
             SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
