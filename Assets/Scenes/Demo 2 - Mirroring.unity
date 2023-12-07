@@ -8949,8 +8949,8 @@ MonoBehaviour:
   LeftKneeHintTarget: {fileID: 782326626}
   RightKneeHintTarget: {fileID: 1982772328}
   pointingConstraint: {fileID: 0}
-  mirroring: 1
-  gesturePlaySmoothing: 0
+  mirroring: 0
+  gesturePlaySmoothing: 1
   crouch: 0
   shoulderOffsetScale: 0.1
   useCalibration: 1
