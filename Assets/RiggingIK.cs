@@ -340,6 +340,31 @@ public class RiggingIK : MonoBehaviour
         landmarksCopy[endLandmark] += rootShift;
     }
 
+    public void MoveTargetByFK(Vector3 rootPosition, Vector3 midPosition, Vector3 midEffectorPosition, float rootLength, float midLength, GameObject endEffector, GameObject midEffector, GameObject root)
+    {
+        //calc directions
+        Vector3 v1 = (midPosition - rootPosition).normalized;
+        Vector3 v2 = (endEffector.transform.position - midPosition).normalized;
+
+        Vector3 rotationAxis = Vector3.Cross(v1, v2).normalized;
+        float rotationAngle = Mathf.Acos(Vector3.Dot(v1, v2));
+
+        Quaternion rotation = Quaternion.AngleAxis(rotationAngle * Mathf.Rad2Deg, rotationAxis);
+        root.transform.rotation = Quaternion.LookRotation(v1, rotationAxis);
+        midEffector.transform.rotation = Quaternion.identity;
+
+        Vector3 endEffectorPosition = rootPosition + rootLength * transform.forward + midLength * transform.GetChild(0).forward;
+        endEffector.transform.position = endEffectorPosition;
+        endEffector.transform.rotation = rotation;
+
+        Vector3 midEffectorOffset = midEffectorPosition - midPosition;
+        Vector3 rotatedMidEffectorOffset = rotation * midEffectorOffset;
+        Vector3 finalMidEffectorPosition = endEffector.transform.position + rotatedMidEffectorOffset;
+
+        midEffector.transform.position = finalMidEffectorPosition;
+    }
+
+
     /* //Function for reshaping the model to resemble the person
     void ElongateModelLimb(GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, GameObject boneToScale)
     {
