@@ -10,6 +10,7 @@ using static UnityEngine.Rendering.DebugUI;
 public class readNpy : MonoBehaviour
 {
     public RiggingIK rigToUse;
+    public RiggingIK rigToVisualizeOn;
     public static Gesture endResult;
 
     bool playing = true;
@@ -44,6 +45,7 @@ public class readNpy : MonoBehaviour
 
             Debug.Log(endResult._poseSequence.Count);
             StartCoroutine(rigToUse.playGesture(endResult));
+            StartCoroutine(rigToVisualizeOn.playGesture(endResult));
         }
     }
 }
