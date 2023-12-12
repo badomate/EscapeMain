@@ -112,6 +112,8 @@ public class RiggingIK : MonoBehaviour
     public bool keepWristsNeutral = false;
     public GameObject leftHand; //for setting wrist rotation to neutral after rotating the body
     public GameObject rightHand;
+    public GameObject leftFoot;
+    public GameObject rightFoot;
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -742,7 +744,14 @@ public class RiggingIK : MonoBehaviour
         if (keepWristsNeutral)
         {
             adjustHands();
+            adjustFeet();
         }
+    }
+
+    private void adjustFeet()
+    {
+        rightFoot.transform.rotation = rightFoot.transform.parent.rotation * Quaternion.Euler(-90, 0, 0);
+        leftFoot.transform.rotation = leftFoot.transform.parent.rotation * Quaternion.Euler(-90, 0, 0);
     }
     private void adjustHands()
     {
