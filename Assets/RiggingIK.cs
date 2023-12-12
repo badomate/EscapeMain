@@ -94,6 +94,9 @@ public class RiggingIK : MonoBehaviour
     public GameObject LeftUpperLegBone;
     public GameObject RightUpperLegBone;
 
+    public GameObject LeftLowerLegBone;
+    public GameObject RightLowerLegBone;
+
 
     public GameObject LeftIndexBase;
     public GameObject LeftThumbBase;
@@ -161,10 +164,11 @@ public class RiggingIK : MonoBehaviour
         SetIKPositions(poseToPlay._landmarkArrangement, relative);
     }
 
+    Dictionary<Pose.Landmark, Vector3> landmarksCopy;
     //Changes every IK target to match up with the given pose
     public void SetIKPositions(Dictionary<Pose.Landmark, Vector3> landmarkArrangement, bool relative = false)
     {
-        Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
+        landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
         /* //disabled for playing coco data
         //ROTATE LANDMARKS BY INITIAL GAMEOBJECT ROTATION
@@ -200,6 +204,8 @@ public class RiggingIK : MonoBehaviour
             if (scaleModelToEstimation)
             {
                 ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
+                /*AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_SHOULDER], landmarksCopy[Pose.Landmark.RIGHT_ELBOW], landmarksCopy[Pose.Landmark.RIGHT_WRIST],
+                    RightUpperArmBone, RightLowerArmBone);*/ //this cannot be done here, needs to be in LateUpdate or we need to not have an animator component
             }
             else
             {
@@ -351,29 +357,6 @@ public class RiggingIK : MonoBehaviour
         landmarksCopy[endLandmark] += rootShift;
     }
 
-    public void MoveTargetByFK(Vector3 rootPosition, Vector3 midPosition, Vector3 midEffectorPosition, float rootLength, float midLength, GameObject endEffector, GameObject midEffector, GameObject root)
-    {
-        //calc directions
-        Vector3 v1 = (midPosition - rootPosition).normalized;
-        Vector3 v2 = (endEffector.transform.position - midPosition).normalized;
-
-        Vector3 rotationAxis = Vector3.Cross(v1, v2).normalized;
-        float rotationAngle = Mathf.Acos(Vector3.Dot(v1, v2));
-
-        Quaternion rotation = Quaternion.AngleAxis(rotationAngle * Mathf.Rad2Deg, rotationAxis);
-        root.transform.rotation = Quaternion.LookRotation(v1, rotationAxis);
-        midEffector.transform.rotation = Quaternion.identity;
-
-        Vector3 endEffectorPosition = rootPosition + rootLength * transform.forward + midLength * transform.GetChild(0).forward;
-        endEffector.transform.position = endEffectorPosition;
-        endEffector.transform.rotation = rotation;
-
-        Vector3 midEffectorOffset = midEffectorPosition - midPosition;
-        Vector3 rotatedMidEffectorOffset = rotation * midEffectorOffset;
-        Vector3 finalMidEffectorPosition = endEffector.transform.position + rotatedMidEffectorOffset;
-
-        midEffector.transform.position = finalMidEffectorPosition;
-    }
 
 
     /* //Function for reshaping the model to resemble the person
@@ -766,6 +749,36 @@ public class RiggingIK : MonoBehaviour
             adjustHands();
             adjustFeet();
         }
+        if (scaleModelToEstimation && landmarksCopy.Count > 0)
+        {
+            ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
+            AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_SHOULDER], landmarksCopy[Pose.Landmark.RIGHT_ELBOW], landmarksCopy[Pose.Landmark.RIGHT_WRIST],
+                RightUpperArmBone, RightLowerArmBone);
+
+            AlignBonesWithFK(landmarksCopy[Pose.Landmark.LEFT_SHOULDER], landmarksCopy[Pose.Landmark.LEFT_ELBOW], landmarksCopy[Pose.Landmark.LEFT_WRIST],
+                LeftUpperArmBone, LeftLowerArmBone);
+
+            AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_HIP], landmarksCopy[Pose.Landmark.RIGHT_KNEE], landmarksCopy[Pose.Landmark.RIGHT_FOOT],
+                RightUpperLegBone, RightLowerLegBone);
+
+            AlignBonesWithFK(landmarksCopy[Pose.Landmark.LEFT_HIP], landmarksCopy[Pose.Landmark.LEFT_KNEE], landmarksCopy[Pose.Landmark.LEFT_FOOT],
+                LeftUpperLegBone, LeftLowerLegBone);
+        }
+    }
+    void AlignBonesWithFK(Vector3 realRootPos, Vector3 realMidPos, Vector3 realEndPos, GameObject inGameRoot, GameObject inGameMid)
+    {
+        // Convert real-world positions to Unity coordinate system
+        Vector3 convertedRootPos = new Vector3(-realRootPos.x, realRootPos.z, -realRootPos.y);
+        Vector3 convertedMidPos = new Vector3(-realMidPos.x, realMidPos.z, -realMidPos.y);
+        Vector3 convertedEndPos = new Vector3(-realEndPos.x, realEndPos.z, -realEndPos.y);
+
+        // Calculate rotations
+        Quaternion rootRotation = Quaternion.LookRotation(convertedMidPos - convertedRootPos, -Vector3.forward);
+        Quaternion midRotation = Quaternion.LookRotation(convertedEndPos - convertedMidPos, -Vector3.forward);
+
+        // Apply rotations separately for troubleshooting
+        inGameRoot.transform.rotation = rootRotation;
+        inGameMid.transform.rotation = midRotation;
     }
 
     private void adjustFeet()

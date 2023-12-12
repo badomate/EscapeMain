@@ -4852,6 +4852,8 @@ MonoBehaviour:
   RightLowerArmBone: {fileID: 0}
   LeftUpperLegBone: {fileID: 0}
   RightUpperLegBone: {fileID: 0}
+  LeftLowerLegBone: {fileID: 0}
+  RightLowerLegBone: {fileID: 0}
   LeftIndexBase: {fileID: 0}
   LeftThumbBase: {fileID: 0}
   LeftRingBase: {fileID: 0}
@@ -15527,6 +15529,11 @@ PrefabInstance:
       objectReference: {fileID: 9000000, guid: c0418887015feff47ba6fa643912230c, type: 3}
     - target: {fileID: 5866666021909216657, guid: c0418887015feff47ba6fa643912230c,
         type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: c0418887015feff47ba6fa643912230c,
+        type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: ac3473691ccfd9940a02106ab9e36a91, type: 2}
@@ -15652,7 +15659,7 @@ MonoBehaviour:
   crouch: 0
   shoulderOffsetScale: 0
   useCalibration: 1
-  scaleModelToEstimation: 1
+  scaleModelToEstimation: 0
   reshapeModelForCalibration: 0
   calibrateFingers: 0
   useWorldCoordinates: 1
@@ -15663,6 +15670,8 @@ MonoBehaviour:
   RightLowerArmBone: {fileID: 749627103}
   LeftUpperLegBone: {fileID: 1372863213}
   RightUpperLegBone: {fileID: 365767535}
+  LeftLowerLegBone: {fileID: 89354387}
+  RightLowerLegBone: {fileID: 1267543847}
   LeftIndexBase: {fileID: 0}
   LeftThumbBase: {fileID: 0}
   LeftRingBase: {fileID: 0}
