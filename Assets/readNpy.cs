@@ -13,14 +13,16 @@ public class readNpy : MonoBehaviour
     public RiggingIK rigToVisualizeOn;
     public static Gesture endResult;
 
-    bool playing = true;
+    public bool playAgain = true;
+    public bool FormattingType1 = false;
+    public string recordingToPlay = "points_3d_list_normalized";
 
     void Update()
     {
-        if (playing) //bit of a workaround to make sure everything else is already initialized and this only plays once
+        if (playAgain) //bit of a workaround to make sure everything else is already initialized and this only plays once
         {
-            playing = false;
-            string filePath = "Assets/GestureDictionary/Recordings/points_3d_list_normalized.npy";
+            playAgain = false;
+            string filePath = "Assets/GestureDictionary/Recordings/"+ recordingToPlay+".npy";
             NDArray npArray = np.load(filePath);
 
             List<Pose> poseList = new List<Pose>();
@@ -29,12 +31,24 @@ public class readNpy : MonoBehaviour
                 Pose currentPose = new Pose();
                 foreach (var landmark in LandmarkIndicesDictionary.cocoIndices.Keys)
                 {
-                    int landmarkIndex = LandmarkIndicesDictionary.cocoIndices[landmark];
-                    double x = npArray[i, 0, landmarkIndex];
-                    double y = npArray[i, 1, landmarkIndex];
-                    double z = npArray[i, 2, landmarkIndex];
+                    Vector3 landmarkPosition;
+                    if (FormattingType1) //if shape is like ...,3,17
+                    {
+                        int landmarkIndex = LandmarkIndicesDictionary.cocoIndices[landmark];
+                        double x = npArray[i, 0, landmarkIndex];
+                        double y = npArray[i, 1, landmarkIndex];
+                        double z = npArray[i, 2, landmarkIndex];
 
-                    Vector3 landmarkPosition = new Vector3((float)x, -(float)y, (float)z);
+                        landmarkPosition = new Vector3((float)x, -(float)y, (float)z);
+                    }
+                    else //if shape is like ...,17,3
+                    {
+                        int landmarkIndex = LandmarkIndicesDictionary.cocoIndices[landmark];
+                        float x = npArray[i, landmarkIndex, 0];
+                        float y = npArray[i, landmarkIndex, 1];
+                        float z = npArray[i, landmarkIndex, 2];
+                        landmarkPosition = new Vector3(x, -y, z);
+                    }
 
                     currentPose._landmarkArrangement.Add(landmark, landmarkPosition);
                 }
