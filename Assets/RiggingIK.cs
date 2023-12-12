@@ -78,6 +78,7 @@ public class RiggingIK : MonoBehaviour
 
     bool lockedInCalibration = false;
     public bool useCalibration = false;
+    public bool scaleModelToEstimation = false; //a different type of calibration in which I resize the model until the arm's length matches that of the estimation
     public bool reshapeModelForCalibration = false;
     public bool calibrateFingers = true; //turn off if model doesnt have fingers anyway
     public bool useWorldCoordinates = false;
@@ -114,6 +115,7 @@ public class RiggingIK : MonoBehaviour
     public GameObject rightHand;
     public GameObject leftFoot;
     public GameObject rightFoot;
+    public GameObject rigRoot;
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -195,12 +197,19 @@ public class RiggingIK : MonoBehaviour
         //RETARGET REAL TO MODEL - if we are not reshaping the model, start by reshaping the received coordinates to match us
         if (useCalibration && !reshapeModelForCalibration)
         {
-            //Calibrate limbs
-            calibrateLimb(landmarksCopy, RightUpperArmBone, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST);
-            calibrateLimb(landmarksCopy, LeftUpperArmBone, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST);
+            if (scaleModelToEstimation)
+            {
+                ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
+            }
+            else
+            {
+                //Calibrate limbs
+                calibrateLimb(landmarksCopy, RightUpperArmBone, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST);
+                calibrateLimb(landmarksCopy, LeftUpperArmBone, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST);
 
-            calibrateLimb(landmarksCopy, LeftUpperLegBone, Pose.Landmark.LEFT_HIP, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_FOOT);
-            calibrateLimb(landmarksCopy, RightUpperLegBone, Pose.Landmark.RIGHT_HIP, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_FOOT);
+                calibrateLimb(landmarksCopy, LeftUpperLegBone, Pose.Landmark.LEFT_HIP, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_FOOT);
+                calibrateLimb(landmarksCopy, RightUpperLegBone, Pose.Landmark.RIGHT_HIP, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_FOOT);
+            }
 
 
             //Calibrate fingers
@@ -379,6 +388,17 @@ public class RiggingIK : MonoBehaviour
 
         boneToScale.transform.localScale = new Vector3(scaleVar, scaleVar, scaleVar);
     }*/
+
+
+    private void ResizeCharacterModel(Dictionary<Pose.Landmark, Vector3> landmarksCopy, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
+    {
+        float realMagnitude = (landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]).magnitude;
+        float modelMagnitude = (landmarkToModelBasePosition[goalLandmark] - landmarkToModelBasePosition[sourceLandmark]).magnitude;
+
+        float scaleFactor = realMagnitude / modelMagnitude;
+
+        transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+    }
 
     //retargets the REAL estimation onto the model and returns the vector so that it may be applied to its children
     Vector3 ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, Vector3 extraShift = default(Vector3))
