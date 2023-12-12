@@ -42,9 +42,62 @@
           </ul>
           </details>
         </li>
+        <li>
+          <details>
+          <summary>GestureData</summary>
+          <ul>
+            <li>
+              <details>
+              <summary>Panoptic</summary>
+              <ul>
+                <li>coverface</li>
+              </ul>
+              </details>
+            </li>
+            <li>Recordings</li>
+          </ul>
+          </details>
+        </li>
         <li>Prefabs</li>
         <li>ScriptableObjects</li>
-        <li>Scripts</li>
+        <li>
+          <details>
+          <summary>Scripts</summary>
+          <ul>
+            <li>
+              <details>
+              <summary>Communication</summary>
+              <ul>
+                <li>
+                  <details>
+                  <summary>GestureDictionary</summary>
+                  <ul>
+                    <li>
+                      <details>
+                      <summary>ContentGenerators</summary>
+                      <ul>
+                        <li>
+                          <details>
+                          <summary>StarterGestures</summary>
+                          <ul>
+                            <li>StarterMetaGestures</li>
+                          </ul>
+                          </details>
+                        </li>
+                        <li>StarterPoses</li>
+                      </ul>
+                      </details>
+                    </li>
+                  </ul>
+                  </details>
+                </li>
+              </ul>
+              </details>
+            </li>
+            <li>Movement</li>
+          </ul>
+          </details>
+        </li>
         <li>Shaders</li>
       </ul>
       </details>
@@ -70,7 +123,14 @@
             </li>
             <li>Models</li>
             <li>Textures</li>
-            <li>UI</li>
+            <li>
+              <details>
+              <summary>UI</summary>
+                <ul>
+                  <li>LimbCoach</li>
+                </ul>
+              </details>
+            </li>
           </ul>
           </details>
         </li>
