@@ -373,15 +373,32 @@ public class RiggingIK : MonoBehaviour
         boneToScale.transform.localScale = new Vector3(scaleVar, scaleVar, scaleVar);
     }*/
 
+    Pose.Landmark[] goalLandmarks = { Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.RIGHT_HIP, Pose.Landmark.LEFT_HIP, Pose.Landmark.LEFT_KNEE, Pose.Landmark.RIGHT_KNEE };
+    Pose.Landmark[] sourceLandmarks = { Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.LEFT_WRIST, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_FOOT, Pose.Landmark.RIGHT_FOOT };
 
-    private void ResizeCharacterModel(Dictionary<Pose.Landmark, Vector3> landmarksCopy, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark)
+
+    private void ResizeCharacterModel(Dictionary<Pose.Landmark, Vector3> landmarksCopy, Pose.Landmark[] goalLandmarks, Pose.Landmark[] sourceLandmarks)
     {
-        float realMagnitude = (landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]).magnitude;
-        float modelMagnitude = (landmarkToModelBasePosition[goalLandmark] - landmarkToModelBasePosition[sourceLandmark]).magnitude;
+        float totalScaleFactor = 0f;
 
-        float scaleFactor = realMagnitude / modelMagnitude;
-         
-        gameObject.transform.localScale = initialScale * scaleFactor;
+        for (int i = 0; i < goalLandmarks.Length; i++)
+        {
+            Pose.Landmark goalLandmark = goalLandmarks[i];
+            Pose.Landmark sourceLandmark = sourceLandmarks[i];
+
+            float realMagnitude = (landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]).magnitude;
+            float modelMagnitude = (landmarkToModelBasePosition[goalLandmark] - landmarkToModelBasePosition[sourceLandmark]).magnitude;
+
+            //float scaleFactor = realMagnitude / modelMagnitude;
+            float scaleFactor = realMagnitude / modelMagnitude;
+            totalScaleFactor += scaleFactor;
+        }
+
+        // Calculate the average scale factor
+        float averageScaleFactor = totalScaleFactor / goalLandmarks.Length;
+
+        // Apply the average scale factor to the initial scale of the character model
+        rootToMove.transform.localScale = initialScale * averageScaleFactor;
     }
 
     //retargets the REAL estimation onto the model and returns the vector so that it may be applied to its children
@@ -754,7 +771,8 @@ public class RiggingIK : MonoBehaviour
         }
         if (scaleModelToEstimation && landmarksCopy.Count > 0)
         {
-            ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
+            ResizeCharacterModel(landmarksCopy, goalLandmarks, sourceLandmarks);
+
         }
         if (overWriteWithFK && landmarksCopy.Count > 0)
         {
