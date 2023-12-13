@@ -574,7 +574,7 @@ public class RiggingIK : MonoBehaviour
         }
 
 
-        if (mirroring && useCalibration)
+        if (mirroring)
         {
             saveCurrentPositions(landmarkToModelBasePosition);
             if (ShoulderTarget)
@@ -752,9 +752,12 @@ public class RiggingIK : MonoBehaviour
             adjustHands();
             adjustFeet();
         }
-        if (overWriteWithFK && landmarksCopy.Count > 0)
+        if (scaleModelToEstimation && landmarksCopy.Count > 0)
         {
             ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
+        }
+        if (overWriteWithFK && landmarksCopy.Count > 0)
+        {
             AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_SHOULDER], landmarksCopy[Pose.Landmark.RIGHT_ELBOW], landmarksCopy[Pose.Landmark.RIGHT_WRIST],
                 RightUpperArmBone, RightLowerArmBone, -rigRoot.transform.forward);
 

@@ -13458,7 +13458,7 @@ MonoBehaviour:
   rigToVisualizeOn: {fileID: 412931551}
   playAgain: 1
   FormattingType1: 0
-  recordingToPlay: demo_points3d_list_rounded
+  recordingToPlay: demo_points3d_list
 --- !u!1001 &972506287
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14914,7 +14914,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 0
+  m_Weight: 1
   m_Data:
     m_Root: {fileID: 642841700}
     m_Mid: {fileID: 642841685}
@@ -15707,7 +15707,7 @@ MonoBehaviour:
   gesturePlaySmoothing: 0
   crouch: 0
   shoulderOffsetScale: 0
-  useCalibration: 1
+  useCalibration: 0
   scaleModelToEstimation: 1
   overWriteWithFK: 1
   reshapeModelForCalibration: 0
@@ -21359,7 +21359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 0
+  m_Weight: 1
   m_Data:
     m_Root: {fileID: 1166921226}
     m_Mid: {fileID: 1166921229}
@@ -22877,7 +22877,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 0
+  m_Weight: 1
   m_Data:
     m_Root: {fileID: 642841701}
     m_Mid: {fileID: 642841687}
@@ -27147,7 +27147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 0
+  m_Weight: 1
   m_Data:
     m_Root: {fileID: 1166921225}
     m_Mid: {fileID: 1166921224}
