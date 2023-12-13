@@ -756,19 +756,19 @@ public class RiggingIK : MonoBehaviour
         {
             //ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
             AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_SHOULDER], landmarksCopy[Pose.Landmark.RIGHT_ELBOW], landmarksCopy[Pose.Landmark.RIGHT_WRIST],
-                RightUpperArmBone, RightLowerArmBone);
+                RightUpperArmBone, RightLowerArmBone, -rigRoot.transform.forward);
 
             AlignBonesWithFK(landmarksCopy[Pose.Landmark.LEFT_SHOULDER], landmarksCopy[Pose.Landmark.LEFT_ELBOW], landmarksCopy[Pose.Landmark.LEFT_WRIST],
-                LeftUpperArmBone, LeftLowerArmBone);
+                LeftUpperArmBone, LeftLowerArmBone, -rigRoot.transform.forward);
 
             AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_HIP], landmarksCopy[Pose.Landmark.RIGHT_KNEE], landmarksCopy[Pose.Landmark.RIGHT_FOOT],
-                RightUpperLegBone, RightLowerLegBone);
+                RightUpperLegBone, RightLowerLegBone, rigRoot.transform.forward);
 
             AlignBonesWithFK(landmarksCopy[Pose.Landmark.LEFT_HIP], landmarksCopy[Pose.Landmark.LEFT_KNEE], landmarksCopy[Pose.Landmark.LEFT_FOOT],
-                LeftUpperLegBone, LeftLowerLegBone);
+                LeftUpperLegBone, LeftLowerLegBone, rigRoot.transform.forward);
         }
     }
-    void AlignBonesWithFK(Vector3 realRootPos, Vector3 realMidPos, Vector3 realEndPos, GameObject inGameRoot, GameObject inGameMid)
+    void AlignBonesWithFK(Vector3 realRootPos, Vector3 realMidPos, Vector3 realEndPos, GameObject inGameRoot, GameObject inGameMid, Vector3 forward)
     {
         Debug.Log("go");
         // Convert real-world positions to Unity coordinate system
@@ -777,8 +777,8 @@ public class RiggingIK : MonoBehaviour
         Vector3 convertedEndPos = new Vector3(-realEndPos.x, realEndPos.z, -realEndPos.y);*/
 
         // Calculate rotations
-        Quaternion rootRotation = Quaternion.LookRotation(realMidPos - realRootPos, rigRoot.transform.forward);
-        Quaternion midRotation = Quaternion.LookRotation(realEndPos - realMidPos, rigRoot.transform.forward);
+        Quaternion rootRotation = Quaternion.LookRotation(realMidPos - realRootPos, forward);
+        Quaternion midRotation = Quaternion.LookRotation(realEndPos - realMidPos, forward);
 
         // Apply rotations separately for troubleshooting
         inGameRoot.transform.rotation = rootRotation * Quaternion.Euler(90,0,0);
