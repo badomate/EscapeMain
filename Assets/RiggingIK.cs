@@ -84,7 +84,7 @@ public class RiggingIK : MonoBehaviour
     public bool calibrateFingers = true; //turn off if model doesnt have fingers anyway
     public bool useWorldCoordinates = false;
 
-    public GameObject skeletonRoot;
+    public GameObject rootToMove;
 
     public GameObject LeftUpperArmBone;
     public GameObject LeftLowerArmBone;
@@ -120,6 +120,7 @@ public class RiggingIK : MonoBehaviour
     public GameObject leftFoot;
     public GameObject rightFoot;
     public GameObject rigRoot;
+    public GameObject rootToFollow; //testing to see if this improves 3D absolute positioning
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -204,7 +205,7 @@ public class RiggingIK : MonoBehaviour
         {
             if (scaleModelToEstimation)
             {
-                ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
+                //ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
                 /*AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_SHOULDER], landmarksCopy[Pose.Landmark.RIGHT_ELBOW], landmarksCopy[Pose.Landmark.RIGHT_WRIST],
                     RightUpperArmBone, RightLowerArmBone);*/ //this cannot be done here, needs to be in LateUpdate or we need to not have an animator component
             }
@@ -288,7 +289,6 @@ public class RiggingIK : MonoBehaviour
         }
 
         Vector3 centerPosition2 = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
-        HipTarget.transform.position = centerPosition2 + gameObject.transform.position;
         if (!useWorldCoordinates)
         {
             HipTarget.transform.position = centerPosition2 + gameObject.transform.position;
@@ -309,7 +309,7 @@ public class RiggingIK : MonoBehaviour
 
         if (useWorldCoordinates)
         {
-           skeletonRoot.transform.position = HipTarget.transform.position;
+           rootToMove.transform.position = rootToFollow.transform.position;
         }
 
         if (crouch) //TODO: check why this wasn't working properly last demo
@@ -381,7 +381,7 @@ public class RiggingIK : MonoBehaviour
 
         float scaleFactor = realMagnitude / modelMagnitude;
          
-        skeletonRoot.transform.localScale = initialScale * scaleFactor;
+        gameObject.transform.localScale = initialScale * scaleFactor;
     }
 
     //retargets the REAL estimation onto the model and returns the vector so that it may be applied to its children
@@ -391,7 +391,7 @@ public class RiggingIK : MonoBehaviour
         Vector3 realPose = landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark];
         Vector3 modelPose = landmarkToModelBasePosition[goalLandmark] - landmarkToModelBasePosition[sourceLandmark];
         float realMagnitude = realPose.magnitude;
-        float modelMagnitude = modelPose.magnitude * skeletonRoot.transform.localScale.x;
+        float modelMagnitude = modelPose.magnitude * gameObject.transform.localScale.x;
 
         //float scaleVar = (modelMagnitude - realMagnitude)/ realMagnitude;
         float scaleVar = (modelMagnitude- realMagnitude) / realMagnitude;
@@ -510,7 +510,7 @@ public class RiggingIK : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        initialScale = skeletonRoot.transform.localScale;
+        initialScale = gameObject.transform.localScale;
         //landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget); //TODO: Add proper left hand functionality to the rig. Currently it keeps trying to override the shoulders completely instead of adjusting them
         landmarkToTarget.Add(Pose.Landmark.RIGHT_WRIST, RightHandTarget);
         landmarkToTarget.Add(Pose.Landmark.LEFT_FOOT, LeftFootTarget);
@@ -754,7 +754,7 @@ public class RiggingIK : MonoBehaviour
         }
         if (overWriteWithFK && landmarksCopy.Count > 0)
         {
-            //ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
+            ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
             AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_SHOULDER], landmarksCopy[Pose.Landmark.RIGHT_ELBOW], landmarksCopy[Pose.Landmark.RIGHT_WRIST],
                 RightUpperArmBone, RightLowerArmBone, -rigRoot.transform.forward);
 
@@ -770,7 +770,6 @@ public class RiggingIK : MonoBehaviour
     }
     void AlignBonesWithFK(Vector3 realRootPos, Vector3 realMidPos, Vector3 realEndPos, GameObject inGameRoot, GameObject inGameMid, Vector3 forward)
     {
-        Debug.Log("go");
         // Convert real-world positions to Unity coordinate system
         /*Vector3 convertedRootPos = new Vector3(-realRootPos.x, realRootPos.z, -realRootPos.y);
         Vector3 convertedMidPos = new Vector3(-realMidPos.x, realMidPos.z, -realMidPos.y);
