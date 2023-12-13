@@ -79,6 +79,7 @@ public class RiggingIK : MonoBehaviour
     bool lockedInCalibration = false;
     public bool useCalibration = false;
     public bool scaleModelToEstimation = false; //a different type of calibration in which I resize the model until the arm's length matches that of the estimation
+    public bool overWriteWithFK = false; //if on, IK will be overwritten at the end of the computation with FK based on the estimation
     public bool reshapeModelForCalibration = false;
     public bool calibrateFingers = true; //turn off if model doesnt have fingers anyway
     public bool useWorldCoordinates = false;
@@ -379,8 +380,8 @@ public class RiggingIK : MonoBehaviour
         float modelMagnitude = (landmarkToModelBasePosition[goalLandmark] - landmarkToModelBasePosition[sourceLandmark]).magnitude;
 
         float scaleFactor = realMagnitude / modelMagnitude;
-
-        transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+         
+        rigRoot.transform.localScale = initialScale * scaleFactor;
     }
 
     //retargets the REAL estimation onto the model and returns the vector so that it may be applied to its children
@@ -390,7 +391,7 @@ public class RiggingIK : MonoBehaviour
         Vector3 realPose = landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark];
         Vector3 modelPose = landmarkToModelBasePosition[goalLandmark] - landmarkToModelBasePosition[sourceLandmark];
         float realMagnitude = realPose.magnitude;
-        float modelMagnitude = modelPose.magnitude;
+        float modelMagnitude = modelPose.magnitude * rigRoot.transform.localScale.x;
 
         //float scaleVar = (modelMagnitude - realMagnitude)/ realMagnitude;
         float scaleVar = (modelMagnitude- realMagnitude) / realMagnitude;
@@ -504,10 +505,12 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
+    Vector3 initialScale;
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
+        initialScale = rigRoot.transform.localScale;
         //landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget); //TODO: Add proper left hand functionality to the rig. Currently it keeps trying to override the shoulders completely instead of adjusting them
         landmarkToTarget.Add(Pose.Landmark.RIGHT_WRIST, RightHandTarget);
         landmarkToTarget.Add(Pose.Landmark.LEFT_FOOT, LeftFootTarget);
@@ -749,7 +752,7 @@ public class RiggingIK : MonoBehaviour
             adjustHands();
             adjustFeet();
         }
-        if (scaleModelToEstimation && landmarksCopy.Count > 0)
+        if (overWriteWithFK && landmarksCopy.Count > 0)
         {
             ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
             AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_SHOULDER], landmarksCopy[Pose.Landmark.RIGHT_ELBOW], landmarksCopy[Pose.Landmark.RIGHT_WRIST],
