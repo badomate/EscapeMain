@@ -172,15 +172,15 @@ public class RiggingIK : MonoBehaviour
     {
         landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
-        /* //disabled for playing coco data
+         //disabled for playing coco data
         //ROTATE LANDMARKS BY INITIAL GAMEOBJECT ROTATION
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
         {
-            if (relative)
+            if (relative && !useWorldCoordinates)
             {
                 landmarksCopy[landmark] = gameObject.transform.rotation * landmarksCopy[landmark];
             }
-        }*/
+        }
 
 
         //MAKE FINGERS RELATIVE TO WRIST POSITION
