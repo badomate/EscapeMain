@@ -1,36 +1,47 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace AuxiliarContent
+namespace Utilities
 {
     public static class CustomDebug
     {
-        public static bool genIsOn = false;
-        public static bool alexIsOn = false;
-        public static bool janosIsOn = true;
-        public static bool mateIsOn = true;
-
-        public static void LogGen(string msg)
+        public enum Type
         {
-            if (genIsOn)
-                Debug.Log(msg);
+            NONE,
+            GEN,
+            ALEX,
+            JANOS,
+            MATE,
+            DIOGO,
+            HENRIQUE,
+            AGENT,
+            GAMEPLAY,
+            SENSORS,
+            OTHER
         }
 
-        public static void LogAlex(string msg)
-        {
-            if (alexIsOn)
-                Debug.Log(msg);
-        }
+        public static Dictionary<Type, bool> isTypeActiveInfo =
+            new Dictionary<Type, bool>() {
+                {Type.GEN, false},
+                {Type.ALEX, true},
+                {Type.JANOS, false},
+                {Type.MATE, false},
+                {Type.DIOGO, false},
+                {Type.HENRIQUE, false},
+                {Type.AGENT, false},
+                {Type.GAMEPLAY, false},
+                {Type.SENSORS, false},
+                {Type.OTHER, false}
+            };
 
-        public static void LogJanos(string msg)
+        public static void Log(string msg, List<Type> debugTypes)
         {
-            if (janosIsOn)
-                Debug.Log(msg);
-        }
-
-        public static void LogMate(string msg)
-        {
-            if (mateIsOn)
-                Debug.Log(msg);
+            foreach(Type debugType in debugTypes)
+            {
+                bool isTypeActive = isTypeActiveInfo[debugType];
+                if (isTypeActive)
+                    Debug.Log(msg);
+            }
         }
     }
 }

@@ -2,41 +2,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractWithHelper : MonoBehaviour
+namespace Agent
 {
 
-    [Tooltip("Reference to The AI helper")]
-    public GameObject Helper;
-
-    private LevelManager LevelManagerScript;
-
-    // Start is called before the first frame update
-    void Start()
+    public class InteractWithHelper : MonoBehaviour
     {
-        if (Helper != null)
-        {
-            LevelManagerScript = Helper.GetComponent<LevelManager>();
-        }
-        else
-        {
-            Debug.Log("I can't find the Helper.");
-        }
-    }
 
-    private bool keyheld = false;
-    // Update is called once per frame
-    void Update()
-    {
-        if (LevelManagerScript)
+        [Tooltip("Reference to The AI helper")]
+        public GameObject Helper;
+
+        private LevelManager LevelManagerScript;
+
+        // Start is called before the first frame update
+        void Start()
         {
-            if (Input.GetKey("g") && !keyheld)
+            if (Helper != null)
             {
-                //Debug.Log("pressed");
-                keyheld = true;
-                LevelManagerScript.Success();
+                LevelManagerScript = Helper.GetComponent<LevelManager>();
             }
-            else if(!Input.GetKey("g")) {
-                keyheld = false;
+            else
+            {
+                Debug.Log("I can't find the Helper.");
+            }
+        }
+
+        private bool keyheld = false;
+        // Update is called once per frame
+        void Update()
+        {
+            if (LevelManagerScript)
+            {
+                if (Input.GetKey("g") && !keyheld)
+                {
+                    //Debug.Log("pressed");
+                    keyheld = true;
+                    LevelManagerScript.Success();
+                }
+                else if(!Input.GetKey("g")) {
+                    keyheld = false;
+                }
             }
         }
     }

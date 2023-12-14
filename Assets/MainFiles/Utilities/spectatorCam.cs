@@ -2,43 +2,46 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Adds keyboard and mouse controls to a camera and dampens (smoothens) both for a cinematic effect. Can be combined with the Recorder to make demonstrational videos.
-public class spectatorCam : MonoBehaviour
+namespace Utilities
 {
-    public float movementSpeed = 3.0f;
-    public float rotationSpeed = 3.0f;
-    public float damping = 0.2f;
-
-    private float yaw = 0.0f;
-    private float pitch = 0.0f;
-    private Vector3 velocity = Vector3.zero;
-
-    // Start is called before the first frame update
-    void Start()
+    //Adds keyboard and mouse controls to a camera and dampens (smoothens) both for a cinematic effect. Can be combined with the Recorder to make demonstrational videos.
+    public class SpectatorCam : MonoBehaviour
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
+        public float movementSpeed = 3.0f;
+        public float rotationSpeed = 3.0f;
+        public float damping = 0.2f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        //Camera movement
-        float translation = Input.GetAxis("Vertical") * movementSpeed;
-        float strafe = Input.GetAxis("Horizontal") * movementSpeed;
+        private float yaw = 0.0f;
+        private float pitch = 0.0f;
+        private Vector3 velocity = Vector3.zero;
 
-        Vector3 movement = new Vector3(strafe, 0, translation);
-        movement = Vector3.ClampMagnitude(movement, movementSpeed);
-        movement *= Time.deltaTime;
-        movement = transform.TransformDirection(movement);
-        transform.position += movement;
+        // Start is called before the first frame update
+        void Start()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
 
-        //Camera rotation
-        yaw += rotationSpeed * Input.GetAxis("Mouse X");
-        pitch -= rotationSpeed * Input.GetAxis("Mouse Y");
-        pitch = Mathf.Clamp(pitch, -90f, 90f);
+        // Update is called once per frame
+        void Update()
+        {
+            //Camera movement
+            float translation = Input.GetAxis("Vertical") * movementSpeed;
+            float strafe = Input.GetAxis("Horizontal") * movementSpeed;
 
-        Quaternion targetRotation = Quaternion.Euler(-pitch, yaw, 0.0f);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * damping);
+            Vector3 movement = new Vector3(strafe, 0, translation);
+            movement = Vector3.ClampMagnitude(movement, movementSpeed);
+            movement *= Time.deltaTime;
+            movement = transform.TransformDirection(movement);
+            transform.position += movement;
+
+            //Camera rotation
+            yaw += rotationSpeed * Input.GetAxis("Mouse X");
+            pitch -= rotationSpeed * Input.GetAxis("Mouse Y");
+            pitch = Mathf.Clamp(pitch, -90f, 90f);
+
+            Quaternion targetRotation = Quaternion.Euler(-pitch, yaw, 0.0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * damping);
+        }
     }
 }

@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CopyPositionOfObject : MonoBehaviour
+namespace Utilities
 {
-    public GameObject ObjectToCopy;
-    // Start is called before the first frame update
-    void Awake()
+    public class CopyPositionOfObject : MonoBehaviour
     {
-        transform.position = ObjectToCopy.transform.position;
+        public GameObject ObjectToCopy;
+        // Start is called before the first frame update
+        void Awake()
+        {
+            transform.position = ObjectToCopy.transform.position;
+        }
     }
 }

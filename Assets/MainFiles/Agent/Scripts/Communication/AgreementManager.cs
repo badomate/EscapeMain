@@ -2,63 +2,66 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AgreementManager : MonoBehaviour
+namespace Agent.Communication
 {
-    public FeedbackManager feedbackManager;
-    public CompareGesture compareGesture;
-    public InteractByPointing pointerScript;
-    bool agreementOffered = false;
-    bool agreementInProgress = false;
-    // Start is called before the first frame update
-    void Start()
+    public class AgreementManager : MonoBehaviour
     {
-        feedbackManager.FeedbackEvent.AddListener(handleFeedbackEvent);
-        compareGesture.MimicEvent.AddListener(handleHelperNewWordEvent);
-        compareGesture.StillnessEvent.AddListener(handlePlayerNewWordEvent);
-    }
+        public FeedbackManager feedbackManager;
+        public CompareGesture compareGesture;
+        public InteractByPointing pointerScript;
+        bool agreementOffered = false;
+        bool agreementInProgress = false;
+        // Start is called before the first frame update
+        void Start()
+        {
+            feedbackManager.FeedbackEvent.AddListener(handleFeedbackEvent);
+            compareGesture.MimicEvent.AddListener(handleHelperNewWordEvent);
+            compareGesture.StillnessEvent.AddListener(handlePlayerNewWordEvent);
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
+        // Update is called once per frame
+        void Update()
+        {
         
-    }
+        }
 
-    void beginAgreement()
-    {
+        void beginAgreement()
+        {
         
-    }
-
-    void handlePlayerNewWordEvent()
-    {
-        if (agreementInProgress)
-        {
-            //the player suggested a word. We should mimic it or reply positively to show that we agree.
-            LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(compareGesture.characterGesture), "shortcut", false);
-            //TODO: "shortcut" should be the unique identifier of the gesture built so far, as such:
-            //LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(compareGesture.characterGesture), pointerScript.GestureBeingBuilt.id, false); //TODO: "shortcut" should be the unique identifier of LevelManager.goalGesture
         }
-    }
 
-
-    void handleHelperNewWordEvent() //for when the player copies a word suggested by the A.I
-    {
-        if (agreementInProgress)
+        void handlePlayerNewWordEvent()
         {
-            //LevelManager.dictionary.AddGesture(suggestedNewWord, levelManager.goalGesture.id, false);
-            //TODO: we lack gesture identifiers as well as a way for the Helper to suggest a word
+            if (agreementInProgress)
+            {
+                //the player suggested a word. We should mimic it or reply positively to show that we agree.
+                LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(compareGesture.characterGesture), "shortcut", false);
+                //TODO: "shortcut" should be the unique identifier of the gesture built so far, as such:
+                //LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(compareGesture.characterGesture), pointerScript.GestureBeingBuilt.id, false); //TODO: "shortcut" should be the unique identifier of LevelManager.goalGesture
+            }
         }
-    }
 
-        void handleFeedbackEvent()
-    {
-        if (!agreementInProgress && feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.INITIATE_AGREEMENT)
+
+        void handleHelperNewWordEvent() //for when the player copies a word suggested by the A.I
         {
-            agreementOffered = true;
-            //TODO: Helper should always accept
+            if (agreementInProgress)
+            {
+                //LevelManager.dictionary.AddGesture(suggestedNewWord, levelManager.goalGesture.id, false);
+                //TODO: we lack gesture identifiers as well as a way for the Helper to suggest a word
+            }
         }
-        else if(!agreementInProgress && agreementOffered && feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.POSITIVE)
+
+            void handleFeedbackEvent()
         {
-            agreementInProgress = true;
+            if (!agreementInProgress && feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.INITIATE_AGREEMENT)
+            {
+                agreementOffered = true;
+                //TODO: Helper should always accept
+            }
+            else if(!agreementInProgress && agreementOffered && feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.POSITIVE)
+            {
+                agreementInProgress = true;
+            }
         }
     }
 }
