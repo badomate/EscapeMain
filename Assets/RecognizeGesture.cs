@@ -55,6 +55,8 @@ public class RecognizeGesture : MonoBehaviour
     // Start is called before the first frame update
 
     public RiggingIK playerRig;
+    public GameObject wristRotTargetLeft;
+    public GameObject wristRotTargetRight;
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
@@ -475,6 +477,15 @@ public class RecognizeGesture : MonoBehaviour
             return false;
         }
     }
+
+
+    bool isWristRotation(GameObject wristRotator, Quaternion targetRotation, float threshold)
+    {
+        float angleDifference = Quaternion.Angle(wristRotator.transform.rotation, targetRotation);
+        return angleDifference <= threshold;
+
+    }
+
 
 
 }
