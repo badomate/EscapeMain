@@ -78,19 +78,47 @@ public class RecognizeGesture : MonoBehaviour
                           !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           !fingerDown(Pose.Landmark.LEFT_RING) &&
                           !fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                          isJointAbove(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f); ;
+                          isJointAbove(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
 
-        bool isFist =     fingerDown(Pose.Landmark.LEFT_INDEX) &&
+        bool isCircle =     fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY);
 
 
-        bool isSpiderman = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+        bool isRed = (fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           !fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                          fingerDown(Pose.Landmark.LEFT_THUMB);
+                          fingerDown(Pose.Landmark.LEFT_THUMB))||
+                          fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                          !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.RIGHT_RING) &&
+                          fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+                          fingerDown(Pose.Landmark.RIGHT_THUMB);
+
+
+
+        bool isThumbsUp = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          !fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          isWristRotation(true, Quaternion.Euler(180, 240, 90), 45f);
+
+
+        bool isDirectionLeft = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          isWristRotation(true, Quaternion.Euler(180, 240, -90), 45f) &&
+                          fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                          fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.RIGHT_RING) &&
+                          fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+                          fingerDown(Pose.Landmark.RIGHT_THUMB) &&
+                          isWristRotation(false, Quaternion.Euler(180, 240, -90), 45f);
         /*
         bool isVictory = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
@@ -156,7 +184,7 @@ public class RecognizeGesture : MonoBehaviour
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_LEFT);
         }
-        else if (isFist)
+        else if (isCircle)
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_RIGHT);
