@@ -16,13 +16,13 @@ public class FeedbackManager : MonoBehaviour
     Animator animator;
     RiggingIK riggingIKScript;
 
-    CompareGesture compareGestureScript;
+    RecognizeGesture RecognizeGestureScript;
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
         riggingIKScript = GetComponent<RiggingIK>();
-        compareGestureScript = GetComponent<CompareGesture>();
+        RecognizeGestureScript = GetComponent<RecognizeGesture>();
 
         //These events are about noticing what the player is doing in the game.
         TwisterGame.successEvent.AddListener(handleSuccessEvent); //player succeeded
@@ -55,10 +55,10 @@ public class FeedbackManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        if (compareGestureScript != null)
+    {   /*
+        if (RecognizeGestureScript != null)
         {
-            Gesture characterGesture = Gesture.MatrixToGesture(compareGestureScript.characterGesture);
+            Gesture characterGesture = Gesture.MatrixToGesture(RecognizeGestureScript.characterGesture);
             string meaning = LevelManager.dictionary.GetMeaningFromGesture(characterGesture);
             switch (meaning){
                 case "POSTIIVE":
@@ -76,7 +76,7 @@ public class FeedbackManager : MonoBehaviour
             {
                 FeedbackEvent.Invoke();
             }
-        }
+        }*/
 
 
         //keyboard shortcuts for testing purposes

@@ -4,8 +4,6 @@ using System.Linq;
 using System;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using GestureDictionary.ContentGenerators.StarterGestures;
-using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 ///This class should serve some of the same functions as EstimationToIk 
@@ -80,8 +78,13 @@ public class RiggingIK : MonoBehaviour
 
     bool lockedInCalibration = false;
     public bool useCalibration = false;
+    public bool scaleModelToEstimation = false; //a different type of calibration in which I resize the model until the arm's length matches that of the estimation
+    public bool overWriteWithFK = false; //if on, IK will be overwritten at the end of the computation with FK based on the estimation
     public bool reshapeModelForCalibration = false;
-    public float calibrationWait = 1.0f;
+    public bool calibrateFingers = true; //turn off if model doesnt have fingers anyway
+    public bool useWorldCoordinates = false;
+
+    public GameObject rootToMove;
 
     public GameObject LeftUpperArmBone;
     public GameObject LeftLowerArmBone;
@@ -91,6 +94,9 @@ public class RiggingIK : MonoBehaviour
 
     public GameObject LeftUpperLegBone;
     public GameObject RightUpperLegBone;
+
+    public GameObject LeftLowerLegBone;
+    public GameObject RightLowerLegBone;
 
 
     public GameObject LeftIndexBase;
@@ -107,6 +113,14 @@ public class RiggingIK : MonoBehaviour
 
 
     public RigBuilder rigBuilder;
+
+    public bool keepWristsNeutral = false;
+    public GameObject leftHand; //for setting wrist rotation to neutral after rotating the body
+    public GameObject rightHand;
+    public GameObject leftFoot;
+    public GameObject rightFoot;
+    public GameObject rigRoot;
+    public GameObject rootToFollow; //testing to see if this improves 3D absolute positioning
 
     List<Pose.Landmark> rightFingers = new List<Pose.Landmark> {
         Pose.Landmark.RIGHT_INDEX,
@@ -152,16 +166,17 @@ public class RiggingIK : MonoBehaviour
         SetIKPositions(poseToPlay._landmarkArrangement, relative);
     }
 
+    Dictionary<Pose.Landmark, Vector3> landmarksCopy;
     //Changes every IK target to match up with the given pose
     public void SetIKPositions(Dictionary<Pose.Landmark, Vector3> landmarkArrangement, bool relative = false)
     {
-        Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
+        landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(landmarkArrangement); //Dictoinary must to be copied before we do the iteration, or we get errors for having it changed by the animation thread in the middle of it.
 
-
+         //disabled for playing coco data
         //ROTATE LANDMARKS BY INITIAL GAMEOBJECT ROTATION
         foreach (var landmark in landmarksCopy.Keys.ToList()) //TODO: use the built-in Pose version of this instead for clarity, but it's a bit tricky since we are copying it over
         {
-            if (relative)
+            if (relative && !useWorldCoordinates)
             {
                 landmarksCopy[landmark] = gameObject.transform.rotation * landmarksCopy[landmark];
             }
@@ -171,13 +186,13 @@ public class RiggingIK : MonoBehaviour
         //MAKE FINGERS RELATIVE TO WRIST POSITION
         foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
         {
-            if (leftFingers.Contains(landmark))
+            if (leftFingers.Contains(landmark) && landmarksCopy.ContainsKey(Pose.Landmark.LEFT_WRIST))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.LEFT_WRIST_ROOT];
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.LEFT_WRIST];
             }
 
-            if (rightFingers.Contains(landmark))
+            if (rightFingers.Contains(landmark) && landmarksCopy.ContainsKey(Pose.Landmark.RIGHT_WRIST))
             {
                 landmarksCopy[landmark] -= landmarksCopy[Pose.Landmark.RIGHT_WRIST_ROOT];
                 landmarksCopy[landmark] += landmarksCopy[Pose.Landmark.RIGHT_WRIST];
@@ -188,16 +203,25 @@ public class RiggingIK : MonoBehaviour
         //RETARGET REAL TO MODEL - if we are not reshaping the model, start by reshaping the received coordinates to match us
         if (useCalibration && !reshapeModelForCalibration)
         {
-            //Calibrate limbs
-            calibrateLimb(landmarksCopy, RightUpperArmBone, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST);
-            calibrateLimb(landmarksCopy, LeftUpperArmBone, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST);
+            if (scaleModelToEstimation)
+            {
+                //ResizeCharacterModel(landmarksCopy, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW);
+                /*AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_SHOULDER], landmarksCopy[Pose.Landmark.RIGHT_ELBOW], landmarksCopy[Pose.Landmark.RIGHT_WRIST],
+                    RightUpperArmBone, RightLowerArmBone);*/ //this cannot be done here, needs to be in LateUpdate or we need to not have an animator component
+            }
+            else
+            {
+                //Calibrate limbs
+                calibrateLimb(landmarksCopy, RightUpperArmBone, Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST);
+                calibrateLimb(landmarksCopy, LeftUpperArmBone, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST);
 
-            calibrateLimb(landmarksCopy, LeftUpperLegBone, Pose.Landmark.LEFT_HIP, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_FOOT);
-            calibrateLimb(landmarksCopy, RightUpperLegBone, Pose.Landmark.RIGHT_HIP, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_FOOT);
+                calibrateLimb(landmarksCopy, LeftUpperLegBone, Pose.Landmark.LEFT_HIP, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_FOOT);
+                calibrateLimb(landmarksCopy, RightUpperLegBone, Pose.Landmark.RIGHT_HIP, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.RIGHT_FOOT);
+            }
 
 
             //Calibrate fingers
-            if (landmarksCopy.ContainsKey(Pose.Landmark.RIGHT_INDEX_BASE))
+            if (landmarksCopy.ContainsKey(Pose.Landmark.RIGHT_INDEX_BASE) && calibrateFingers)
             {
                 calibrateLimb(landmarksCopy, RightIndexBase, Pose.Landmark.RIGHT_INDEX_BASE, Pose.Landmark.RIGHT_INDEX_KNUCKLE, Pose.Landmark.RIGHT_INDEX);
                 calibrateLimb(landmarksCopy, RightThumbBase, Pose.Landmark.RIGHT_THUMB_BASE, Pose.Landmark.RIGHT_THUMB_KNUCKLE, Pose.Landmark.RIGHT_THUMB);
@@ -205,7 +229,7 @@ public class RiggingIK : MonoBehaviour
                 calibrateLimb(landmarksCopy, RightRingBase, Pose.Landmark.RIGHT_RING_BASE, Pose.Landmark.RIGHT_RING_KNUCKLE, Pose.Landmark.RIGHT_RING);
                 calibrateLimb(landmarksCopy, RightPinkyBase, Pose.Landmark.RIGHT_PINKY_BASE, Pose.Landmark.RIGHT_PINKY_KNUCKLE, Pose.Landmark.RIGHT_PINKY);
             }
-            if (landmarksCopy.ContainsKey(Pose.Landmark.LEFT_INDEX_BASE))
+            if (landmarksCopy.ContainsKey(Pose.Landmark.LEFT_INDEX_BASE) && calibrateFingers)
             {
                 calibrateLimb(landmarksCopy, LeftIndexBase, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_INDEX_KNUCKLE, Pose.Landmark.LEFT_INDEX);
                 calibrateLimb(landmarksCopy, LeftThumbBase, Pose.Landmark.LEFT_THUMB_BASE, Pose.Landmark.LEFT_THUMB_KNUCKLE, Pose.Landmark.LEFT_THUMB);
@@ -229,7 +253,12 @@ public class RiggingIK : MonoBehaviour
                 GameObject landmarkTarget = landmarkToTarget[landmark];
 
                 //Move the target gameobject to the position our Pose specified
-                if (relative)
+                
+                /*if(relative && skeletonRoot && !useWorldCoordinates)
+                {
+                    landmarkTarget.transform.position = position + skeletonRoot.transform.position;
+                }*/
+                if (relative && !useWorldCoordinates)
                 {
                     landmarkTarget.transform.position = position + gameObject.transform.position;
                 }
@@ -239,17 +268,51 @@ public class RiggingIK : MonoBehaviour
                 }
             }
         }
-        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
-        
+
+
+
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_PINKY_BASE, Pose.Landmark.LEFT_INDEX_BASE, Pose.Landmark.LEFT_WRIST, LeftWristTarget, Quaternion.Euler(0, 0, 0));
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.RIGHT_INDEX_BASE, Pose.Landmark.RIGHT_PINKY_BASE, Pose.Landmark.RIGHT_WRIST, RightWristTarget, Quaternion.Euler(0, 0, 0));
 
         setRotationFromTriangle(landmarksCopy, Pose.Landmark.LEFT_EAR, Pose.Landmark.RIGHT_EAR, Pose.Landmark.NOSE, HeadTarget, Quaternion.Euler(-90,0,0));
 
-        setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
+
+        Vector3 centerPosition;
+        centerPosition  = (landmarksCopy[Pose.Landmark.LEFT_SHOULDER] + landmarksCopy[Pose.Landmark.RIGHT_SHOULDER]) / 2;
+        if (!useWorldCoordinates)
+        {
+            ShoulderTarget.transform.position = centerPosition + gameObject.transform.position;
+        }
+        else
+        {
+            ShoulderTarget.transform.position = centerPosition;
+        }
+
+        Vector3 centerPosition2 = (landmarksCopy[Pose.Landmark.LEFT_HIP] + landmarksCopy[Pose.Landmark.RIGHT_HIP]) / 2;
+        if (!useWorldCoordinates)
+        {
+            HipTarget.transform.position = centerPosition2 + gameObject.transform.position;
+        }
+        else
+        {
+            HipTarget.transform.position = centerPosition2;
+        }
 
 
-        if (crouch)
+        //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, ShoulderTarget, shoulderOffsetScale);
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_SHOULDER, centerPosition2, ShoulderTarget, Quaternion.Euler(0, 180, 0));
+
+        //setTargetBetweenlandmarks(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, HipTarget);
+        setRotationFromTriangleAlternative(landmarksCopy, Pose.Landmark.LEFT_HIP, Pose.Landmark.RIGHT_HIP, centerPosition, HipTarget, Quaternion.Euler(180, 180, 0));
+
+
+
+        if (useWorldCoordinates)
+        {
+           rootToMove.transform.position = rootToFollow.transform.position;
+        }
+
+        if (crouch) //TODO: check why this wasn't working properly last demo
         {
             float distFromFloor = 0;
             if (landmarkToTarget.ContainsKey(Pose.Landmark.LEFT_FOOT) && landmarkToTarget.ContainsKey(Pose.Landmark.RIGHT_FOOT) && LeftFootTarget && RightFootTarget)
@@ -278,13 +341,24 @@ public class RiggingIK : MonoBehaviour
 
     void calibrateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, GameObject rootBone, Pose.Landmark rootLandmark, Pose.Landmark midLandmark, Pose.Landmark endLandmark)
     {
-        Vector3 rootShift = rootBone.transform.position - (transform.position + landmarksCopy[rootLandmark]);
-        
+        Vector3 rootShift;
+        if (!useWorldCoordinates)
+        {
+            rootShift = rootBone.transform.position - (transform.position + landmarksCopy[rootLandmark]);
+        }
+        else
+        {
+            rootShift = rootBone.transform.position - landmarksCopy[rootLandmark];
+        }
+
+
         Vector3 extraShift = ElongateLimb(landmarksCopy, midLandmark, rootLandmark);
         ElongateLimb(landmarksCopy, endLandmark, midLandmark, extraShift);
         landmarksCopy[midLandmark] += rootShift;
         landmarksCopy[endLandmark] += rootShift;
     }
+
+
 
     /* //Function for reshaping the model to resemble the person
     void ElongateModelLimb(GameObject goalTarget, GameObject sourceTarget, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, GameObject boneToScale)
@@ -299,6 +373,34 @@ public class RiggingIK : MonoBehaviour
         boneToScale.transform.localScale = new Vector3(scaleVar, scaleVar, scaleVar);
     }*/
 
+    Pose.Landmark[] goalLandmarks = { Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.RIGHT_HIP, Pose.Landmark.LEFT_HIP, Pose.Landmark.LEFT_KNEE, Pose.Landmark.RIGHT_KNEE };
+    Pose.Landmark[] sourceLandmarks = { Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.RIGHT_WRIST, Pose.Landmark.LEFT_WRIST, Pose.Landmark.RIGHT_KNEE, Pose.Landmark.LEFT_KNEE, Pose.Landmark.LEFT_FOOT, Pose.Landmark.RIGHT_FOOT };
+
+
+    private void ResizeCharacterModel(Dictionary<Pose.Landmark, Vector3> landmarksCopy, Pose.Landmark[] goalLandmarks, Pose.Landmark[] sourceLandmarks)
+    {
+        float totalScaleFactor = 0f;
+
+        for (int i = 0; i < goalLandmarks.Length; i++)
+        {
+            Pose.Landmark goalLandmark = goalLandmarks[i];
+            Pose.Landmark sourceLandmark = sourceLandmarks[i];
+
+            float realMagnitude = (landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark]).magnitude;
+            float modelMagnitude = (landmarkToModelBasePosition[goalLandmark] - landmarkToModelBasePosition[sourceLandmark]).magnitude;
+
+            //float scaleFactor = realMagnitude / modelMagnitude;
+            float scaleFactor = realMagnitude / modelMagnitude;
+            totalScaleFactor += scaleFactor;
+        }
+
+        // Calculate the average scale factor
+        float averageScaleFactor = totalScaleFactor / goalLandmarks.Length;
+
+        // Apply the average scale factor to the initial scale of the character model
+        rootToMove.transform.localScale = initialScale * averageScaleFactor;
+    }
+
     //retargets the REAL estimation onto the model and returns the vector so that it may be applied to its children
     Vector3 ElongateLimb(Dictionary<Pose.Landmark, Vector3> landmarksCopy, Pose.Landmark goalLandmark, Pose.Landmark sourceLandmark, Vector3 extraShift = default(Vector3))
     {
@@ -306,7 +408,7 @@ public class RiggingIK : MonoBehaviour
         Vector3 realPose = landmarksCopy[goalLandmark] - landmarksCopy[sourceLandmark];
         Vector3 modelPose = landmarkToModelBasePosition[goalLandmark] - landmarkToModelBasePosition[sourceLandmark];
         float realMagnitude = realPose.magnitude;
-        float modelMagnitude = modelPose.magnitude;
+        float modelMagnitude = modelPose.magnitude * gameObject.transform.localScale.x;
 
         //float scaleVar = (modelMagnitude - realMagnitude)/ realMagnitude;
         float scaleVar = (modelMagnitude- realMagnitude) / realMagnitude;
@@ -321,7 +423,29 @@ public class RiggingIK : MonoBehaviour
         return shiftVector;
     }
 
+    /*
     //on the mirror, shoulder is not set automatically, instead it can be calculated
+    public void setTargetBetweenlandmarks(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, GameObject centerTarget, float offsetScale = 0.0f)
+    {
+        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
+        {
+            Vector3 rightDirection = (landmarks[rightLandmark] - landmarks[leftLandmark]).normalized;
+            Vector3 forwardDirection = Vector3.Cross(landmarks[rightLandmark].normalized, landmarks[leftLandmark].normalized).normalized;
+            Vector3 upDirection = Vector3.Cross(forwardDirection, rightDirection).normalized;
+
+            Quaternion orientation = Quaternion.LookRotation(forwardDirection, upDirection);
+
+            //place it
+            Vector3 centerPosition = (landmarks[leftLandmark] + landmarks[rightLandmark]) / 2;
+            centerPosition -= Vector3.up * offsetScale; // Slightly lower it to match with rig
+
+            //Move the target
+            centerTarget.transform.position = centerPosition + gameObject.transform.position;
+            centerTarget.transform.rotation = orientation;
+        }
+    }
+    */
+
     public void setTargetBetweenlandmarks(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, GameObject centerTarget, float offsetScale = 0.0f)
     {
         if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
@@ -339,8 +463,33 @@ public class RiggingIK : MonoBehaviour
             //Move the target
             centerTarget.transform.position = centerPosition + gameObject.transform.position; //change if not relative
             centerTarget.transform.rotation = gameObject.transform.rotation * rotation;
+
         }
     }
+
+    void setRotationFromTriangleAlternative(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Vector3 baseLandmark, GameObject centerTarget, Quaternion rotationOffset)
+    {
+        if (landmarks.ContainsKey(rightLandmark) && landmarks.ContainsKey(leftLandmark) && centerTarget != null)
+        {
+            Vector3 rightDirection = (landmarks[rightLandmark] - landmarks[leftLandmark]).normalized;
+            Vector3 upDirection;
+            if (!useWorldCoordinates)
+            {
+                upDirection = ((centerTarget.transform.position - gameObject.transform.position) - baseLandmark).normalized;
+            }
+            else
+            {
+                upDirection = (centerTarget.transform.position - baseLandmark).normalized;
+            }
+
+            Vector3 forwardDirection = Vector3.Cross(upDirection, rightDirection).normalized;
+
+            Quaternion orientation = Quaternion.LookRotation(forwardDirection, upDirection);
+
+            centerTarget.transform.rotation = orientation * rotationOffset;
+        }
+    }
+
 
     void setRotationFromTriangle(Dictionary<Pose.Landmark, Vector3> landmarks, Pose.Landmark leftLandmark, Pose.Landmark rightLandmark, Pose.Landmark baseLandmark, GameObject centerTarget, Quaternion rotationOffset)
     {
@@ -373,10 +522,12 @@ public class RiggingIK : MonoBehaviour
         }
     }
 
+    Vector3 initialScale;
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
+        initialScale = gameObject.transform.localScale;
         //landmarkToTarget.Add(Pose.Landmark.LEFT_WRIST, LeftHandTarget); //TODO: Add proper left hand functionality to the rig. Currently it keeps trying to override the shoulders completely instead of adjusting them
         landmarkToTarget.Add(Pose.Landmark.RIGHT_WRIST, RightHandTarget);
         landmarkToTarget.Add(Pose.Landmark.LEFT_FOOT, LeftFootTarget);
@@ -440,31 +591,38 @@ public class RiggingIK : MonoBehaviour
         }
 
 
-        if (mirroring && useCalibration)
+        if (mirroring)
         {
             saveCurrentPositions(landmarkToModelBasePosition);
-        }
+            if (ShoulderTarget)
+            {
+                spineExtent = ShoulderTarget.transform.localPosition.magnitude;
 
+            }
+        }
     }
+
+    float spineExtent;
     
     // Update is called once per frame
     void Update()
     {
         if (mirroring && CameraStream.playerPose._landmarkArrangement.Count > 0)
         {
-            SetIKPositions(CameraStream.playerPose, true);
-            if (!lockedInCalibration && useCalibration)
+            SetIKPositions(CameraStream.playerPose, !useWorldCoordinates);
+            /*if (!lockedInCalibration && useCalibration) ///ive commented out everything related to the alternate calibration method as it is likely not needed for a while
             {
                 lockedInCalibration = true;
                 StartCoroutine(calibrationTimer());
 
 
-            }
+            }*/
         }
     }
+
     IEnumerator calibrationTimer()
     {
-        yield return new WaitForSeconds(calibrationWait);
+        yield return new WaitForSeconds(1f);
         Debug.Log("Using calibration!");
         //ELONGATE ARMS
         if (mirroring && lockedInCalibration && rigBuilder)
@@ -533,6 +691,9 @@ public class RiggingIK : MonoBehaviour
         dictionaryToFill.Add(Pose.Landmark.RIGHT_FOOT, RightFootTarget.transform.position);
 
 
+        if(calibrateFingers)
+        {
+
         dictionaryToFill.Add(Pose.Landmark.LEFT_INDEX, LeftIndexTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.LEFT_MIDDLE, LeftMiddleTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.LEFT_RING, LeftRingTarget.transform.position);
@@ -544,13 +705,6 @@ public class RiggingIK : MonoBehaviour
         dictionaryToFill.Add(Pose.Landmark.LEFT_RING_KNUCKLE, LeftRingHintTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.LEFT_PINKY_KNUCKLE, LeftPinkyHintTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.LEFT_THUMB_KNUCKLE, LeftThumbHintTarget.transform.position);
-
-        dictionaryToFill.Add(Pose.Landmark.LEFT_INDEX_BASE, LeftIndexBase.transform.position);
-        dictionaryToFill.Add(Pose.Landmark.LEFT_MIDDLE_BASE, LeftMiddleBase.transform.position);
-        dictionaryToFill.Add(Pose.Landmark.LEFT_RING_BASE, LeftRingBase.transform.position);
-        dictionaryToFill.Add(Pose.Landmark.LEFT_PINKY_BASE, LeftPinkyBase.transform.position);
-        dictionaryToFill.Add(Pose.Landmark.LEFT_THUMB_BASE, LeftThumbBase.transform.position);
-
 
         dictionaryToFill.Add(Pose.Landmark.RIGHT_INDEX, RightIndexTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_MIDDLE, RightMiddleTarget.transform.position);
@@ -564,11 +718,18 @@ public class RiggingIK : MonoBehaviour
         dictionaryToFill.Add(Pose.Landmark.RIGHT_PINKY_KNUCKLE, RightPinkyHintTarget.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_THUMB_KNUCKLE, RightThumbHintTarget.transform.position);
 
+        dictionaryToFill.Add(Pose.Landmark.LEFT_INDEX_BASE, LeftIndexBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_MIDDLE_BASE, LeftMiddleBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_RING_BASE, LeftRingBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_PINKY_BASE, LeftPinkyBase.transform.position);
+        dictionaryToFill.Add(Pose.Landmark.LEFT_THUMB_BASE, LeftThumbBase.transform.position);
+
         dictionaryToFill.Add(Pose.Landmark.RIGHT_INDEX_BASE, RightIndexBase.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_MIDDLE_BASE, RightMiddleBase.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_RING_BASE, RightRingBase.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_PINKY_BASE, RightPinkyBase.transform.position);
         dictionaryToFill.Add(Pose.Landmark.RIGHT_THUMB_BASE, RightThumbBase.transform.position);
+        }
     }
 
 
@@ -577,6 +738,7 @@ public class RiggingIK : MonoBehaviour
     //StartCoroutine(playGesture(exampleGesture));
     public IEnumerator playGesture(Gesture gestureToPlay)
     {
+        Debug.Log("Playing gesture...");
         for (int i = 0; i < gestureToPlay._poseSequence.Count; i++)
         {
             SetIKPositions(gestureToPlay._poseSequence[i]._poseToMatch, true);
@@ -600,14 +762,57 @@ public class RiggingIK : MonoBehaviour
             }
         }
     }
+    private void LateUpdate()
+    {
+        if (keepWristsNeutral)
+        {
+            adjustHands();
+            adjustFeet();
+        }
+        if (scaleModelToEstimation && landmarksCopy.Count > 0)
+        {
+            ResizeCharacterModel(landmarksCopy, goalLandmarks, sourceLandmarks);
 
+        }
+        if (overWriteWithFK && landmarksCopy.Count > 0)
+        {
+            AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_SHOULDER], landmarksCopy[Pose.Landmark.RIGHT_ELBOW], landmarksCopy[Pose.Landmark.RIGHT_WRIST],
+                RightUpperArmBone, RightLowerArmBone, -rigRoot.transform.forward);
 
+            AlignBonesWithFK(landmarksCopy[Pose.Landmark.LEFT_SHOULDER], landmarksCopy[Pose.Landmark.LEFT_ELBOW], landmarksCopy[Pose.Landmark.LEFT_WRIST],
+                LeftUpperArmBone, LeftLowerArmBone, -rigRoot.transform.forward);
+
+            AlignBonesWithFK(landmarksCopy[Pose.Landmark.RIGHT_HIP], landmarksCopy[Pose.Landmark.RIGHT_KNEE], landmarksCopy[Pose.Landmark.RIGHT_FOOT],
+                RightUpperLegBone, RightLowerLegBone, rigRoot.transform.forward);
+
+            AlignBonesWithFK(landmarksCopy[Pose.Landmark.LEFT_HIP], landmarksCopy[Pose.Landmark.LEFT_KNEE], landmarksCopy[Pose.Landmark.LEFT_FOOT],
+                LeftUpperLegBone, LeftLowerLegBone, rigRoot.transform.forward);
+        }
+    }
+    void AlignBonesWithFK(Vector3 realRootPos, Vector3 realMidPos, Vector3 realEndPos, GameObject inGameRoot, GameObject inGameMid, Vector3 forward)
+    {
+        // Convert real-world positions to Unity coordinate system
+        /*Vector3 convertedRootPos = new Vector3(-realRootPos.x, realRootPos.z, -realRootPos.y);
+        Vector3 convertedMidPos = new Vector3(-realMidPos.x, realMidPos.z, -realMidPos.y);
+        Vector3 convertedEndPos = new Vector3(-realEndPos.x, realEndPos.z, -realEndPos.y);*/
+
+        // Calculate rotations
+        Quaternion rootRotation = Quaternion.LookRotation(realMidPos - realRootPos, forward);
+        Quaternion midRotation = Quaternion.LookRotation(realEndPos - realMidPos, forward);
+
+        // Apply rotations separately for troubleshooting
+        inGameRoot.transform.rotation = rootRotation * Quaternion.Euler(90,0,0);
+        inGameMid.transform.rotation = midRotation * Quaternion.Euler(90, 0, 0);
+    }
+
+    private void adjustFeet()
+    {
+        rightFoot.transform.rotation = rightFoot.transform.parent.rotation * Quaternion.Euler(-90, 0, 0);
+        leftFoot.transform.rotation = leftFoot.transform.parent.rotation * Quaternion.Euler(-90, 0, 0);
+    }
     private void adjustHands()
     {
-        Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
-        Transform leftHand = animator.GetBoneTransform(HumanBodyBones.LeftHand);
         rightHand.transform.rotation = rightHand.transform.parent.rotation;
         leftHand.transform.rotation = leftHand.transform.parent.rotation;
-
     }
 }

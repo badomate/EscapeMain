@@ -5,7 +5,7 @@ using UnityEngine;
 public class AgreementManager : MonoBehaviour
 {
     public FeedbackManager feedbackManager;
-    public CompareGesture compareGesture;
+    public RecognizeGesture recognizeGesture;
     public InteractByPointing pointerScript;
     bool agreementOffered = false;
     bool agreementInProgress = false;
@@ -13,8 +13,8 @@ public class AgreementManager : MonoBehaviour
     void Start()
     {
         feedbackManager.FeedbackEvent.AddListener(handleFeedbackEvent);
-        compareGesture.MimicEvent.AddListener(handleHelperNewWordEvent);
-        compareGesture.StillnessEvent.AddListener(handlePlayerNewWordEvent);
+        //recognizeGesture.MimicEvent.AddListener(handleHelperNewWordEvent);
+        RecognizeGesture.StillnessEvent.AddListener(handlePlayerNewWordEvent);
     }
 
     // Update is called once per frame
@@ -33,9 +33,9 @@ public class AgreementManager : MonoBehaviour
         if (agreementInProgress)
         {
             //the player suggested a word. We should mimic it or reply positively to show that we agree.
-            LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(compareGesture.characterGesture), "shortcut", false);
+            //LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(recognizeGesture.characterGesture), "shortcut", false);
             //TODO: "shortcut" should be the unique identifier of the gesture built so far, as such:
-            //LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(compareGesture.characterGesture), pointerScript.GestureBeingBuilt.id, false); //TODO: "shortcut" should be the unique identifier of LevelManager.goalGesture
+            //LevelManager.dictionary.AddGesture(Gesture.MatrixToGesture(recognizeGesture.characterGesture), pointerScript.GestureBeingBuilt.id, false); //TODO: "shortcut" should be the unique identifier of LevelManager.goalGesture
         }
     }
 
