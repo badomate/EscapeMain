@@ -55,6 +55,8 @@ public class RecognizeGesture : MonoBehaviour
     // Start is called before the first frame update
 
     public RiggingIK playerRig;
+    public GameObject wristRotTargetLeft;
+    public GameObject wristRotTargetRight;
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
@@ -69,6 +71,14 @@ public class RecognizeGesture : MonoBehaviour
 
         bool isLeftHandLeveled = isJointLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
         bool isRightHandLeveled = isJointLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
+
+
+        bool isHello = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                         fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          isWristRotation(true, Quaternion.Euler(0,90,0), 0.3f);
 
         bool isVictory = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
@@ -475,6 +485,24 @@ public class RecognizeGesture : MonoBehaviour
             return false;
         }
     }
+
+
+    bool isWristRotation(bool leftHand, Quaternion targetRotation, float threshold)
+    {
+        GameObject wristRotator;
+        if (leftHand)
+        {
+            wristRotator = wristRotTargetLeft;
+        }
+        else
+        {
+            wristRotator = wristRotTargetRight;
+        }
+        float angleDifference = Quaternion.Angle(wristRotator.transform.rotation, targetRotation);
+        return angleDifference <= threshold;
+
+    }
+
 
 
 }
