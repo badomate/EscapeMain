@@ -72,14 +72,18 @@ public class RecognizeGesture : MonoBehaviour
         bool isLeftHandLeveled = isJointLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
         bool isRightHandLeveled = isJointLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
+        Debug.Log(wristRotTargetLeft.transform.eulerAngles);
+        bool isHello =    isWristRotation(true, Quaternion.Euler(0, 240, 180), 45f) &&
+                          !fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.LEFT_RING) &&
+                          !fingerDown(Pose.Landmark.LEFT_PINKY);
 
-        bool isHello = fingerDown(Pose.Landmark.LEFT_INDEX) &&
-                         fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+        bool isFist =     fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
-                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                          fingerDown(Pose.Landmark.LEFT_THUMB) &&
-                          isWristRotation(true, Quaternion.Euler(0,90,0), 0.3f);
-
+                          fingerDown(Pose.Landmark.LEFT_PINKY);
+        /*
         bool isVictory = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
@@ -138,7 +142,18 @@ public class RecognizeGesture : MonoBehaviour
                             isJoint90Degrees(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 0.3f);
         bool isGoLeft = isLeftLegRaised(0.5f);
         bool isGoRight = isRightLegRaised(0.5f); 
-
+        */
+        if (isHello)
+        {
+            InfoBox.SetActive(true);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_LEFT);
+        }
+        else if (isFist)
+        {
+            InfoBox.SetActive(true);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_RIGHT);
+        }
+        /*
         if (turnCameraLeft)
         {
             InfoBox.SetActive(true);
@@ -201,7 +216,7 @@ public class RecognizeGesture : MonoBehaviour
             InfoBox.SetActive(false);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.UNRECOGNIZED);
 
-        }
+        }*/
 
     }
 
@@ -499,6 +514,7 @@ public class RecognizeGesture : MonoBehaviour
             wristRotator = wristRotTargetRight;
         }
         float angleDifference = Quaternion.Angle(wristRotator.transform.rotation, targetRotation);
+        Debug.Log(angleDifference);
         return angleDifference <= threshold;
 
     }
