@@ -77,12 +77,20 @@ public class RecognizeGesture : MonoBehaviour
                           !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           !fingerDown(Pose.Landmark.LEFT_RING) &&
-                          !fingerDown(Pose.Landmark.LEFT_PINKY);
+                          !fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          isJointAbove(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f); ;
 
         bool isFist =     fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY);
+
+
+        bool isSpiderman = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          fingerDown(Pose.Landmark.LEFT_THUMB);
         /*
         bool isVictory = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
