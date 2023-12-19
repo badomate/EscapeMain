@@ -72,12 +72,13 @@ public class RecognizeGesture : MonoBehaviour
         bool isLeftHandLeveled = isJointLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
         bool isRightHandLeveled = isJointLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
-        Debug.Log(wristRotTargetLeft.transform.eulerAngles);
+        Debug.Log(!fingerDown(Pose.Landmark.LEFT_THUMB));
         bool isHello = isWristRotation(true, Quaternion.Euler(340, 240, 180), 45f) &&
                           !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           !fingerDown(Pose.Landmark.LEFT_RING) &&
-                          !fingerDown(Pose.Landmark.LEFT_PINKY);
+                          !fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          !fingerDown(Pose.Landmark.LEFT_THUMB);
 
         bool isCircle = fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
@@ -235,12 +236,10 @@ public class RecognizeGesture : MonoBehaviour
                 return false; //recording is incomplete
             }
 
-            //Debug.Log(playerMovementRecord[recordingIndex]);
             foreach (var landmark in playerMovementRecord[recordingIndex].Keys.ToList()) //adjust hand origin
             {
                 if (Vector3.Distance(playerMovementRecord[recordingIndex][landmark], playerMovementRecord[recordingIndex + 1][landmark]) > stillnessThreshold)
                 {
-                    //Debug.Log("This landmark broke the stillness: " + landmark);
                     return false; // Difference exceeded the threshold
                 }
 
@@ -248,7 +247,6 @@ public class RecognizeGesture : MonoBehaviour
         }
         if (StillnessEvent != null)
         {
-            //Debug.LogWarning("Still!");
             return true;
         }
         else
@@ -261,11 +259,8 @@ public class RecognizeGesture : MonoBehaviour
 
     public bool goalGestureCompleted(Vector3[,] gestureToCompareMatrix)
     {
-        // Debug.Log("CURRENT GESTURE MATRIX:\n" + gestureToCompareMatrix + "\n\nGOAL GESTURE MATRIX:\n" + LevelManagerScript.goalGesture);
-
         Gesture gestureToCompare = Gesture.MatrixToGesture(gestureToCompareMatrix);
         Gesture goalGesture = LevelManagerScript.goalGesture;
-        //Debug.Log("CURRENT GESTURE:\n" + gestureToCompare + "\n\nGOAL GESTURE:\n" + goalGesture);
         return recording && recordingProgress == recordingLength && goalGesture.GestureMatches(gestureToCompare);
     }
 
@@ -313,7 +308,7 @@ public class RecognizeGesture : MonoBehaviour
         Pose.Landmark wrist;
         Pose.Landmark fingerMiddle;
         Enum.TryParse(fingerTip + "_KNUCKLE", out fingerMiddle);
-        Enum.TryParse(fingerTip.ToString().Substring(0, fingerTip.ToString().IndexOf('_') + 1) + "WRIST", out wrist);
+        Enum.TryParse(fingerTip.ToString().Substring(0, fingerTip.ToString().IndexOf('_') + 1) + "WRIST_ROOT", out wrist);
 
         if (!poseToExamine.ContainsKey(fingerMiddle) || !poseToExamine.ContainsKey(wrist) || !poseToExamine.ContainsKey(fingerTip))
         {
@@ -337,12 +332,12 @@ public class RecognizeGesture : MonoBehaviour
             Pose.Landmark wristMiddle;
             Enum.TryParse(fingerTip.ToString().Substring(0, fingerTip.ToString().IndexOf('_') + 1) + "MIDDLE_BASE", out wristMiddle);
 
-            float toleranceThreshold = 0.02f; // Adjust this threshold as needed
+            float toleranceThreshold = 0f; // Adjust this threshold as needed
             Vector2 wristDirection = poseToExamine[wristMiddle] - poseToExamine[wrist];
             Vector2 thumbDirection = poseToExamine[fingerTip] - poseToExamine[fingerMiddle];
 
             bool thumbInsidePalm = (thumbDirection.x * wristDirection.y - thumbDirection.y * wristDirection.x) > -toleranceThreshold;
-            Debug.Log((thumbDirection.x * wristDirection.y - thumbDirection.y * wristDirection.x));
+            //Debug.Log((thumbDirection.x * wristDirection.y - thumbDirection.y * wristDirection.x));
             return thumbInsidePalm;
         }
     }
