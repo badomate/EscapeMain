@@ -72,7 +72,7 @@ public class RecognizeGesture : MonoBehaviour
         bool isLeftHandLeveled = isJointLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
         bool isRightHandLeveled = isJointLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
-        Debug.Log(wristRotTargetLeft.transform.eulerAngles);
+        Debug.Log("Left: " + wristRotTargetLeft.transform.eulerAngles +"; Right: "+ wristRotTargetRight.transform.eulerAngles);
         bool isHello = isWristRotation(true, Quaternion.Euler(340, 240, 180), 45f) &&
                           !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
@@ -100,6 +100,16 @@ public class RecognizeGesture : MonoBehaviour
         || (fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           !fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY));
+
+        bool isBlue = (!fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                          !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.RIGHT_RING) &&
+                          !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+                          isWristRotation(false, Quaternion.Euler(300, 90, 240), 45f))
+        && (fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY));
 
         /*
@@ -134,12 +144,12 @@ public class RecognizeGesture : MonoBehaviour
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
-        }/*
-        else if (isGoForward)
+        }
+        else if (isBlue)
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
-        }
+        }/*
         else if (isGoBackward)
         {
             InfoBox.SetActive(true);
