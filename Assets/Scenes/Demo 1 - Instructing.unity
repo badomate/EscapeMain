@@ -4757,7 +4757,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   recordingLength: 30
-  stillnessFramesRequired: 10
+  stillnessFramesRequired: 1
   recording: 1
   matchThreshold: 0.15
   stillnessThreshold: 0.3
