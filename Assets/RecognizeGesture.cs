@@ -87,7 +87,7 @@ public class RecognizeGesture : MonoBehaviour
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY);
 
-        /*
+        
         bool isYes = fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
@@ -126,7 +126,7 @@ public class RecognizeGesture : MonoBehaviour
                           fingerDown(Pose.Landmark.RIGHT_PINKY) &&
                           fingerDown(Pose.Landmark.RIGHT_THUMB) &&
                           isWristRotation(false, Quaternion.Euler(0, 140, 240), 45);
-        */
+        
         if (isCircle)
         {
             InfoBox.SetActive(true);
@@ -135,7 +135,7 @@ public class RecognizeGesture : MonoBehaviour
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_LEFT);
-        }/*
+        }
         else if (isYes)
         {
             InfoBox.SetActive(true);
@@ -150,7 +150,7 @@ public class RecognizeGesture : MonoBehaviour
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
-        }*/
+        }
 
     }
 
