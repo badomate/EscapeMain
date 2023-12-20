@@ -57,6 +57,7 @@ public class RecognizeGesture : MonoBehaviour
     public RiggingIK playerRig;
     public GameObject wristRotTargetLeft;
     public GameObject wristRotTargetRight;
+    public GameObject playerRoot;
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
@@ -72,8 +73,8 @@ public class RecognizeGesture : MonoBehaviour
         bool isLeftHandLeveled = isJointLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
         bool isRightHandLeveled = isJointLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
-        Debug.Log("Left: " + wristRotTargetLeft.transform.eulerAngles +"; Right: "+ wristRotTargetRight.transform.eulerAngles);
-        bool isHello = isWristRotation(true, Quaternion.Euler(340, 240, 180), 45f) &&
+        //Debug.Log("Left: " + wristRotTargetLeft.transform.eulerAngles +"; Right: "+ wristRotTargetRight.transform.eulerAngles);
+        bool isHello = isWristRotation(true, Quaternion.Euler(340, 240, 180), 20f) &&
                           !fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           !fingerDown(Pose.Landmark.LEFT_RING) &&
@@ -112,20 +113,19 @@ public class RecognizeGesture : MonoBehaviour
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY));
 
-        /*
-        bool isDirectionLeft = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+        bool isDirectionForward = fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY) &&
                           fingerDown(Pose.Landmark.LEFT_THUMB) &&
-                          isWristRotation(true, Quaternion.Euler(180, 240, -90), 45f) &&
+                          isWristRotation(true, Quaternion.Euler(0, 300, 120), 45f) &&
                           fingerDown(Pose.Landmark.RIGHT_INDEX) &&
                           fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
                           fingerDown(Pose.Landmark.RIGHT_RING) &&
                           fingerDown(Pose.Landmark.RIGHT_PINKY) &&
                           fingerDown(Pose.Landmark.RIGHT_THUMB) &&
-                          isWristRotation(false, Quaternion.Euler(180, 240, -90), 45f);
-        */
+                          isWristRotation(false, Quaternion.Euler(0, 140, 240), 45f);
+
         if (isCircle)
         {
             InfoBox.SetActive(true);
@@ -145,7 +145,7 @@ public class RecognizeGesture : MonoBehaviour
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
         }
-        else if (isBlue)
+        else if (isDirectionForward)
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
@@ -466,18 +466,14 @@ public class RecognizeGesture : MonoBehaviour
 
     bool isWristRotation(bool leftHand, Quaternion targetRotation, float threshold)
     {
-        GameObject wristRotator;
-        if (leftHand)
-        {
-            wristRotator = wristRotTargetLeft;
-        }
-        else
-        {
-            wristRotator = wristRotTargetRight;
-        }
-        float angleDifference = Quaternion.Angle(wristRotator.transform.rotation, targetRotation);
-        return angleDifference <= threshold;
+        GameObject wristRotator = leftHand ? wristRotTargetLeft : wristRotTargetRight;
 
+        Quaternion playerRootRotation = playerRoot.transform.rotation;
+
+        Quaternion relativeWristRotation = Quaternion.Inverse(playerRootRotation) * wristRotator.transform.rotation;
+        float angleDifference = Quaternion.Angle(relativeWristRotation, targetRotation);
+        Debug.Log(angleDifference);
+        return angleDifference <= threshold;
     }
 
 
