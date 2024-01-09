@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using NumSharp;
+//using NumSharp;
 using UnityEngine.Experimental.AI;
 using System.Linq;
 using static UnityEngine.Rendering.DebugUI;
@@ -19,7 +19,7 @@ public class readNpy : MonoBehaviour
 
     void Update()
     {
-        if (playAgain) //bit of a workaround to make sure everything else is already initialized and this only plays once
+        /*f (playAgain) //bit of a workaround to make sure everything else is already initialized and this only plays once
         {
             playAgain = false;
             string filePath = "Assets/GestureDictionary/Recordings/"+ recordingToPlay+".npy";
@@ -61,5 +61,6 @@ public class readNpy : MonoBehaviour
             StartCoroutine(rigToUse.playGesture(endResult));
             StartCoroutine(rigToVisualizeOn.playGesture(endResult));
         }
+        */
     }
 }
