@@ -28,7 +28,14 @@ public class Pose
         LEFT_SHOULDER,
         RIGHT_SHOULDER,
 
+        NOSE,
+        RIGHT_EAR,
+        LEFT_EAR,
+
         //hand landmarks
+        LEFT_WRIST_ROOT,
+        RIGHT_WRIST_ROOT,
+
         RIGHT_INDEX,
         RIGHT_THUMB,
         RIGHT_RING,
@@ -39,7 +46,35 @@ public class Pose
         LEFT_THUMB,
         LEFT_RING,
         LEFT_PINKY,
-        LEFT_MIDDLE
+        LEFT_MIDDLE,
+
+        RIGHT_INDEX_KNUCKLE,
+        RIGHT_THUMB_KNUCKLE,
+        RIGHT_RING_KNUCKLE,
+        RIGHT_PINKY_KNUCKLE,
+        RIGHT_MIDDLE_KNUCKLE,
+
+        LEFT_INDEX_KNUCKLE,
+        LEFT_THUMB_KNUCKLE,
+        LEFT_RING_KNUCKLE,
+        LEFT_PINKY_KNUCKLE,
+        LEFT_MIDDLE_KNUCKLE,
+
+        RIGHT_INDEX_BASE,
+        RIGHT_THUMB_BASE,
+        RIGHT_RING_BASE,
+        RIGHT_PINKY_BASE,
+        RIGHT_MIDDLE_BASE,
+
+        LEFT_INDEX_BASE,
+        LEFT_THUMB_BASE,
+        LEFT_RING_BASE,
+        LEFT_PINKY_BASE,
+        LEFT_MIDDLE_BASE,
+
+        LEFT_HIP,
+        RIGHT_HIP,
+
 
     }
 

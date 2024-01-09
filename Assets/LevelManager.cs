@@ -16,9 +16,8 @@ public class LevelManager : MonoBehaviour
     //private Gesture lastGoalGesture;//saved for the limb lock mechanic
     public Gesture goalGesture;
 
-    EstimationToIK estimationToIkScript;
     public RiggingIK riggingIKScript;
-    public CompareGesture compareGestureScript;
+    public RecognizeGesture recognizeGestureScript;
     public InteractByPointing pointerScript;
     public TwisterGame twisterGame;
 
@@ -37,9 +36,7 @@ public class LevelManager : MonoBehaviour
         dictionary = new DictionaryManager();
         _poseRegex = new Regex("Position=\\[\\s(?<x>-?\\d+(?:\\.\\d+)?),\\s(?<y>-?\\d+(?:\\.\\d+)?),\\s\\s(?<z>-?\\d+(?:\\.\\d+)?)\\]");
 
-        estimationToIkScript = Helper.GetComponent<EstimationToIK>();
-        estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.None;
-        compareGestureScript.StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to stay still for a bit before processing his gesture
+        RecognizeGesture.StillnessEvent.AddListener(handlePlayerConfirmedGesture); //wait for player to stay still for a bit before processing his gesture
         TwisterGame.successEvent.AddListener(Success);
 
         PrepareGestureOptions();
@@ -64,7 +61,7 @@ public class LevelManager : MonoBehaviour
     {
         levelCounter++;
         //pick a gesture from the dictionary
-        compareGestureScript.recording = true;
+        recognizeGestureScript.recording = true;
 
         twisterGame.TwisterSpin(currentPlayer);
 
