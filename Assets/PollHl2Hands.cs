@@ -3,6 +3,7 @@ using Microsoft.MixedReality.Toolkit.Utilities;
 using Microsoft.MixedReality.Toolkit;
 using System.Collections.Generic;
 using UnityEngine;
+using Microsoft.MixedReality.OpenXR;
 
 public class PollHl2Hands : MonoBehaviour,
     IMixedRealitySourceStateHandler, // Handle source detected and lost
@@ -47,13 +48,18 @@ public class PollHl2Hands : MonoBehaviour,
         }
     }
 
+    Dictionary<Pose.Landmark, Vector3> poseDictionary;
+
     public void OnHandJointsUpdated(
                 InputEventData<IDictionary<TrackedHandJoint, MixedRealityPose>> eventData)
     {
-        MixedRealityPose palmPose;
-        if (eventData.InputData.TryGetValue(TrackedHandJoint.Palm, out palmPose))
+        MixedRealityPose handJoint;
+        if (eventData.InputData.TryGetValue(TrackedHandJoint.IndexTip, out handJoint))
         {
-            Debug.Log("Hand Joint Palm Updated: " + palmPose.Position);
+            Debug.Log("Hand Joint Palm Updated: " + handJoint.Position);
+            poseDictionary.Add(Pose.Landmark.LEFT_INDEX, handJoint.Position);
         }
+
+        RecognizeGesture.playerMovementRecord[0] = poseDictionary;
     }
 }

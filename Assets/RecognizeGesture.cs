@@ -38,7 +38,7 @@ public class RecognizeGesture : MonoBehaviour
 
     public bool recording = false;
 
-    public Dictionary<Pose.Landmark, Vector3>[] playerMovementRecord;
+    public static Dictionary<Pose.Landmark, Vector3>[] playerMovementRecord;
     private int recordingProgress = 0; // how many samples of the currently playing gesture have we saved so far
     public float matchThreshold = 0.01f; // 0 would mean an absolute perfect match across all samples
     public float stillnessThreshold = 0.1f; // used to "lock in" a pose
