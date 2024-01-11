@@ -57,6 +57,7 @@ public class RecognizeGesture : MonoBehaviour
     public RiggingIK playerRig;
     public GameObject wristRotTargetLeft;
     public GameObject wristRotTargetRight;
+    public GameObject playerRoot;
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
@@ -66,145 +67,170 @@ public class RecognizeGesture : MonoBehaviour
 
     void handleStillness()
     {
+        //Watch out: Depending on mediapipe configuration, left and right hand indicators may be flipped 
         bool isLeftHandStraight = isJointStraight(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST, 45f);
         bool isRightHandStraight = isJointStraight(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 45f);
 
         bool isLeftHandLeveled = isJointLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
         bool isRightHandLeveled = isJointLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
+        //Debug.Log(" LEFT_THUMB." + fingerDown(Pose.Landmark.LEFT_THUMB) + "LEFT_MIDDLE:" + fingerDown(Pose.Landmark.LEFT_MIDDLE) + "LEFT_RING: " + fingerDown(Pose.Landmark.LEFT_RING) + "LEFT_PINKY: " + fingerDown(Pose.Landmark.LEFT_PINKY));
+        Debug.Log(wristRotTargetRight.transform.eulerAngles);
 
-        bool isHello = fingerDown(Pose.Landmark.LEFT_INDEX) &&
-                         fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
-                          fingerDown(Pose.Landmark.LEFT_RING) &&
-                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                          fingerDown(Pose.Landmark.LEFT_THUMB) &&
-                          isWristRotation(true, Quaternion.Euler(0,90,0), 0.3f);
-
-        bool isVictory = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
-                         !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+        //Shapes
+        bool isCircle = fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY);
 
-        bool isTurnLeft = !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+
+        bool isSquare = fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          isWristRotation(true, Quaternion.Euler(300, 0, 50), 45);
+
+        //Colors
+        bool isBlue = (!fingerDown(Pose.Landmark.RIGHT_INDEX) &&
                           !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
                           !fingerDown(Pose.Landmark.RIGHT_RING) &&
                           !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
-                          !fingerDown(Pose.Landmark.RIGHT_THUMB) &&
-                          isRightHandLeveled &&
-                          isRightHandStraight;
-
-
-        bool turnCameraLeft = fingerDown(Pose.Landmark.RIGHT_INDEX) &&
-                            !fingerDown(Pose.Landmark.RIGHT_THUMB) &&
-                            !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
-                            !fingerDown(Pose.Landmark.RIGHT_RING) &&
-                            !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
-                            isRightHandStraight &&
-                            isRightHandLeveled;
-
-        bool turnCameraRight = !fingerDown(Pose.Landmark.LEFT_INDEX) &&
-                                fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
-                                fingerDown(Pose.Landmark.LEFT_RING) &&
-                                fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                                isLeftHandLeveled &&
-                                isLeftHandStraight;
-
-        bool isTurnRight = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          isWristRotation(false, Quaternion.Euler(300, 60, 300), 45))
+        && (fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                          isLeftHandLeveled &&
-                          isLeftHandStraight;
+                          isWristRotation(true, Quaternion.Euler(0, 300, 150), 45));
 
-        bool isSuperman = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+        bool isRed = (fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                          !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.RIGHT_RING) &&
+                          fingerDown(Pose.Landmark.RIGHT_PINKY))
+        || (fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY));
+        //Directions
+
+        bool isDirectionForward = fingerDown(Pose.Landmark.LEFT_INDEX) &&
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                          isLeftHandStraight &&
-                          isJointAbove(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
+                          fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          isWristRotation(true, Quaternion.Euler(0, 330, 70), 45) &&
+                          fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                          fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.RIGHT_RING) &&
+                          fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+                          fingerDown(Pose.Landmark.RIGHT_THUMB) &&
+                          isWristRotation(false, Quaternion.Euler(0, 120, 260), 45);
 
-        bool isGoForward = isJoint90Degrees(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_ELBOW, Pose.Landmark.LEFT_WRIST, 0.3f) &&
-                           !fingerDown(Pose.Landmark.LEFT_INDEX) &&
-                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
-                           fingerDown(Pose.Landmark.LEFT_RING) &&
-                           //fingerDown(Pose.Landmark.LEFT_THUMB) &&
-                           !fingerDown(Pose.Landmark.LEFT_PINKY);
 
-        bool isGoBackward = !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
-                            fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
-                            fingerDown(Pose.Landmark.RIGHT_RING) &&
-                            //!fingerDown(Pose.Landmark.RIGHT_THUMB) &&
-                            !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
-                            isJoint90Degrees(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_ELBOW, Pose.Landmark.RIGHT_WRIST, 0.3f);
-        bool isGoLeft = isLeftLegRaised(0.5f);
-        bool isGoRight = isRightLegRaised(0.5f); 
+        bool isDirectionRight = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          isWristRotation(true, Quaternion.Euler(0, 250, 100), 45) &&
+                          fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                          fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.RIGHT_RING) &&
+                          fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+                          fingerDown(Pose.Landmark.RIGHT_THUMB) &&
+                          isWristRotation(false, Quaternion.Euler(0, 75, 280), 45);
 
-        if (turnCameraLeft)
+
+        bool isDirectionLeft = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          isWristRotation(true, Quaternion.Euler(0, 0, 90), 45) &&
+                          fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                          fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.RIGHT_RING) &&
+                          fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+                          fingerDown(Pose.Landmark.RIGHT_THUMB) &&
+                          isWristRotation(false, Quaternion.Euler(0, 200, 260), 45);
+
+        //Feedback
+        bool isYes = fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          !fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          isWristRotation(true, Quaternion.Euler(0, 60, 90), 45);
+
+        bool isHello = isWristRotation(true, Quaternion.Euler(330, 230, 170), 30) &&
+                          !fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.LEFT_RING) &&
+                          !fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          !fingerDown(Pose.Landmark.LEFT_THUMB) ||
+                          isWristRotation(false, Quaternion.Euler(0, 180, 180), 30) &&
+                          !fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                          !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.RIGHT_RING) &&
+                          !fingerDown(Pose.Landmark.RIGHT_PINKY) &&
+                          !fingerDown(Pose.Landmark.RIGHT_THUMB);
+
+
+
+        bool isNewWord = isWristRotation(true, Quaternion.Euler(45, 250, 0), 30) &&
+                          !fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.LEFT_RING) &&
+                          !fingerDown(Pose.Landmark.LEFT_PINKY) &&
+                          !fingerDown(Pose.Landmark.LEFT_THUMB);
+
+
+
+        if (isCircle)
+        {
+            InfoBox.SetActive(true);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_RIGHT);
+        }else if (isHello)
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_LEFT);
         }
-        else if (turnCameraRight)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_RIGHT);
-        }
-
-        if (Truth(isVictory, isGoBackward, isGoForward, isSuperman, isTurnLeft, isGoLeft, isTurnRight, isGoRight) >= 2)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.AMBIGUOUS);
-        }
-        else if (isVictory)
+        else if (isYes)
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
         }
-        else if (isSuperman)
+        else if (isRed)
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
         }
-        else if (isGoForward)
+        else if (isDirectionForward)
         {
             InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
         }
-        else if (isGoBackward)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_BACKWARD);
-        }
-        else if (isGoRight)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
-
-        }
-        else if (isTurnRight)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
-        }
-        else if (isGoLeft)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
-        }
-        else if (isTurnLeft)
-        {
-            InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
-        }
-        else
-        {
-            InfoBox.SetActive(false);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.UNRECOGNIZED);
-
-        }
 
     }
 
+    bool isWristRotation(bool leftHand, Quaternion targetRotation, int threshold)
+    {
+        GameObject wristRotator = leftHand ? wristRotTargetLeft : wristRotTargetRight;
+
+        Quaternion playerRootRotation = playerRoot.transform.rotation;
+
+        //TODO - The following lines is an attempt to make up for body rotation when using absolute coordinates. I have not had the chance to test it so it is disabled for now.
+        //Quaternion relativeWristRotation = Quaternion.Inverse(playerRootRotation) * wristRotator.transform.rotation;
+        float angleDifference = Quaternion.Angle(wristRotator.transform.rotation, targetRotation);
+
+        /*if (!leftHand)
+        {
+            Debug.Log("Original: " + relativeWristRotation.eulerAngles + "; Inverted: " + wristRotator.transform.eulerAngles);
+        }
+        */
+        return angleDifference <= threshold;
+    }
 
     private float frameInterval = 1f / 30f; // 30hz
     private float timeSinceLastFrame = 0f;
@@ -249,12 +275,10 @@ public class RecognizeGesture : MonoBehaviour
                 return false; //recording is incomplete
             }
 
-            //Debug.Log(playerMovementRecord[recordingIndex]);
             foreach (var landmark in playerMovementRecord[recordingIndex].Keys.ToList()) //adjust hand origin
             {
                 if (Vector3.Distance(playerMovementRecord[recordingIndex][landmark], playerMovementRecord[recordingIndex + 1][landmark]) > stillnessThreshold)
                 {
-                    //Debug.Log("This landmark broke the stillness: " + landmark);
                     return false; // Difference exceeded the threshold
                 }
 
@@ -262,7 +286,6 @@ public class RecognizeGesture : MonoBehaviour
         }
         if (StillnessEvent != null)
         {
-            //Debug.LogWarning("Still!");
             return true;
         }
         else
@@ -275,11 +298,8 @@ public class RecognizeGesture : MonoBehaviour
 
     public bool goalGestureCompleted(Vector3[,] gestureToCompareMatrix)
     {
-        // Debug.Log("CURRENT GESTURE MATRIX:\n" + gestureToCompareMatrix + "\n\nGOAL GESTURE MATRIX:\n" + LevelManagerScript.goalGesture);
-
         Gesture gestureToCompare = Gesture.MatrixToGesture(gestureToCompareMatrix);
         Gesture goalGesture = LevelManagerScript.goalGesture;
-        //Debug.Log("CURRENT GESTURE:\n" + gestureToCompare + "\n\nGOAL GESTURE:\n" + goalGesture);
         return recording && recordingProgress == recordingLength && goalGesture.GestureMatches(gestureToCompare);
     }
 
@@ -327,9 +347,10 @@ public class RecognizeGesture : MonoBehaviour
         Pose.Landmark wrist;
         Pose.Landmark fingerMiddle;
         Enum.TryParse(fingerTip + "_KNUCKLE", out fingerMiddle);
-        Enum.TryParse(fingerTip.ToString().Substring(fingerTip.ToString().IndexOf('_')) + "WRIST", out wrist);
 
-        if (!poseToExamine.ContainsKey(fingerMiddle) || !poseToExamine.ContainsKey(wrist) || !poseToExamine.ContainsKey(fingerTip))
+        Enum.TryParse(fingerTip.ToString().Substring(0, fingerTip.ToString().IndexOf('_') + 1) + "WRIST_ROOT", out wrist);
+
+            if (!poseToExamine.ContainsKey(fingerMiddle) || !poseToExamine.ContainsKey(wrist) || !poseToExamine.ContainsKey(fingerTip))
         {
             return false;
         }
@@ -338,23 +359,28 @@ public class RecognizeGesture : MonoBehaviour
         {
             if (Vector3.Distance(poseToExamine[fingerMiddle], poseToExamine[wrist]) < Vector3.Distance(poseToExamine[fingerTip], poseToExamine[wrist])) //I'm just using distances here but this could be done with angles
             {
-                //Finger is down
-                return true;
+                return false;
             }
             else
             {
-                return false;
+                return true;
             }
         }
         else //calculate the thumb, it is an exception
         {
-            Pose.Landmark elbow;
-            Enum.TryParse(fingerTip.ToString().Substring(fingerTip.ToString().IndexOf('_')) + "ELBOW", out elbow);
+            Pose.Landmark wristLeft;
+            Pose.Landmark wristRight;
+            Enum.TryParse(fingerTip.ToString().Substring(0, fingerTip.ToString().IndexOf('_') + 1) + "INDEX_BASE", out wristLeft);
+            Enum.TryParse(fingerTip.ToString().Substring(0, fingerTip.ToString().IndexOf('_') + 1) + "PINKY_BASE", out wristRight);
 
-            Vector3 wristDirection = poseToExamine[wrist] - poseToExamine[elbow];
+            float toleranceThreshold = 90f;
+            Vector3 wristDirection = poseToExamine[wristRight] - poseToExamine[wristLeft];
             Vector3 thumbDirection = poseToExamine[fingerTip] - poseToExamine[fingerMiddle];
-            float thumbDirectionDot = Vector3.Dot(wristDirection.normalized, thumbDirection.normalized);
-            return thumbDirectionDot < 0;
+
+            float thumbDirectionDot = Vector3.Angle(wristDirection.normalized, thumbDirection.normalized);
+
+            bool thumbInsidePalm = thumbDirectionDot < toleranceThreshold;
+            return thumbInsidePalm;
         }
     }
 
@@ -484,23 +510,6 @@ public class RecognizeGesture : MonoBehaviour
         {
             return false;
         }
-    }
-
-
-    bool isWristRotation(bool leftHand, Quaternion targetRotation, float threshold)
-    {
-        GameObject wristRotator;
-        if (leftHand)
-        {
-            wristRotator = wristRotTargetLeft;
-        }
-        else
-        {
-            wristRotator = wristRotTargetRight;
-        }
-        float angleDifference = Quaternion.Angle(wristRotator.transform.rotation, targetRotation);
-        return angleDifference <= threshold;
-
     }
 
 
