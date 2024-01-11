@@ -14,12 +14,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/FPS/Scenes/LoseScene.unity
     guid: 72e5c65a45893714484002914e3fd521
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: d794a2ef8ba31d847ad3c19d03e2ddb9
-  - enabled: 1
-    path: Assets/Scenes/mrtk testing.unity
-    guid: 7c9fd01391508ab4eb86bef0ad10777c
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 1ce57b0bf6ad346419b4a3a15ae6f9c9,
       type: 2}
