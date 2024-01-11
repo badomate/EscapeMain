@@ -4,7 +4,7 @@ using Microsoft.MixedReality.Toolkit;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GlobalHandListenerExample : MonoBehaviour,
+public class PollHl2Hands : MonoBehaviour,
     IMixedRealitySourceStateHandler, // Handle source detected and lost
     IMixedRealityHandJointHandler // handle joint position updates for hands
 {
