@@ -12,6 +12,7 @@
     "com.microsoft.mixedreality.toolkit.testutilities": "file:MixedReality/com.microsoft.mixedreality.toolkit.testutilities-2.8.3.tgz",
     "com.microsoft.mixedreality.toolkit.tools": "file:MixedReality/com.microsoft.mixedreality.toolkit.tools-2.8.3.tgz",
     "com.unity.animation.rigging": "1.1.1",
+    "com.unity.burst": "1.6.6",
     "com.unity.collab-proxy": "2.0.1",
     "com.unity.connect.share": "4.2.3",
     "com.unity.feature.development": "1.0.1",
