@@ -1,22 +1,54 @@
 //using Microsoft.MixedReality.Toolkit.Input;
 //using Microsoft.MixedReality.Toolkit.Utilities;
 using Microsoft.MixedReality.Toolkit;
+using MixedReality.Toolkit.Subsystems;
+using MixedReality.Toolkit;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
+using System.Collections;
+using System;
 //using Microsoft.MixedReality.OpenXR;
 
 public class PollHl2Hands : MonoBehaviour
-    //IMixedRealitySourceStateHandler, // Handle source detected and lost
-    //IMixedRealityHandJointHandler // handle joint position updates for hands
 {
-    /*private void OnEnable()
+    private HandsAggregatorSubsystem subsystem;
+
+    void Start()
     {
-        // Instruct Input System that we would like to receive all input events of type
-        // IMixedRealitySourceStateHandler and IMixedRealityHandJointHandler
-        CoreServices.InputSystem?.RegisterHandler<IMixedRealitySourceStateHandler>(this);
-        CoreServices.InputSystem?.RegisterHandler<IMixedRealityHandJointHandler>(this);
+        EnableWhenSubsystemAvailable();
     }
 
+    IEnumerator EnableWhenSubsystemAvailable()
+    {
+        yield return new WaitUntil(() => XRSubsystemHelpers.GetFirstRunningSubsystem<HandsAggregatorSubsystem>() != null);
+        subsystem = XRSubsystemHelpers.GetFirstRunningSubsystem<HandsAggregatorSubsystem>();
+    }
+
+    void Update()
+    {
+        if (subsystem.TryGetEntireHand(XRNode.LeftHand, out IReadOnlyList<HandJointPose> leftHand))
+        {
+            doLeftHand(leftHand);
+        }
+
+        if (subsystem.TryGetEntireHand(XRNode.RightHand, out IReadOnlyList<HandJointPose> rightHand))
+        {
+            doRightHand(rightHand);
+        }
+    }
+
+    void doLeftHand(IReadOnlyList<HandJointPose> leftHand)
+    {
+        throw new NotImplementedException();
+    }
+    void doRightHand(IReadOnlyList<HandJointPose> leftHand)
+    {
+        throw new NotImplementedException();
+    }
+
+
+    /*
     private void OnDisable()
     {
         // This component is being destroyed
