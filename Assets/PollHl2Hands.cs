@@ -27,24 +27,27 @@ public class PollHl2Hands : MonoBehaviour
 
     void Update()
     {
-        if (subsystem.TryGetEntireHand(XRNode.LeftHand, out IReadOnlyList<HandJointPose> leftHand))
+        if (subsystem != null)
         {
-            doLeftHand(leftHand);
-        }
+            if (subsystem.TryGetEntireHand(XRNode.LeftHand, out IReadOnlyList<HandJointPose> leftHand))
+            {
+                doLeftHand(leftHand);
+            }
 
-        if (subsystem.TryGetEntireHand(XRNode.RightHand, out IReadOnlyList<HandJointPose> rightHand))
-        {
-            doRightHand(rightHand);
+            if (subsystem.TryGetEntireHand(XRNode.RightHand, out IReadOnlyList<HandJointPose> rightHand))
+            {
+                doRightHand(rightHand);
+            }
         }
     }
 
     void doLeftHand(IReadOnlyList<HandJointPose> leftHand)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(leftHand[0].ToString());
     }
-    void doRightHand(IReadOnlyList<HandJointPose> leftHand)
+    void doRightHand(IReadOnlyList<HandJointPose> rightHand)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(rightHand[0].ToString());
     }
 
 
