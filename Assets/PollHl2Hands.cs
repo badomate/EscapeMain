@@ -16,15 +16,9 @@ public class PollHl2Hands : MonoBehaviour
 
     void Start()
     {
-        EnableWhenSubsystemAvailable();
-    }
-
-    IEnumerator EnableWhenSubsystemAvailable()
-    {
-        yield return new WaitUntil(() => XRSubsystemHelpers.GetFirstRunningSubsystem<HandsAggregatorSubsystem>() != null);
+        new WaitUntil(() => XRSubsystemHelpers.GetFirstRunningSubsystem<HandsAggregatorSubsystem>() != null);
         subsystem = XRSubsystemHelpers.GetFirstRunningSubsystem<HandsAggregatorSubsystem>();
     }
-
     void Update()
     {
         if (subsystem != null)
@@ -43,11 +37,11 @@ public class PollHl2Hands : MonoBehaviour
 
     void doLeftHand(IReadOnlyList<HandJointPose> leftHand)
     {
-        Console.WriteLine(leftHand[0].ToString());
+        Debug.Log(leftHand[0].ToString());
     }
     void doRightHand(IReadOnlyList<HandJointPose> rightHand)
     {
-        Console.WriteLine(rightHand[0].ToString());
+        Debug.Log(rightHand[0].ToString());
     }
 
 
