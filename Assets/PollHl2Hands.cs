@@ -1,15 +1,15 @@
-using Microsoft.MixedReality.Toolkit.Input;
-using Microsoft.MixedReality.Toolkit.Utilities;
+//using Microsoft.MixedReality.Toolkit.Input;
+//using Microsoft.MixedReality.Toolkit.Utilities;
 using Microsoft.MixedReality.Toolkit;
 using System.Collections.Generic;
 using UnityEngine;
-using Microsoft.MixedReality.OpenXR;
+//using Microsoft.MixedReality.OpenXR;
 
-public class PollHl2Hands : MonoBehaviour,
-    IMixedRealitySourceStateHandler, // Handle source detected and lost
-    IMixedRealityHandJointHandler // handle joint position updates for hands
+public class PollHl2Hands : MonoBehaviour
+    //IMixedRealitySourceStateHandler, // Handle source detected and lost
+    //IMixedRealityHandJointHandler // handle joint position updates for hands
 {
-    private void OnEnable()
+    /*private void OnEnable()
     {
         // Instruct Input System that we would like to receive all input events of type
         // IMixedRealitySourceStateHandler and IMixedRealityHandJointHandler
@@ -61,5 +61,5 @@ public class PollHl2Hands : MonoBehaviour,
         }
 
         RecognizeGesture.playerMovementRecord[0] = poseDictionary;
-    }
+    }*/
 }
