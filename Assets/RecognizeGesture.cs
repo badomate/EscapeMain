@@ -84,7 +84,7 @@ public class RecognizeGesture : MonoBehaviour
                           fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           fingerDown(Pose.Landmark.LEFT_RING) &&
                           fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                          isWristRotation(true, Quaternion.Euler(300, 0, 50), 45);
+                          isWristRotation(true, Quaternion.Euler(300, 0, 50), 45); //this one needs more checks
 
         //Colors
         bool isBlue = (!fingerDown(Pose.Landmark.RIGHT_INDEX) &&
@@ -98,14 +98,14 @@ public class RecognizeGesture : MonoBehaviour
                           fingerDown(Pose.Landmark.LEFT_PINKY) &&
                           isWristRotation(true, Quaternion.Euler(0, 300, 150), 45));
 
-        bool isRed = (fingerDown(Pose.Landmark.RIGHT_INDEX) &&
-                          !fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
-                          !fingerDown(Pose.Landmark.RIGHT_RING) &&
-                          fingerDown(Pose.Landmark.RIGHT_PINKY))
-        || (fingerDown(Pose.Landmark.LEFT_INDEX) &&
-                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
-                          !fingerDown(Pose.Landmark.LEFT_RING) &&
-                          fingerDown(Pose.Landmark.LEFT_PINKY));
+        bool isRed = (!fingerDown(Pose.Landmark.RIGHT_INDEX) &&
+                          fingerDown(Pose.Landmark.RIGHT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.RIGHT_RING) &&
+                          !fingerDown(Pose.Landmark.RIGHT_PINKY))
+        || (!fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          fingerDown(Pose.Landmark.LEFT_RING) &&
+                          !fingerDown(Pose.Landmark.LEFT_PINKY));
         //Directions
 
         bool isDirectionForward = fingerDown(Pose.Landmark.LEFT_INDEX) &&
