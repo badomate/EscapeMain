@@ -13,6 +13,9 @@ public class PollHl2Hands : MonoBehaviour
 
     Dictionary<TrackedHandJoint, Pose.Landmark> jointToLandmarkMapping = new Dictionary<TrackedHandJoint, Pose.Landmark>()
 {
+    { TrackedHandJoint.Palm, Pose.Landmark.LEFT_WRIST },//To-do: may want a seperate palm landmark instead? this could cause issues later
+    { TrackedHandJoint.Wrist, Pose.Landmark.LEFT_WRIST_ROOT }, 
+
     { TrackedHandJoint.IndexTip, Pose.Landmark.LEFT_INDEX },
     { TrackedHandJoint.IndexMetacarpal, Pose.Landmark.LEFT_INDEX_BASE },
     { TrackedHandJoint.IndexProximal, Pose.Landmark.LEFT_INDEX_KNUCKLE },
@@ -46,29 +49,42 @@ public class PollHl2Hands : MonoBehaviour
         {
             if (subsystem.TryGetEntireHand(XRNode.LeftHand, out IReadOnlyList<HandJointPose> leftHand))
             {
-                doLeftHand(leftHand);
+                processHand(leftHand, true);
             }
 
             if (subsystem.TryGetEntireHand(XRNode.RightHand, out IReadOnlyList<HandJointPose> rightHand))
             {
-                doRightHand(rightHand);
+                processHand(rightHand, false);
             }
             RecognizeGesture.playerMovementRecord[0] = poseDictionary;
         }
     }
-
-    void doLeftHand(IReadOnlyList<HandJointPose> leftHand)
+    public static string ReplaceLeftWithRight(string enumValue)
     {
-        foreach (int i in Enum.GetValues(typeof(TrackedHandJoint)))
-        {
-            poseDictionary[jointToLandmarkMapping[(TrackedHandJoint)i]] = leftHand[i].Position;
-        }
+        return enumValue.Replace("LEFT", "RIGHT");
     }
-    void doRightHand(IReadOnlyList<HandJointPose> rightHand)
+
+    void processHand(IReadOnlyList<HandJointPose> hand, bool left)
     {
-        foreach (int i in Enum.GetValues(typeof(TrackedHandJoint)))
+        if (hand != null)
         {
-            poseDictionary[jointToLandmarkMapping[(TrackedHandJoint)i]] = rightHand[i].Position;
+            foreach (TrackedHandJoint i in Enum.GetValues(typeof(TrackedHandJoint)))
+            {
+                if((int)i < hand.Count && (int)i >= 0 && hand[(int)i] != null)
+                {
+                    if (left)
+                    {
+                        //poseDictionary[jointToLandmarkMapping[i]] = hand[(int)i].Position;
+                        Debug.Log(hand[(int)i].Position);
+                    }
+                    else
+                    {
+                        //Enum.TryParse(ReplaceLeftWithRight(jointToLandmarkMapping[i].ToString()), out Pose.Landmark landmarkToPut);
+                        //poseDictionary[landmarkToPut] = hand[(int)i].Position;
+                        Debug.Log(hand[(int)i].Position);
+                    }
+                }
+            }
         }
     }
 
