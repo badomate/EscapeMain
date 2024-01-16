@@ -1,15 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using AuxiliarContent;
 using System.Linq;
 using System;
-using UnityEngine.Windows;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
-using Unity.VisualScripting;
 
 public enum Actions
 {
@@ -37,6 +30,7 @@ public class RecognizeGesture : MonoBehaviour
 
 
     public bool recording = false;
+    public bool stillnessCheck = false;
 
     public static Dictionary<Pose.Landmark, Vector3>[] playerMovementRecord;
     private int recordingProgress = 0; // how many samples of the currently playing gesture have we saved so far
@@ -74,8 +68,8 @@ public class RecognizeGesture : MonoBehaviour
         bool isLeftHandLeveled = isJointLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
         bool isRightHandLeveled = isJointLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
-        //Debug.Log(" LEFT_THUMB." + fingerDown(Pose.Landmark.LEFT_THUMB) + "LEFT_MIDDLE:" + fingerDown(Pose.Landmark.LEFT_MIDDLE) + "LEFT_RING: " + fingerDown(Pose.Landmark.LEFT_RING) + "LEFT_PINKY: " + fingerDown(Pose.Landmark.LEFT_PINKY));
-        Debug.Log(wristRotTargetRight.transform.eulerAngles);
+        Debug.Log(" LEFT_THUMB." + fingerDown(Pose.Landmark.LEFT_THUMB) + "LEFT_INDEX:" + fingerDown(Pose.Landmark.LEFT_INDEX) + "LEFT_MIDDLE:" + fingerDown(Pose.Landmark.LEFT_MIDDLE) + "LEFT_RING: " + fingerDown(Pose.Landmark.LEFT_RING) + "LEFT_PINKY: " + fingerDown(Pose.Landmark.LEFT_PINKY));
+        //Debug.Log(wristRotTargetRight.transform.eulerAngles);
 
         //Shapes
         bool isCircle = fingerDown(Pose.Landmark.LEFT_THUMB) &&
@@ -190,16 +184,16 @@ public class RecognizeGesture : MonoBehaviour
         if (isCircle)
         {
             InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_RIGHT);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
         }else if (isHello)
         {
             InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.CAMERA_LEFT);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
         }
         else if (isYes)
         {
             InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
         }
         else if (isRed)
         {
@@ -237,13 +231,19 @@ public class RecognizeGesture : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        timeSinceLastFrame += Time.deltaTime;
 
+        if (!stillnessCheck)
+        {
+            StillnessEvent.Invoke();
+            return;
+        }
+
+        timeSinceLastFrame += Time.deltaTime;
         // Check if the desired time interval has passed (30fps)
-        if (timeSinceLastFrame >= frameInterval && recording)
+        if (timeSinceLastFrame >= frameInterval && recording && stillnessCheck)
         {
             saveGestureFrame();
-            if (detectStillness())
+            if (detectStillness()) //TO-DO: reimplement the stillness check, it is likely still useful
             {
                 StillnessEvent.Invoke();
             }
@@ -254,10 +254,7 @@ public class RecognizeGesture : MonoBehaviour
             timeSinceLastFrame = 0f; // Reset the time counter
         }
     }
-    public static int Truth(params bool[] booleans)
-    {
-        return booleans.Count(b => b);
-    }
+
     public bool detectStillness()
     {
         // Check if there are enough rows to check for stillness
@@ -315,7 +312,7 @@ public class RecognizeGesture : MonoBehaviour
 
             if (recordingProgress < recordingLength) //building up the matrix
             {
-                foreach (var landmark in landmarksCopy.Keys.ToList()) //adjust hand origin
+                foreach (var landmark in landmarksCopy.Keys.ToList())
                 {
                     playerMovementRecord[recordingProgress][landmark] = landmarksCopy[landmark];
                 }
