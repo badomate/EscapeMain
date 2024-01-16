@@ -6,6 +6,7 @@
     "com.microsoft.spatialaudio.spatializer.unity": "file:MixedReality/com.microsoft.spatialaudio.spatializer.unity-2.0.47.tgz",
     "com.unity.animation.rigging": "1.1.1",
     "com.unity.burst": "1.6.6",
+    "com.unity.cloud.gltfast": "6.0.1",
     "com.unity.collab-proxy": "2.0.1",
     "com.unity.connect.share": "4.2.3",
     "com.unity.feature.development": "1.0.1",
