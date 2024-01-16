@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
 using System;
-using System.Linq;
 
 public class PollHl2Hands : MonoBehaviour
 {
     private HandsAggregatorSubsystem subsystem;
 
     public static Dictionary<Pose.Landmark, Vector3> poseDictionary = new Dictionary<Pose.Landmark, Vector3>();
+    public static Quaternion leftPalmRot = Quaternion.identity;
+    public static Quaternion rightPalmRot = Quaternion.identity;
 
     Dictionary<TrackedHandJoint, Pose.Landmark> jointToLandmarkMapping = new Dictionary<TrackedHandJoint, Pose.Landmark>()
 {
@@ -60,7 +61,7 @@ public class PollHl2Hands : MonoBehaviour
                 processHand(rightHand, false);
             }
 
-            RecognizeGesture.playerMovementRecord[0] = new Dictionary<Pose.Landmark, Vector3>(PollHl2Hands.poseDictionary);
+            RecognizeGesture.playerMovementRecord[0] = new Dictionary<Pose.Landmark, Vector3>(poseDictionary);
         }
     }
     public static string ReplaceLeftWithRight(string enumValue)
@@ -87,6 +88,17 @@ public class PollHl2Hands : MonoBehaviour
                         poseDictionary.Add(landmarkToPut, hand[(int)i].Position);
                         //Debug.Log(hand[(int)i].Position);
                     }
+                }
+            }
+            if (2 < hand.Count && hand[2] != null)
+            {
+                if (left)
+                {
+                    leftPalmRot = hand[2].Rotation;
+                }
+                else
+                {
+                    rightPalmRot = hand[2].Rotation;
                 }
             }
         }
