@@ -47,6 +47,7 @@ public class PollHl2Hands : MonoBehaviour
     {
         if (subsystem != null)
         {
+            poseDictionary = new Dictionary<Pose.Landmark, Vector3>();
             if (subsystem.TryGetEntireHand(XRNode.LeftHand, out IReadOnlyList<HandJointPose> leftHand))
             {
                 processHand(leftHand, true);
@@ -70,18 +71,18 @@ public class PollHl2Hands : MonoBehaviour
         {
             foreach (TrackedHandJoint i in Enum.GetValues(typeof(TrackedHandJoint)))
             {
-                if((int)i < hand.Count && (int)i >= 0 && hand[(int)i] != null)
+                if((int)i < hand.Count && (int)i >= 0 && hand[(int)i] != null && jointToLandmarkMapping.ContainsKey(i))
                 {
                     if (left)
                     {
-                        //poseDictionary[jointToLandmarkMapping[i]] = hand[(int)i].Position;
-                        Debug.Log(hand[(int)i].Position);
+                        poseDictionary[jointToLandmarkMapping[i]] = hand[(int)i].Position;
+                        //Debug.Log(hand[(int)i].Position);
                     }
                     else
                     {
-                        //Enum.TryParse(ReplaceLeftWithRight(jointToLandmarkMapping[i].ToString()), out Pose.Landmark landmarkToPut);
-                        //poseDictionary[landmarkToPut] = hand[(int)i].Position;
-                        Debug.Log(hand[(int)i].Position);
+                        Enum.TryParse(ReplaceLeftWithRight(jointToLandmarkMapping[i].ToString()), out Pose.Landmark landmarkToPut);
+                        poseDictionary[landmarkToPut] = hand[(int)i].Position;
+                        //Debug.Log(hand[(int)i].Position);
                     }
                 }
             }
