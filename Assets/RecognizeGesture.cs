@@ -221,7 +221,7 @@ public class RecognizeGesture : MonoBehaviour
         else if (isNo)
         {
             InfoBox.SetActive(true);
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
         }
         else if (isDirectionForward)
         {
@@ -300,14 +300,14 @@ public class RecognizeGesture : MonoBehaviour
         // the difference in each element of the last stillnessFramesRequired rows must be under threshold
         for (int recordingIndex = recordingLength - stillnessFramesRequired; recordingIndex < recordingLength - 1; recordingIndex++)
         {
-            if (playerMovementRecord[recordingIndex] == null)
+            if (playerMovementRecord[recordingIndex] == null || playerMovementRecord[recordingIndex + 1] == null)
             {
                 return false; //recording is incomplete
             }
 
             foreach (var landmark in playerMovementRecord[recordingIndex].Keys.ToList()) //adjust hand origin
             {
-                if (Vector3.Distance(playerMovementRecord[recordingIndex][landmark], playerMovementRecord[recordingIndex + 1][landmark]) > stillnessThreshold)
+                if (playerMovementRecord[recordingIndex].ContainsKey(landmark) && playerMovementRecord[recordingIndex+1].ContainsKey(landmark) && Vector3.Distance(playerMovementRecord[recordingIndex][landmark], playerMovementRecord[recordingIndex + 1][landmark]) > stillnessThreshold)
                 {
                     return false; // Difference exceeded the threshold
                 }
@@ -340,15 +340,12 @@ public class RecognizeGesture : MonoBehaviour
     {
         if (recording)
         {
-            Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(CameraStream.playerPose._landmarkArrangement);
+            //Dictionary<Pose.Landmark, Vector3> landmarksCopy = new Dictionary<Pose.Landmark, Vector3>(PollHl2Hands.poseDictionary);
 
 
             if (recordingProgress < recordingLength) //building up the matrix
             {
-                foreach (var landmark in landmarksCopy.Keys.ToList())
-                {
-                    playerMovementRecord[recordingProgress][landmark] = landmarksCopy[landmark];
-                }
+                playerMovementRecord[recordingProgress] = new Dictionary<Pose.Landmark, Vector3>(PollHl2Hands.poseDictionary);
                 recordingProgress++;
             }
             else //updating the matrix
@@ -358,7 +355,7 @@ public class RecognizeGesture : MonoBehaviour
                     playerMovementRecord[i] = playerMovementRecord[i + 1];
                 }
 
-                playerMovementRecord[playerMovementRecord.GetLength(0) - 1] = landmarksCopy;
+                playerMovementRecord[playerMovementRecord.GetLength(0) - 1] = new Dictionary<Pose.Landmark, Vector3>(PollHl2Hands.poseDictionary);
 
             }
         }

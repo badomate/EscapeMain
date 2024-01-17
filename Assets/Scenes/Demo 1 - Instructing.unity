@@ -4756,10 +4756,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dce46c1181343f4c9488063476804b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recordingLength: 1
-  stillnessFramesRequired: 1
-  recording: 0
-  stillnessCheck: 0
+  recordingLength: 30
+  stillnessFramesRequired: 15
+  recording: 1
+  stillnessCheck: 1
   matchThreshold: 0.15
   stillnessThreshold: 0.3
   InfoBox: {fileID: 1320848330}
