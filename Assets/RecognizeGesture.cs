@@ -68,8 +68,8 @@ public class RecognizeGesture : MonoBehaviour
         bool isLeftHandLeveled = isJointLeveled(Pose.Landmark.LEFT_SHOULDER, Pose.Landmark.LEFT_WRIST, 0.3f);
         bool isRightHandLeveled = isJointLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
-        Debug.Log(" LEFT_THUMB." + fingerDown(Pose.Landmark.LEFT_THUMB) + "LEFT_INDEX:" + fingerDown(Pose.Landmark.LEFT_INDEX) + "LEFT_MIDDLE:" + fingerDown(Pose.Landmark.LEFT_MIDDLE) + "LEFT_RING: " + fingerDown(Pose.Landmark.LEFT_RING) + "LEFT_PINKY: " + fingerDown(Pose.Landmark.LEFT_PINKY));
-        //Debug.Log(wristRotTargetRight.transform.eulerAngles);
+        //Debug.Log(" LEFT_THUMB." + fingerDown(Pose.Landmark.LEFT_THUMB) + "LEFT_INDEX:" + fingerDown(Pose.Landmark.LEFT_INDEX) + "LEFT_MIDDLE:" + fingerDown(Pose.Landmark.LEFT_MIDDLE) + "LEFT_RING: " + fingerDown(Pose.Landmark.LEFT_RING) + "LEFT_PINKY: " + fingerDown(Pose.Landmark.LEFT_PINKY));
+        Debug.Log(PollHl2Hands.leftPalmRot);
 
         //Shapes
         bool isCircle = fingerDown(Pose.Landmark.LEFT_THUMB) &&
@@ -79,11 +79,11 @@ public class RecognizeGesture : MonoBehaviour
                           fingerDown(Pose.Landmark.LEFT_PINKY);
 
 
-        bool isSquare = fingerDown(Pose.Landmark.LEFT_THUMB) &&
-                          fingerDown(Pose.Landmark.LEFT_INDEX) &&
-                          fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
-                          fingerDown(Pose.Landmark.LEFT_RING) &&
-                          fingerDown(Pose.Landmark.LEFT_PINKY) &&
+        bool isSquare = !fingerDown(Pose.Landmark.LEFT_THUMB) &&
+                          !fingerDown(Pose.Landmark.LEFT_INDEX) &&
+                          !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
+                          !fingerDown(Pose.Landmark.LEFT_RING) &&
+                          !fingerDown(Pose.Landmark.LEFT_PINKY) &&
                           isWristRotation(true, Quaternion.Euler(300, 0, 50), 45); //this one needs more checks
 
         //Colors
