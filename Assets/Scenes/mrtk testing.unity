@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731704, g: 0.13414727, b: 0.121078536, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MeshPrefab: {fileID: 5231468805595906662, guid: bf44d29a1e5e4ee459dfc640360c1d4f,
     type: 3}
-  m_Density: 1
+  m_Density: 0.5
   m_Normals: 1
   m_Tangents: 0
   m_TextureCoordinates: 0
@@ -709,6 +709,7 @@ MonoBehaviour:
   recordingLength: 2
   stillnessFramesRequired: 2
   recording: 0
+  stillnessCheck: 0
   matchThreshold: 0.01
   stillnessThreshold: 0.1
   InfoBox: {fileID: 0}
