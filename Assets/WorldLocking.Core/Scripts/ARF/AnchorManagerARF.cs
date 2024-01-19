@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -68,7 +69,7 @@ namespace Microsoft.MixedReality.WorldLocking.Core
         }
 
         private readonly ARSession arSession;
-        private readonly ARSessionOrigin arSessionOrigin;
+        private readonly XROrigin arSessionOrigin;
 
         private readonly ARAnchorManager arAnchorManager;
 
