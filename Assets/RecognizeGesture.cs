@@ -245,7 +245,7 @@ public class RecognizeGesture : MonoBehaviour
     {
         Quaternion palmRotation = leftHand ? PollHl2Hands.leftPalmRot : PollHl2Hands.rightPalmRot;
 
-        Quaternion playerRootRotation = playerRoot.transform.rotation;
+        //Quaternion playerRootRotation = playerRoot.transform.rotation;
 
         //TODO - The following lines is an attempt to make up for body rotation when using absolute coordinates. I have not had the chance to test it so it is disabled for now.
         //Quaternion relativeWristRotation = Quaternion.Inverse(playerRootRotation) * wristRotator.transform.rotation;
