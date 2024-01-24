@@ -194,6 +194,27 @@ public class RecognizeGesture : MonoBehaviour
 
 
 
+        if (isYes)
+        {
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
+            Debug.Log("YES detected");
+        }
+        else if (isRed)
+        {
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
+            Debug.Log("RED detected");
+        }
+        else if (isCircle)
+        {
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
+            Debug.Log("CIRCLE detected");
+        }
+        else if (isSquare)
+        {
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
+            Debug.Log("CIRCLE detected");
+        }
+        /*
         if (isBlue)
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
@@ -233,7 +254,7 @@ public class RecognizeGesture : MonoBehaviour
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
             Debug.Log("RIGHT detected");
-        }
+        }*/
 
     }
 
