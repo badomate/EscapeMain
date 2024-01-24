@@ -45,13 +45,9 @@ public class RecognizeGesture : MonoBehaviour
 
     private LevelManager LevelManagerScript;
 
-    public GameObject InfoBox;
     // Start is called before the first frame update
 
-    public RiggingIK playerRig;
-    public GameObject wristRotTargetLeft;
-    public GameObject wristRotTargetRight;
-    public GameObject playerRoot;
+    public GameObject playerCamera;
     void Start()
     {
         LevelManagerScript = GetComponent<LevelManager>();
@@ -69,7 +65,7 @@ public class RecognizeGesture : MonoBehaviour
         bool isRightHandLeveled = isJointLeveled(Pose.Landmark.RIGHT_SHOULDER, Pose.Landmark.RIGHT_WRIST, 0.3f);
 
         //Debug.Log(" LEFT_THUMB." + fingerDown(Pose.Landmark.LEFT_THUMB) + "LEFT_INDEX:" + fingerDown(Pose.Landmark.LEFT_INDEX) + "LEFT_MIDDLE:" + fingerDown(Pose.Landmark.LEFT_MIDDLE) + "LEFT_RING: " + fingerDown(Pose.Landmark.LEFT_RING) + "LEFT_PINKY: " + fingerDown(Pose.Landmark.LEFT_PINKY));
-        Debug.Log(PollHl2Hands.leftPalmRot.eulerAngles + ";" + PollHl2Hands.rightPalmRot.eulerAngles);
+        //Debug.Log(PollHl2Hands.leftPalmRot.eulerAngles + ";" + PollHl2Hands.rightPalmRot.eulerAngles);
 
         //********************************** Shapes **********************************
         bool isCircle = fingerDown(Pose.Landmark.LEFT_THUMB) &&
@@ -200,42 +196,34 @@ public class RecognizeGesture : MonoBehaviour
 
         if (isBlue)
         {
-            InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
         }
         else if (isRed)
         {
-            InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
         }
         else if (isHello)
         {
-            InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
         }
         else if (isYes)
         {
-            InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
         }
         else if (isNo)
         {
-            InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
         }
         else if (isDirectionForward)
         {
-            InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
         }
         else if (isDirectionLeft)
         {
-            InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
         }
         else if (isDirectionRight)
         {
-            InfoBox.SetActive(true);
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
         }
 
@@ -245,17 +233,26 @@ public class RecognizeGesture : MonoBehaviour
     {
         Quaternion palmRotation = leftHand ? PollHl2Hands.leftPalmRot : PollHl2Hands.rightPalmRot;
 
-        //Quaternion playerRootRotation = playerRoot.transform.rotation;
+        // Step 1: Get the inverse of the camera's rotation
+        Quaternion inverseCameraRotation = Quaternion.Inverse(playerCamera.transform.rotation);
 
-        //TODO - The following lines is an attempt to make up for body rotation when using absolute coordinates. I have not had the chance to test it so it is disabled for now.
-        //Quaternion relativeWristRotation = Quaternion.Inverse(playerRootRotation) * wristRotator.transform.rotation;
-        float angleDifference = Quaternion.Angle(palmRotation, targetRotation);
+        // Step 2: Apply this inverse to the palm rotation
+        Quaternion palmLocalToCamera = inverseCameraRotation * palmRotation;
 
-        /*if (!leftHand)
+        // Step 3: Isolate and remove the Y component
+        //palmLocalToCamera.eulerAngles = new Vector3(palmLocalToCamera.eulerAngles.x, 0, palmLocalToCamera.eulerAngles.z);
+
+        // Convert it back to world space
+        //Quaternion palmRotationWorld = playerCamera.transform.rotation * palmLocalToCamera;
+        
+        if (leftHand)
         {
-            Debug.Log("Original: " + relativeWristRotation.eulerAngles + "; Inverted: " + wristRotator.transform.eulerAngles);
+            Debug.Log(palmLocalToCamera.eulerAngles + "; Player camera: " + playerCamera.transform.eulerAngles);
         }
-        */
+
+        // Step 4: Compare with target rotation
+        float angleDifference = Quaternion.Angle(palmLocalToCamera, targetRotation);
+
         return angleDifference <= threshold;
     }
 
