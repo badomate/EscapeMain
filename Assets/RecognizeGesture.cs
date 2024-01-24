@@ -93,7 +93,7 @@ public class RecognizeGesture : MonoBehaviour
                           !fingerDown(Pose.Landmark.LEFT_MIDDLE) &&
                           !fingerDown(Pose.Landmark.LEFT_RING) &&
                           !fingerDown(Pose.Landmark.LEFT_PINKY) &&
-                          !isWristRotation(true, Quaternion.Euler(0, 140, 270), 45));
+                          !isWristRotation(true, Quaternion.Euler(0, 130, 300), 45));
 
         //"spiderman"
         bool isRed = (!fingerDown(Pose.Landmark.RIGHT_INDEX) &&
@@ -197,34 +197,42 @@ public class RecognizeGesture : MonoBehaviour
         if (isBlue)
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
+            Debug.Log("BLUE detected");
         }
         else if (isRed)
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
+            Debug.Log("RED detected");
         }
         else if (isHello)
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
+            Debug.Log("HELLO detected");
         }
         else if (isYes)
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
+            Debug.Log("YES detected");
         }
         else if (isNo)
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
+            Debug.Log("NO detected");
         }
         else if (isDirectionForward)
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_FORWARD);
+            Debug.Log("FORWARD detected");
         }
         else if (isDirectionLeft)
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
+            Debug.Log("LEFT detected");
         }
         else if (isDirectionRight)
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
+            Debug.Log("RIGHT detected");
         }
 
     }
@@ -238,12 +246,6 @@ public class RecognizeGesture : MonoBehaviour
 
         // Step 2: Apply this inverse to the palm rotation
         Quaternion palmLocalToCamera = inverseCameraRotation * palmRotation;
-
-        // Step 3: Isolate and remove the Y component
-        //palmLocalToCamera.eulerAngles = new Vector3(palmLocalToCamera.eulerAngles.x, 0, palmLocalToCamera.eulerAngles.z);
-
-        // Convert it back to world space
-        //Quaternion palmRotationWorld = playerCamera.transform.rotation * palmLocalToCamera;
         
         if (leftHand)
         {
