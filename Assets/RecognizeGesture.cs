@@ -270,7 +270,7 @@ public class RecognizeGesture : MonoBehaviour
         
         if (leftHand)
         {
-            Debug.Log(palmLocalToCamera.eulerAngles + "; Player camera: " + playerCamera.transform.eulerAngles);
+            //Debug.Log(palmLocalToCamera.eulerAngles + "; Player camera: " + playerCamera.transform.eulerAngles);
         }
 
         // Step 4: Compare with target rotation
