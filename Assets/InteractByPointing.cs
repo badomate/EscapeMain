@@ -57,17 +57,17 @@ public class InteractByPointing : MonoBehaviour
         {
             Debug.Log("I can't find the Helper.");
         }
-        feedbackManager.FeedbackEvent.AddListener(handleFeedbackEvent); //wait for player to "lock in" his gesture
-        levelManagerScript.LevelFinishedEvent.AddListener(handleLevelFinished); //wait for player to "lock in" his gesture
+        //feedbackManager.FeedbackEvent.AddListener(handleFeedbackEvent); //wait for player to "lock in" his gesture.
+        //levelManagerScript.LevelFinishedEvent.AddListener(handleLevelFinished); //wait for player to "lock in" his gesture
     }
 
-
+    //The contents of this function were commented out as they are most likely outdated.
     private void handleFeedbackEvent()
     {
-        if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.POSITIVE)
+        /*if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.POSITIVE)
         {
             unselectLimb();
-        }/* //Numerical feedback unused for twister rules
+        } //Numerical feedback unused for twister rules
         else if (feedbackManager.lastDetectedFeedback == FeedbackManager.feedbackType.NUMERICAL)
         {
             unselectLimb();
@@ -260,17 +260,6 @@ public class InteractByPointing : MonoBehaviour
     {
         hoveredLimb = null; //releases the selection lock on this limb and resets the script to the original selection phase
         hoveringSomething = false;
-
-        /*
-        //TODO: we must tell the estimation script to play the animation ONCE
-        Vector3[,] pointerBuiltGestureMatrix = Gesture.GestureToMatrix(GestureBeingBuilt);
-        if (GestureBeingBuilt._poseSequence.Count > 0)
-        {
-            estimationToIkScript.saveRecording(pointerBuiltGestureMatrix);
-            estimationToIkScript.currentEstimationSource = EstimationToIK.estimationSource.Recording;
-            estimationToIkScript.Looping = true;
-        }
-        */
     }
 
 
@@ -285,13 +274,11 @@ public class InteractByPointing : MonoBehaviour
             fingertipPosition = playerCamera.transform.position;
             fingertipDirection = playerCamera.transform.forward * 10;
         }
-        else
+        else if(PollHl2Hands.poseDictionary.Count > 20)
         {
-            if (estimationScript.landmarks.Length > 20)
-            {
-                fingertipPosition = estimationScript.landmarks[16];
-                fingertipDirection = estimationScript.landmarks[20];
-            }
+
+            fingertipPosition = PollHl2Hands.poseDictionary[Pose.Landmark.LEFT_INDEX_KNUCKLE];
+            fingertipDirection = PollHl2Hands.poseDictionary[Pose.Landmark.LEFT_INDEX];
         }
 
         Ray ray = new Ray(fingertipPosition, fingertipDirection); //mock data for now
@@ -303,7 +290,7 @@ public class InteractByPointing : MonoBehaviour
             {
                 if (!selfPointCheck(ray))
                 {
-                   /* if (!helperPointCheck(ray))
+                   /* if (!helperPointCheck(ray)) //Disabled pointing at the helper's limbs as pointing at self limbs maybe sufficient.
                     {
                         hoveredLimb = null;
                         hoveringSomething = false;
