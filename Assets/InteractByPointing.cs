@@ -133,9 +133,9 @@ public class InteractByPointing : MonoBehaviour
         closestPointIndex = -1;
         float closestDistance = boneHitThreshold;
 
-        for (int i = 0; i < estimationScript.landmarks.Length; i++)
+        for (int i = 0; i < PollHl2Hands.poseDictionary.Count; i++)
         {
-            Vector3 rayToPoint = estimationScript.landmarks[i] - ray.origin;
+            Vector3 rayToPoint = PollHl2Hands.poseDictionary.ElementAt(i).Value - ray.origin;
             float projection = Vector3.Dot(ray.direction, rayToPoint);
 
             if (projection < 0)
@@ -145,7 +145,7 @@ public class InteractByPointing : MonoBehaviour
             }
 
             Vector3 closestPoint = ray.origin + projection * ray.direction;
-            float distance = Vector3.Distance(estimationScript.landmarks[i], closestPoint);
+            float distance = Vector3.Distance(PollHl2Hands.poseDictionary.ElementAt(i).Value, closestPoint);
 
             if (distance < selfHitThreshold && distance < closestDistance)
             {
@@ -157,7 +157,7 @@ public class InteractByPointing : MonoBehaviour
         if (closestPointIndex != -1
             && LandmarkIndicesDictionary.mediapipeIndicesToLimbs.Values.Any(list => list.Contains(closestPointIndex)))
         {
-            Pose.Landmark currentLandmark = LandmarkIndicesDictionary.mediapipeIndicesToLimbs.FirstOrDefault(x => x.Value.Contains(closestPointIndex)).Key;  //TODO: we are going through the dictionary twice, we should fix that
+            Pose.Landmark currentLandmark = PollHl2Hands.poseDictionary.ElementAt(closestPointIndex).Key;
             if (currentLandmark != landmarkSelected)
             { //New major landmark is hovered
                 landmarkSelected = currentLandmark;
@@ -303,16 +303,16 @@ public class InteractByPointing : MonoBehaviour
             {
                 if (!selfPointCheck(ray))
                 {
-                    if (!helperPointCheck(ray))
+                   /* if (!helperPointCheck(ray))
                     {
                         hoveredLimb = null;
                         hoveringSomething = false;
                         hidePointVisualizer();
                     }
                     else
-                    {
+                    {*/
                         hoveringSomething = true;
-                    }
+                    //}
                 }
                 else
                 {
