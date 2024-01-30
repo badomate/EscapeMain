@@ -10,7 +10,7 @@ ModelImporter:
       name: Alpha_Body_MAT
     second: {fileID: 2100000, guid: 5fc0e3d37ec294384aaa0b18e537ff86, type: 3}
   materials:
-    materialImportMode: 2
+    materialImportMode: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
