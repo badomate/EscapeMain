@@ -153,24 +153,24 @@ public class InteractByPointing : MonoBehaviour
                 closestPointIndex = i;
             }
         }
-
-        if (closestPointIndex != -1
-            && LandmarkIndicesDictionary.mediapipeIndicesToLimbs.Values.Any(list => list.Contains(closestPointIndex)))
+        if (closestPointIndex != -1)
         {
-            Pose.Landmark currentLandmark = PollHl2Hands.poseDictionary.ElementAt(closestPointIndex).Key;
-            if (currentLandmark != landmarkSelected)
-            { //New major landmark is hovered
-                landmarkSelected = currentLandmark;
+            Pose.Landmark hoveredLandmark = PollHl2Hands.poseDictionary.ElementAt(closestPointIndex).Key;
+            if (closestPointIndex != -1
+                && LandmarkIndicesDictionary.landmarkToLimb.Values.Any(list => list.Contains(hoveredLandmark)))
+            {
+                Pose.Landmark currentLandmark = hoveredLandmark;
+                if (currentLandmark != landmarkSelected)
+                { //New major landmark is hovered
+                    landmarkSelected = currentLandmark;
+                }
+                Debug.Log("Self-pointed at landmark: " + closestPointIndex);
+
+                startTime = Time.time;
+                return true;
             }
-            Debug.Log("Self-pointed at landmark: " + closestPointIndex);
-
-            startTime = Time.time;
-            return true;
         }
-        else
-        {
-            return false;
-        }
+       return false;
     }
 
     bool helperPointCheck(Ray ray)
