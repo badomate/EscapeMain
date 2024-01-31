@@ -15,14 +15,14 @@ public class RotateCamera : MonoBehaviour
 
     void handleRotationRecognitionEvent(Actions action)
     {
-        if(action == Actions.CAMERA_LEFT)
+        /*if(action == Actions.CAMERA_LEFT)
         {
             RotateCameraAround(rotationSpeed * -fastRotationMultiplier);
         }
         else if(action == Actions.CAMERA_RIGHT)
         {
             RotateCameraAround(rotationSpeed * fastRotationMultiplier);
-        }
+        }*/
     }
         void Update()
     {

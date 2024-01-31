@@ -14,13 +14,19 @@ public enum Actions
     TURN_LEFT,
     TURN_RIGHT,
 
-    VICTORY,
-    SUPERMAN,
+    CIRCLE,
+    SQUARE,
+
+    RED,
+    BLUE,
+
+    NEW_WORD,
+    ATTENTION,
+    YES,
+    NO,
+
     UNRECOGNIZED,
     AMBIGUOUS,
-
-    CAMERA_LEFT,
-    CAMERA_RIGHT,
 }
 
 public class RecognizeGesture : MonoBehaviour
@@ -193,52 +199,25 @@ public class RecognizeGesture : MonoBehaviour
                           !fingerDown(Pose.Landmark.LEFT_THUMB);
 
 
-
-        if (isYes)
+        if (isCircle)
         {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
-            Debug.Log("YES detected");
-        }
-        else if (isRed)
-        {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_LEFT);
-            Debug.Log("RED detected");
-        }
-        else if (isCircle)
-        {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.CIRCLE);
             Debug.Log("CIRCLE detected");
         }
         else if (isSquare)
         {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
-            Debug.Log("CIRCLE detected");
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.SQUARE);
+            Debug.Log("SQUARE detected");
         }
-        /*
         if (isBlue)
         {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.VICTORY);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.BLUE);
             Debug.Log("BLUE detected");
         }
         else if (isRed)
         {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.RED);
             Debug.Log("RED detected");
-        }
-        else if (isHello)
-        {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.SUPERMAN);
-            Debug.Log("HELLO detected");
-        }
-        else if (isYes)
-        {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_LEFT);
-            Debug.Log("YES detected");
-        }
-        else if (isNo)
-        {
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.TURN_RIGHT);
-            Debug.Log("NO detected");
         }
         else if (isDirectionForward)
         {
@@ -254,7 +233,27 @@ public class RecognizeGesture : MonoBehaviour
         {
             RecognizeGesture.RecognitionEvent.Invoke(Actions.GO_RIGHT);
             Debug.Log("RIGHT detected");
-        }*/
+        }
+        else if (isYes)
+        {
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.YES);
+            Debug.Log("YES detected");
+        }
+        else if (isNo)
+        {
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.NO);
+            Debug.Log("NO detected");
+        }
+        else if (isHello)
+        {
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.ATTENTION);
+            Debug.Log("ATTENTION detected");
+        }
+        else if (isNewWord)
+        {
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.NEW_WORD);
+            Debug.Log("NEW_WORD detected");
+        }
 
     }
 
