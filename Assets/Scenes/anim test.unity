@@ -470,3 +470,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   performStandardAnimations: 1
+--- !u!114 &611448302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 611448298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1af1d7282eb64644a5665adbdf8fee0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Helper: {fileID: 0}
+  playerCamera: {fileID: 0}
+  highlightedMaterial: {fileID: 0}
+  regularMaterial: {fileID: 0}
+  Visualize: 1
+  moveWithMouse: 1
+  boneHitThreshold: 2
+  selfHitThreshold: 2
+  estimationScript: {fileID: 0}
+  currentPoseIndex: 0
+  pointingVisualizationObject: {fileID: 0}
+  feedbackManager: {fileID: 0}

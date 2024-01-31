@@ -1585,7 +1585,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Communicative Gestures
     m_StateMachine: {fileID: -1120129935148258112}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: fd52f528a3382564e95c9885742d5dcd, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 1
