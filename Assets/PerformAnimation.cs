@@ -45,13 +45,19 @@ public class PerformAnimation : MonoBehaviour
                     break;
                 case Actions.TURN_LEFT:
                     Debug.Log("Play animation TURN_LEFT now!");
-                    //animator.SetBool("TurnLeft", true);
                     animator.SetTrigger("TurnLeft");
                     break;
                 case Actions.TURN_RIGHT:
                     Debug.Log("Play animation TURN_RIGHT now!");
-                    //animator.SetBool("TurnRight", true);
                     animator.SetTrigger("TurnRight");
+                    break;
+                case Actions.YES:
+                    Debug.Log("Play animation YES now!");
+                    animator.SetTrigger("Yes");
+                    break;
+                case Actions.RED:
+                    Debug.Log("Play animation RED now!");
+                    animator.SetTrigger("Red");
                     break;
                 /*case Actions.VICTORY:
                     Debug.Log("Victory sign detected");
@@ -116,7 +122,7 @@ public class PerformAnimation : MonoBehaviour
         else if (Input.GetKeyDown("8"))
         {
             pressing = true;
-            RecognizeGesture.RecognitionEvent.Invoke(Actions.NO);
+            RecognizeGesture.RecognitionEvent.Invoke(Actions.RED);
         }
         else if (Input.GetKeyDown("9"))
         {

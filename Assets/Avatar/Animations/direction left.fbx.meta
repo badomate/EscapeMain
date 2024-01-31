@@ -58,7 +58,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: direction_right
+      name: direction_left
       takeName: Armature|Action
       internalID: 885944232402757753
       firstFrame: 0
