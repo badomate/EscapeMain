@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d79a8309894b0644789995c2250d9f9c
+guid: d6ff3a8a1b5b881428b86958e2660e5b
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
@@ -17,9 +17,26 @@ ModelImporter:
     removeConstantScaleCurves: 1
     motionNodeName: 
     rigImportErrors: 
-    rigImportWarnings: 
+    rigImportWarnings: "Copied Avatar Rig Configuration mis-match. Bone length in
+      copied configuration does not match position in animation file:\n\t'mixamorig:LeftUpLeg'
+      : position error = 108.854355 mm\n\t'mixamorig:LeftLeg' : position error =
+      391.289154 mm\n\t'mixamorig:LeftFoot' : position error = 405.741943 mm\n\t'mixamorig:LeftToeBase'
+      : position error = 151.521255 mm\n\t'mixamorig:RightUpLeg' : position error
+      = 108.854347 mm\n\t'mixamorig:RightLeg' : position error = 391.289398 mm\n\t'mixamorig:RightFoot'
+      : position error = 405.742157 mm\n\t'mixamorig:RightToeBase' : position error
+      = 151.521240 mm\n"
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'Armature|Action' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'mixamorig:LeftShoulder' has translation
+      animation that will be discarded.\n\t'mixamorig:LeftHandMiddle1' has translation
+      animation that will be discarded.\n\t'mixamorig:LeftHandPinky1' has translation
+      animation that will be discarded.\n\t'mixamorig:RightShoulder' has translation
+      animation that will be discarded.\n\t'mixamorig:RightHandMiddle1' has translation
+      animation that will be discarded.\n\t'mixamorig:RightHandMiddle3' has translation
+      animation that will be discarded.\n\t'mixamorig:RightHandRing1' has translation
+      animation that will be discarded.\n\t'mixamorig:RightHandPinky1' has translation
+      animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -33,7 +50,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: new_word
+      name: point_left_arm
       takeName: Armature|Action
       internalID: 885944232402757753
       firstFrame: 0
@@ -124,7 +141,7 @@ ModelImporter:
     secondaryUVMinLightmapResolution: 40
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
-    useFileScale: 1
+    useFileScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
